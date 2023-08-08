@@ -1,77 +1,59 @@
 <?php
-/**
- * A Magento 2 module named Dealer4Dealer\SubstituteOrders
- * Copyright (C) 2017 Maikel Martens
- *
- * This file is part of Dealer4Dealer\SubstituteOrders.
- *
- * Dealer4Dealer\SubstituteOrders is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
 
-namespace Dealer4Dealer\SubstituteOrders\src\Api;
+namespace Dealer4Dealer\SubstituteOrders\Api;
+
+use Dealer4Dealer\SubstituteOrders\Api\Data\ShipmentInterface;
+use Dealer4Dealer\SubstituteOrders\Api\Data\ShipmentSearchResultsInterface;
+use Magento\Framework\Api\SearchCriteriaInterface;
 
 interface ShipmentManagementInterface
 {
     /**
-     * GET shipment by shipment_id
-     * @param string $id
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\ShipmentInterface
+     * @param int $id
+     *
+     * @return ShipmentInterface
      */
-    public function getShipment($id);
+    public function getShipmentById(int $id): ShipmentInterface;
 
     /**
-     * GET shipment by ext_shipment_id
-     * @param string $id
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\ShipmentInterface
+     * @param int $id
+     *
+     * @return ShipmentInterface
      */
-    public function getShipmentByExt($id);
+    public function getShipmentByExt(int $id): ShipmentInterface;
 
     /**
-     * GET shipment by magento_increment_id
-     * @param string $id
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\ShipmentInterface
+     * @param int $id
+     *
+     * @return ShipmentInterface
      */
-    public function getShipmentByMagentoIncrement($id);
+    public function getShipmentByMagentoIncrement(int $id): ShipmentInterface;
 
     /**
-     * POST for Shipment api
-     * @param \Dealer4Dealer\SubstituteOrders\src\Api\Data\ShipmentInterface $shipment
+     * @param ShipmentInterface $shipment
+     *
      * @return int
      */
-    public function postShipment($shipment);
+    public function postShipment(ShipmentInterface $shipment): int;
 
     /**
-     * PUT for Shipment api
-     * @param \Dealer4Dealer\SubstituteOrders\src\Api\Data\ShipmentInterface $shipment
+     * @param ShipmentInterface $shipment
+     *
      * @return int
      */
-    public function putShipment($shipment);
+    public function putShipment(ShipmentInterface $shipment): int;
 
     /**
-     * DELETE for Shipment api
-     * @param string $id
-     * @return boolean
+     * @param int $id
+     *
+     * @return bool
      */
-    public function deleteShipment($id);
+    public function deleteShipmentById(int $id): bool;
 
     /**
-     * Retrieve Shipment matching the specified criteria.
-     * @param \Magento\Framework\Api\SearchCriteriaInterface $searchCriteria
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\ShipmentSearchResultsInterface
-     * @throws \Magento\Framework\Exception\LocalizedException
+     * @param SearchCriteriaInterface $searchCriteria
+     *
+     * @return ShipmentSearchResultsInterface
      */
-    public function getList(
-        \Magento\Framework\Api\SearchCriteriaInterface $searchCriteria
-    );
+    public function getList(SearchCriteriaInterface $searchCriteria): ShipmentSearchResultsInterface;
 }

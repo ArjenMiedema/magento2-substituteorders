@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A Magento 2 module named Dealer4Dealer\SubstituteOrders
  * Copyright (C) 2017 Maikel Martens
@@ -19,20 +20,20 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Dealer4Dealer\SubstituteOrders\src\Observer\Sales;
+namespace Dealer4Dealer\SubstituteOrders\Observer\Sales;
 
 use Magento\Framework\Exception\LocalizedException;
-use Dealer4Dealer\SubstituteOrders\src\Model\OrderAddress;
+use Dealer4Dealer\SubstituteOrders\Model\OrderAddress;
 
 class OrderSaveAfter implements \Magento\Framework\Event\ObserverInterface
 {
-    /** @var \Dealer4Dealer\SubstituteOrders\src\Api\OrderRepositoryInterface */
+    /** @var \Dealer4Dealer\SubstituteOrders\Api\OrderRepositoryInterface */
     protected $orderRepository;
 
-    /** @var \Dealer4Dealer\SubstituteOrders\src\Api\OrderItemRepositoryInterface */
+    /** @var \Dealer4Dealer\SubstituteOrders\Api\OrderItemRepositoryInterface */
     protected $orderItemsRepository;
 
-    /** @var \Dealer4Dealer\SubstituteOrders\src\Api\OrderAddressRepositoryInterface */
+    /** @var \Dealer4Dealer\SubstituteOrders\Api\OrderAddressRepositoryInterface */
     protected $orderAddressesRepository;
 
     /** @var \Dealer4Dealer\SubstituteOrders\Model\OrderFactory */
@@ -51,12 +52,12 @@ class OrderSaveAfter implements \Magento\Framework\Event\ObserverInterface
     protected $customerRepository;
 
     public function __construct(
-        \Magento\Framework\App\Config\ScopeConfigInterface               $scopeConfig,
-        \Dealer4Dealer\SubstituteOrders\Model\OrderFactory               $orderFactory,
-        \Dealer4Dealer\SubstituteOrders\Model\OrderAddressFactory        $addressFactory,
-        \Dealer4Dealer\SubstituteOrders\Model\OrderItemFactory           $orderItemFactory,
-        \Dealer4Dealer\SubstituteOrders\src\Api\OrderRepositoryInterface $orders,
-        \Magento\Customer\Api\CustomerRepositoryInterface                $customerRepository
+        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
+        \Dealer4Dealer\SubstituteOrders\Model\OrderFactory $orderFactory,
+        \Dealer4Dealer\SubstituteOrders\Model\OrderAddressFactory $addressFactory,
+        \Dealer4Dealer\SubstituteOrders\Model\OrderItemFactory $orderItemFactory,
+        \Dealer4Dealer\SubstituteOrders\Api\OrderRepositoryInterface $orders,
+        \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository
     ) {
         $this->orderFactory = $orderFactory;
         $this->addressFactory = $addressFactory;
@@ -142,7 +143,7 @@ class OrderSaveAfter implements \Magento\Framework\Event\ObserverInterface
             $customer = $this->customerRepository->getById($order->getCustomerId());
             /** @var \Magento\Framework\Api\AttributeInterface */
             $externalCustomerIdAttribute = $customer->getCustomAttribute("external_customer_id");
-            if ($externalCustomerIdAttribute !== null && $externalCustomerIdAttribute->getValue() !== ''){
+            if ($externalCustomerIdAttribute !== null && $externalCustomerIdAttribute->getValue() !== '') {
                 $substitute->setExternalCustomerId($externalCustomerIdAttribute->getValue());
             }
         }

@@ -1,11 +1,14 @@
 <?php
+
 /**
  * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-namespace Dealer4Dealer\SubstituteOrders\src\Block\Order\PrintOrder;
+
+namespace Dealer4Dealer\SubstituteOrders\Block\Order\PrintOrder;
 
 use Magento\Framework\View\Element\AbstractBlock;
+
 use function Dealer4Dealer\SubstituteOrders\Block\Order\PrintOrder\__;
 
 /**
@@ -169,6 +172,7 @@ class Shipment extends \Magento\Sales\Block\Items\AbstractItems
         if (!empty($this->tracks[$shipment->getId()])) {
             $tracks = $this->tracks[$shipment->getId()];
         }
+
         return $tracks;
     }
 
@@ -184,6 +188,7 @@ class Shipment extends \Magento\Sales\Block\Items\AbstractItems
         if (!$shippingAddress instanceof \Magento\Sales\Model\Order\Address) {
             return '';
         }
+
         return $this->addressRenderer->format($shippingAddress, 'html');
     }
 
@@ -199,6 +204,7 @@ class Shipment extends \Magento\Sales\Block\Items\AbstractItems
         if (!$billingAddress instanceof \Magento\Sales\Model\Order\Address) {
             return '';
         }
+
         return $this->addressRenderer->format($billingAddress, 'html');
     }
 
@@ -216,6 +222,7 @@ class Shipment extends \Magento\Sales\Block\Items\AbstractItems
                 $res[] = $item;
             }
         }
+
         return $res;
     }
 }

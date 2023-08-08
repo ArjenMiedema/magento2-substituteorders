@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A Magento 2 module named Dealer4Dealer\SubstituteOrders
  * Copyright (C) 2017 Maikel Martens
@@ -19,21 +20,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Dealer4Dealer\SubstituteOrders\src\Api\Data;
+namespace Dealer4Dealer\SubstituteOrders\Api\Data;
 
 interface ShipmentSearchResultsInterface extends \Magento\Framework\Api\SearchResultsInterface
 {
+    /**
+     * @return ShipmentInterface[]
+     */
+    public function getItems(): array;
 
     /**
-     * Get Shipment list.
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\ShipmentInterface[]
+     * @param ShipmentInterface[] $items
      */
-    public function getItems();
-
-    /**
-     * Set customer_id list.
-     * @param \Dealer4Dealer\SubstituteOrders\src\Api\Data\ShipmentInterface[] $items
-     * @return $this
-     */
-    public function setItems(array $items);
+    public function setItems(array $items): self;
 }

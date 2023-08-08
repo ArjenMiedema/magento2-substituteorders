@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A Magento 2 module named Dealer4Dealer\SubstituteOrders
  * Copyright (C) 2017 Maikel Martens
@@ -19,9 +20,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Dealer4Dealer\SubstituteOrders\src\Block\Order;
+namespace Dealer4Dealer\SubstituteOrders\Block\Order;
 
-class Invoice extends \Dealer4Dealer\SubstituteOrders\src\Block\Order\View
+class Invoice extends \Dealer4Dealer\SubstituteOrders\Block\Order\View
 {
     /**
      * @var string

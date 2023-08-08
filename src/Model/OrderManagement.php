@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A Magento 2 module named Dealer4Dealer\SubstituteOrders
  * Copyright (C) 2017 Maikel Martens
@@ -19,19 +20,20 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Dealer4Dealer\SubstituteOrders\src\Model;
+namespace Dealer4Dealer\SubstituteOrders\Model;
 
 use Dealer4Dealer\SubstituteOrders\Model\OrderAddressFactory;
 use Dealer4Dealer\SubstituteOrders\Model\OrderFactory;
 use Dealer4Dealer\SubstituteOrders\Model\OrderItemFactory;
-use Dealer4Dealer\SubstituteOrders\src\Model\AttachmentRepository;
-use Dealer4Dealer\SubstituteOrders\src\Model\Order;
-use Dealer4Dealer\SubstituteOrders\src\Model\OrderItemRepository;
-use Dealer4Dealer\SubstituteOrders\src\Model\OrderRepository;
+use Dealer4Dealer\SubstituteOrders\Model\AttachmentRepository;
+use Dealer4Dealer\SubstituteOrders\Model\Order;
+use Dealer4Dealer\SubstituteOrders\Model\OrderItemRepository;
+use Dealer4Dealer\SubstituteOrders\Model\OrderRepository;
 use Magento\Framework\Exception\NoSuchEntityException;
+
 use function Dealer4Dealer\SubstituteOrders\Model\__;
 
-class OrderManagement implements \Dealer4Dealer\SubstituteOrders\src\Api\OrderManagementInterface
+class OrderManagement implements \Dealer4Dealer\SubstituteOrders\Api\OrderManagementInterface
 {
     /*
      * @var \Dealer4Dealer\SubstituteOrders\Model\OrderFactory
@@ -73,14 +75,14 @@ class OrderManagement implements \Dealer4Dealer\SubstituteOrders\src\Api\OrderMa
      * @param OrderItemRepository $orderItemRepository
      */
     public function __construct(
-        \Dealer4Dealer\SubstituteOrders\Model\OrderFactory             $orderFactory,
-        \Dealer4Dealer\SubstituteOrders\Model\OrderAddressFactory      $addressFactory,
-        \Dealer4Dealer\SubstituteOrders\Model\OrderItemFactory         $orderItemFactory,
-        \Dealer4Dealer\SubstituteOrders\src\Model\AttachmentRepository $attachmentRepository,
-        \Dealer4Dealer\SubstituteOrders\src\Model\OrderRepository      $orderRepository,
-        \Dealer4Dealer\SubstituteOrders\src\Model\OrderItemRepository  $orderItemRepository
+        \Dealer4Dealer\SubstituteOrders\Model\OrderFactory $orderFactory,
+        \Dealer4Dealer\SubstituteOrders\Model\OrderAddressFactory $addressFactory,
+        \Dealer4Dealer\SubstituteOrders\Model\OrderItemFactory $orderItemFactory,
+        \Dealer4Dealer\SubstituteOrders\Model\AttachmentRepository $attachmentRepository,
+        \Dealer4Dealer\SubstituteOrders\Model\OrderRepository $orderRepository,
+        \Dealer4Dealer\SubstituteOrders\Model\OrderItemRepository $orderItemRepository
     ) {
-    
+
         $this->orderFactory = $orderFactory;
         $this->addressFactory = $addressFactory;
         $this->orderItemFactory = $orderItemFactory;
@@ -105,7 +107,7 @@ class OrderManagement implements \Dealer4Dealer\SubstituteOrders\src\Api\OrderMa
     /**
      * {@inheritdoc}
      */
-    public function getOrder($id)
+    public function getOrderById($id)
     {
         $order = $this->orderFactory->create()->load($id);
 
@@ -179,7 +181,7 @@ class OrderManagement implements \Dealer4Dealer\SubstituteOrders\src\Api\OrderMa
             $oldOrder->setBillingAddress($billingAddress);
         }
 
-        foreach ($oldOrder->getItems() as $oldOrderItem){
+        foreach ($oldOrder->getItems() as $oldOrderItem) {
             $this->orderItemRepository->delete($oldOrderItem);
         }
 
@@ -196,7 +198,7 @@ class OrderManagement implements \Dealer4Dealer\SubstituteOrders\src\Api\OrderMa
     /**
      * {@inheritdoc}
      */
-    public function deleteOrder($id)
+    public function deleteOrderById($id)
     {
         $order = $this->orderFactory->create()->load($id);
 

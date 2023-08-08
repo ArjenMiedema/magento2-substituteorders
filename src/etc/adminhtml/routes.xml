@@ -1,5 +1,6 @@
 <?xml version="1.0" ?>
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/routes.xsd">
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/routes.xsd">
 	<router id="admin">
 		<route frontName="dealer4dealer_substituteorders" id="dealer4dealer_substituteorders">
 			<module before="Magento_Backend" name="Dealer4Dealer_SubstituteOrders"/>

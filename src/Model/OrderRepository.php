@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A Magento 2 module named Dealer4Dealer\SubstituteOrders
  * Copyright (C) 2017 Maikel Martens
@@ -19,26 +20,26 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Dealer4Dealer\SubstituteOrders\src\Model;
+namespace Dealer4Dealer\SubstituteOrders\Model;
 
 use Dealer4Dealer\SubstituteOrders\Model\OrderFactory;
 use Magento\Framework\Reflection\DataObjectProcessor;
 use Magento\Framework\Api\DataObjectHelper;
 use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\Order\CollectionFactory as OrderCollectionFactory;
-use Dealer4Dealer\SubstituteOrders\src\Api\OrderRepositoryInterface;
+use Dealer4Dealer\SubstituteOrders\Api\OrderRepositoryInterface;
 use Magento\Framework\Api\SortOrder;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\Exception\CouldNotSaveException;
-use Dealer4Dealer\SubstituteOrders\src\Model\ResourceModel\Order as ResourceOrder;
+use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\Order as ResourceOrder;
 use Dealer4Dealer\SubstituteOrders\Api\Data\OrderInterfaceFactory;
 use Dealer4Dealer\SubstituteOrders\Api\Data\OrderSearchResultsInterfaceFactory;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Exception\CouldNotDeleteException;
+
 use function Dealer4Dealer\SubstituteOrders\Model\__;
 
 class OrderRepository implements OrderRepositoryInterface
 {
-
     /*
      * @var StoreManagerInterface
      */
@@ -84,7 +85,6 @@ class OrderRepository implements OrderRepositoryInterface
      */
     protected $searchCriteriaBuilder;
 
-
     /**
      * @param ResourceOrder $resource
      * @param OrderFactory $orderFactory
@@ -121,16 +121,19 @@ class OrderRepository implements OrderRepositoryInterface
      * {@inheritdoc}
      */
     public function save(
-        \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderInterface $order
+        \Dealer4Dealer\SubstituteOrders\Api\Data\OrderInterface $order
     ) {
         try {
             $this->resource->save($order);
         } catch (\Exception $exception) {
-            throw new CouldNotSaveException(__(
-                'Could not save the order: %1',
-                $exception->getMessage()
-            ));
+            throw new CouldNotSaveException(
+                __(
+                    'Could not save the order: %1',
+                    $exception->getMessage()
+                )
+            );
         }
+
         return $order;
     }
 
@@ -144,6 +147,7 @@ class OrderRepository implements OrderRepositoryInterface
         if (!$order->getId()) {
             throw new NoSuchEntityException(__('Order with id "%1" does not exist.', $orderId));
         }
+
         return $order;
     }
 
@@ -157,6 +161,7 @@ class OrderRepository implements OrderRepositoryInterface
         if (!$order->getId()) {
             throw new NoSuchEntityException(__('Order with id "%1" does not exist.', $id));
         }
+
         return $order;
     }
 
@@ -170,6 +175,7 @@ class OrderRepository implements OrderRepositoryInterface
         if (!$order->getId()) {
             throw new NoSuchEntityException(__('External Order with id "%1" does not exist.', $id));
         }
+
         return $order;
     }
 
@@ -189,10 +195,12 @@ class OrderRepository implements OrderRepositoryInterface
                     $collection->addStoreFilter($filter->getValue(), false);
                     continue;
                 }
+
                 $condition = $filter->getConditionType() ?: 'eq';
                 $collection->addFieldToFilter($filter->getField(), [$condition => $filter->getValue()]);
             }
         }
+
         $searchResults->setTotalCount($collection->getSize());
         $sortOrders = $criteria->getSortOrders();
         if ($sortOrders) {
@@ -204,6 +212,7 @@ class OrderRepository implements OrderRepositoryInterface
                 );
             }
         }
+
         $collection->setCurPage($criteria->getCurrentPage());
         $collection->setPageSize($criteria->getPageSize());
         $items = [];
@@ -213,10 +222,11 @@ class OrderRepository implements OrderRepositoryInterface
             $this->dataObjectHelper->populateWithArray(
                 $orderData,
                 $orderModel->getData(),
-                'Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderInterface'
+                'Dealer4Dealer\SubstituteOrders\Api\Data\OrderInterface'
             );
             $items[] = $orderData;
         }
+
         $searchResults->setItems($items);
         return $searchResults;
     }
@@ -225,16 +235,19 @@ class OrderRepository implements OrderRepositoryInterface
      * {@inheritdoc}
      */
     public function delete(
-        \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderInterface $order
+        \Dealer4Dealer\SubstituteOrders\Api\Data\OrderInterface $order
     ) {
         try {
             $this->resource->delete($order);
         } catch (\Exception $exception) {
-            throw new CouldNotDeleteException(__(
-                'Could not delete the Order: %1',
-                $exception->getMessage()
-            ));
+            throw new CouldNotDeleteException(
+                __(
+                    'Could not delete the Order: %1',
+                    $exception->getMessage()
+                )
+            );
         }
+
         return true;
     }
 

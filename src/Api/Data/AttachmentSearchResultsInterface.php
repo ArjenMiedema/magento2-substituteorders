@@ -1,22 +1,18 @@
 <?php
 
+namespace Dealer4Dealer\SubstituteOrders\Api\Data;
 
-namespace Dealer4Dealer\SubstituteOrders\src\Api\Data;
+use Magento\Framework\Api\SearchResultsInterface;
 
-interface AttachmentSearchResultsInterface extends \Magento\Framework\Api\SearchResultsInterface
+interface AttachmentSearchResultsInterface extends SearchResultsInterface
 {
-
+    /**
+     * @return AttachmentInterface[]
+     */
+    public function getItems(): array;
 
     /**
-     * Get Attachment list.
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\AttachmentInterface[]
+     * @param AttachmentInterface[] $items
      */
-    public function getItems();
-
-    /**
-     * Set magento_customer_identifier list.
-     * @param \Dealer4Dealer\SubstituteOrders\src\Api\Data\AttachmentInterface[] $items
-     * @return $this
-     */
-    public function setItems(array $items);
+    public function setItems(array $items): self;
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A Magento 2 module named Dealer4Dealer\SubstituteOrders
  * Copyright (C) 2017 Maikel Martens
@@ -19,11 +20,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Dealer4Dealer\SubstituteOrders\src\Controller\Adminhtml\Order;
+namespace Dealer4Dealer\SubstituteOrders\Controller\Adminhtml\Order;
 
 use function Dealer4Dealer\SubstituteOrders\Controller\Adminhtml\Order\__;
 
-class Edit extends \Dealer4Dealer\SubstituteOrders\src\Controller\Adminhtml\Order
+class Edit extends \Dealer4Dealer\SubstituteOrders\Controller\Adminhtml\Order
 {
     protected $resultPageFactory;
 
@@ -50,8 +51,8 @@ class Edit extends \Dealer4Dealer\SubstituteOrders\src\Controller\Adminhtml\Orde
     {
         // 1. Get ID and create model
         $id = $this->getRequest()->getParam('order_id');
-        $model = $this->_objectManager->create('Dealer4Dealer\SubstituteOrders\src\Model\Order');
-        
+        $model = $this->_objectManager->create('Dealer4Dealer\SubstituteOrders\Model\Order');
+
         // 2. Initial checking
         if ($id) {
             $model->load($id);
@@ -62,8 +63,9 @@ class Edit extends \Dealer4Dealer\SubstituteOrders\src\Controller\Adminhtml\Orde
                 return $resultRedirect->setPath('*/*/');
             }
         }
+
         $this->_coreRegistry->register('dealer4dealer_substituteorders_order', $model);
-        
+
         // 5. Build edit form
         /** @var \Magento\Backend\Model\View\Result\Page $resultPage */
         $resultPage = $this->resultPageFactory->create();

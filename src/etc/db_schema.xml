@@ -1,0 +1,353 @@
+<?xml version="1.0"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <!-- Dealer4Dealer Order Table -->
+    <table name="dealer4dealer_order" resource="default" engine="innodb" comment="Dealer4Dealer Substitute Order Table">
+        <column xsi:type="int" name="order_id" padding="11" unsigned="true" nullable="false" identity="true" comment="Entity ID" />
+        <column xsi:type="int" name="magento_order_id" padding="11" unsigned="true" nullable="true" comment="Magento Order ID" />
+        <column xsi:type="varchar" name="ext_order_id" comment="External Order ID" />
+        <column xsi:type="varchar" name="po_number" comment="PO Number" />
+        <column xsi:type="int" name="magento_customer_id" unsigned="true" nullable="true" comment="Magento Customer ID" />
+        <column xsi:type="int" name="shipping_address_id" unsigned="true" nullable="false" comment="Shipping Address ID" />
+        <column xsi:type="int" name="billing_address_id" unsigned="true" nullable="false" comment="Billing Address ID" />
+        <column xsi:type="decimal" name="base_tax_amount" comment="Base Tax Amount" />
+        <column xsi:type="decimal" name="base_discount_amount" comment="Base Discount Amount" />
+        <column xsi:type="decimal" name="base_shipping_amount" comment="Base Shipping Amount" />
+        <column xsi:type="decimal" name="base_subtotal" comment="Base Subtotal" />
+        <column xsi:type="decimal" name="base_grandtotal" comment="Base Grand Total" />
+        <column xsi:type="varchar" name="shipping_method" length="120" comment="Shipping Method" />
+        <column xsi:type="decimal" name="tax_amount" comment="Tax Amount" />
+        <column xsi:type="decimal" name="discount_amount" comment="Discount Amount" />
+        <column xsi:type="decimal" name="shipping_amount" comment="Shipping Amount" />
+        <column xsi:type="decimal" name="subtotal" comment="Subtotal" />
+        <column xsi:type="decimal" name="grandtotal" comment="Gran Total" />
+        <column xsi:type="datetime" name="order_date" comment="Order Date" />
+        <column xsi:type="varchar" name="state" length="32" comment="State" />
+        <column xsi:type="varchar" name="payment_method" comment="Payment Method" />
+        <column xsi:type="text" name="additional_data" comment="Additional Data" />
+        <column xsi:type="datetime" name="updated_at" comment="Updated At" />
+        <column xsi:type="decimal" name="magento_increment_id" comment="Magento Increment ID" />
+        <column xsi:type="decimal" name="external_customer_id" comment="External Customer ID" />
+
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="order_id"/>
+        </constraint>
+        <constraint xsi:type="foreign"
+                    referenceId="DEALER4DEALER_ORDER_MAGENTO_ORDER_ID_SALES_ORDER_ENTITY_ID"
+                    table="dealer4dealer_order"
+                    column="magento_order_id"
+                    referenceTable="sales_order"
+                    referenceColumn="entity_id"
+                    onDelete="CASCADE"
+        />
+        <constraint xsi:type="foreign"
+                    referenceId="DEALER4DEALER_ORDER_MAGENTO_CUSTOMER_ID_CUSTOMER_ENTITY_ID"
+                    table="dealer4dealer_order"
+                    column="magento_customer_id"
+                    referenceTable="customer_entity"
+                    referenceColumn="entity_id"
+                    onDelete="CASCADE"
+        />
+    </table>
+
+    <!-- Dealer4Dealer Order Address Table -->
+    <table name="dealer4dealer_orderaddress" resource="default" engine="innodb" comment="Dealer4Dealer Substitute Order Address Table">
+        <column xsi:type="int" name="orderaddress_id" padding="11" unsigned="true" nullable="false" identity="true" comment="Entity ID" />
+        <column xsi:type="int" name="order_id" padding="11" unsigned="true" comment="Order ID" />
+        <column xsi:type="varchar" name="company" comment="Company" />
+        <column xsi:type="text" name="street" comment="Street" />
+        <column xsi:type="varchar" name="postcode" comment="Postcode" />
+        <column xsi:type="varchar" name="city" comment="City" />
+        <column xsi:type="varchar" name="country" length="2" comment="Country ID" />
+        <column xsi:type="varchar" name="fax" nullable="false" comment="Fax" />
+        <column xsi:type="text" name="additional_data" comment="Additional Data" />
+        <column xsi:type="varchar" name="prefix" comment="Prefix" />
+        <column xsi:type="varchar" name="firstname" comment="First Name" />
+        <column xsi:type="varchar" name="middlename" comment="Middle Name" />
+        <column xsi:type="varchar" name="lastname" comment="Last Name" />
+        <column xsi:type="varchar" name="suffix" comment="Suffix" />
+
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="orderaddress_id"/>
+        </constraint>
+        <constraint xsi:type="foreign"
+                    referenceId="DEALER4DEALER_ORDERADDRESS_ORDER_ID_DEALER4DEALER_ORDER_ORDER_ID"
+                    table="dealer4dealer_orderaddress"
+                    column="order_id"
+                    referenceTable="dealer4dealer_order"
+                    referenceColumn="order_id"
+                    onDelete="CASCADE"
+        />
+    </table>
+
+    <!-- Dealer4Dealer Order Item Table -->
+    <table name="dealer4dealer_orderitem" resource="default" engine="innodb" comment="Dealer4Dealer Substitute Order Item Table">
+        <column xsi:type="int" name="orderitem_id" padding="11" unsigned="true" nullable="false" identity="true" comment="Entity ID" />
+        <column xsi:type="int" name="order_id" padding="11" unsigned="true" comment="Order ID" />
+        <column xsi:type="varchar" name="name" comment="Name" />
+        <column xsi:type="varchar" name="sku" comment="SKU" />
+        <column xsi:type="decimal" name="base_price" comment="Base Price" />
+        <column xsi:type="decimal" name="price" comment="Price" />
+        <column xsi:type="decimal" name="base_row_total" comment="Base Row Total" />
+        <column xsi:type="decimal" name="row_total" nullable="false" comment="Row Total" />
+        <column xsi:type="decimal" name="base_tax_amount" nullable="false" comment="Base Tax Amount" />
+        <column xsi:type="decimal" name="tax_amount" nullable="false" comment="Tax Amount" />
+        <column xsi:type="decimal" name="qty" nullable="false" comment="Quantity" />
+        <column xsi:type="text" name="additional_data" comment="Additional Data" />
+        <column xsi:type="decimal" name="base_discount_amount" comment="Base Discount Amount" />
+        <column xsi:type="decimal" name="discount_amount" comment="Discount Amount" />
+        <column xsi:type="int" name="invoice_id" comment="Invoice ID" />
+
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="orderitem_id"/>
+        </constraint>
+        <constraint xsi:type="foreign"
+                    referenceId="DEALER4DEALER_ORDERITEM_ORDER_ID_DEALER4DEALER_ORDER_ORDER_ID"
+                    table="dealer4dealer_orderitem"
+                    column="order_id"
+                    referenceTable="dealer4dealer_order"
+                    referenceColumn="order_id"
+                    onDelete="CASCADE"
+        />
+    </table>
+
+    <!-- Dealer4Dealer Invoice Table -->
+    <table name="dealer4dealer_invoice" resource="default" engine="innodb" comment="Dealer4Dealer Substitute Invoice Table">
+        <column xsi:type="int" name="invoice_id" padding="11" unsigned="true" nullable="false" identity="true" comment="Entity ID" />
+        <column xsi:type="int" name="magento_invoice_id" padding="11" unsigned="true" nullable="true" comment="Magento Invoice ID" />
+        <column xsi:type="varchar" name="ext_invoice_id" comment="External Invoice ID" />
+        <column xsi:type="varchar" name="po_number" comment="PO Number" />
+        <column xsi:type="int" name="magento_customer_id" unsigned="true" nullable="true" comment="Magento Customer ID" />
+        <column xsi:type="int" name="shipping_address_id" unsigned="true" nullable="false" comment="Shipping Address ID" />
+        <column xsi:type="int" name="billing_address_id" unsigned="true" nullable="false" comment="Billing Address ID" />
+        <column xsi:type="decimal" name="base_tax_amount" comment="Base Tax Amount" />
+        <column xsi:type="decimal" name="base_discount_amount" comment="Base Discount Amount" />
+        <column xsi:type="decimal" name="base_shipping_amount" comment="Base Shipping Amount" />
+        <column xsi:type="decimal" name="base_subtotal" comment="Base Subtotal" />
+        <column xsi:type="decimal" name="base_grandtotal" comment="Base Grand Total" />
+        <column xsi:type="decimal" name="tax_amount" comment="Tax Amount" />
+        <column xsi:type="decimal" name="discount_amount" comment="Discount Amount" />
+        <column xsi:type="decimal" name="shipping_amount" comment="Shipping Amount" />
+        <column xsi:type="decimal" name="subtotal" comment="Subtotal" />
+        <column xsi:type="decimal" name="grandtotal" comment="Gran Total" />
+        <column xsi:type="datetime" name="invoice_date" comment="Invoice Date" />
+        <column xsi:type="datetime" name="updated_at" comment="Updated At" />
+        <column xsi:type="varchar" name="state" length="32" comment="State" />
+        <column xsi:type="decimal" name="magento_increment_id" comment="Magento Increment ID" />
+        <column xsi:type="text" name="additional_data" comment="Additional Data" />
+
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="invoice_id"/>
+        </constraint>
+        <constraint xsi:type="foreign"
+                    referenceId="DEALER4DEALER_INVOICE_MAGENTO_INVOICE_ID_QUOTE_ENTITY_ID"
+                    table="dealer4dealer_invoice"
+                    column="magento_invoice_id"
+                    referenceTable="quote"
+                    referenceColumn="entity_id"
+                    onDelete="CASCADE"
+        />
+        <constraint xsi:type="foreign"
+                    referenceId="DEALER4DEALER_INVOICE_MAGENTO_CUSTOMER_ID_CUSTOMER_ENTITY_ID"
+                    table="dealer4dealer_invoice"
+                    column="magento_customer_id"
+                    referenceTable="customer_entity"
+                    referenceColumn="entity_id"
+                    onDelete="CASCADE"
+        />
+        <constraint xsi:type="foreign"
+                    referenceId="DEALER4DEALER_INVOICE_SHIPPING_ADDRESS_ID_DEALER4DEALER_ORDERADDRESS_ORDERADDRESS_ID"
+                    table="dealer4dealer_invoice"
+                    column="shipping_address_id"
+                    referenceTable="dealer4dealer_orderaddress"
+                    referenceColumn="orderaddress_id"
+                    onDelete="CASCADE"
+        />
+        <constraint xsi:type="foreign"
+                    referenceId="DEALER4DEALER_INVOICE_BILLING_ADDRESS_ID_DEALER4DEALER_ORDERADDRESS_ORDERADDRESS_ID"
+                    table="dealer4dealer_invoice"
+                    column="billing_address_id"
+                    referenceTable="dealer4dealer_orderaddress"
+                    referenceColumn="orderaddress_id"
+                    onDelete="CASCADE"
+        />
+    </table>
+
+    <!-- Dealer4Dealer Invoice Item Table -->
+    <table name="dealer4dealer_invoiceitem" resource="default" engine="innodb" comment="Dealer4Dealer Substitute Order Item Table">
+        <column xsi:type="int" name="invoiceitem_id" padding="11" unsigned="true" nullable="false" identity="true" comment="Entity ID" />
+        <column xsi:type="int" name="invoice_id" padding="11" unsigned="true" comment="Order ID" />
+        <column xsi:type="varchar" name="name" comment="Name" />
+        <column xsi:type="varchar" name="sku" comment="SKU" />
+        <column xsi:type="decimal" name="base_price" comment="Base Price" />
+        <column xsi:type="decimal" name="price" comment="Price" />
+        <column xsi:type="decimal" name="base_row_total" comment="Base Row Total" />
+        <column xsi:type="decimal" name="row_total" nullable="false" comment="Row Total" />
+        <column xsi:type="decimal" name="base_tax_amount" nullable="false" comment="Base Tax Amount" />
+        <column xsi:type="decimal" name="tax_amount" nullable="false" comment="Tax Amount" />
+        <column xsi:type="decimal" name="qty" nullable="false" comment="Quantity" />
+        <column xsi:type="text" name="additional_data" comment="Additional Data" />
+        <column xsi:type="decimal" name="base_discount_amount" comment="Base Discount Amount" />
+        <column xsi:type="decimal" name="discount_amount" comment="Discount Amount" />
+        <column xsi:type="int" name="order_id" comment="Invoice ID" />
+
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="invoiceitem_id"/>
+        </constraint>
+        <constraint xsi:type="foreign"
+                    referenceId="DEALER4DEALER_INVOICEITEM_INVOICE_ID_DEALER4DEALER_INVOICE_INVOICE_ID"
+                    table="dealer4dealer_invoiceitem"
+                    column="invoice_id"
+                    referenceTable="dealer4dealer_invoice"
+                    referenceColumn="invoice_id"
+                    onDelete="CASCADE"
+        />
+    </table>
+
+    <!-- Dealer4Dealer Shipment Table -->
+    <table name="dealer4dealer_shipment" resource="default" engine="innodb" comment="Dealer4Dealer Substitute Invoice Table">
+        <column xsi:type="int" name="shipment_id" padding="11" unsigned="true" nullable="false" identity="true" comment="Entity ID" />
+        <column xsi:type="int" name="magento_shipment_id" padding="11" unsigned="true" nullable="true" comment="Magento Shipment ID" />
+        <column xsi:type="varchar" name="ext_shipment_id" comment="External Shipment ID" />
+        <column xsi:type="int" name="customer_id" unsigned="true" nullable="true" comment="Magento Customer ID" />
+        <column xsi:type="int" name="invoice_id" unsigned="true" nullable="true" comment="Dealer4Dealer Invoice ID" />
+        <column xsi:type="int" name="order_id" unsigned="true" nullable="true" comment="Dealer4Dealer Order ID" />
+        <column xsi:type="varchar" name="name" comment="Name" />
+        <column xsi:type="varchar" name="shipment_status" comment="Shipment Status" />
+        <column xsi:type="int" name="shipping_address_id" unsigned="true" nullable="false" comment="Shipping Address ID" />
+        <column xsi:type="int" name="billing_address_id" unsigned="true" nullable="false" comment="Billing Address ID" />
+        <column xsi:type="varchar" name="increment_id" comment="Magento Increment ID" />
+        <column xsi:type="datetime" name="created_at" comment="Created At" />
+        <column xsi:type="datetime" name="updated_at" comment="Updated At" />
+        <column xsi:type="text" name="tracking" comment="Tracking" />
+        <column xsi:type="text" name="additional_data" comment="Additional Data" />
+        <column xsi:type="varchar" name="shipping_method" comment="Shipping Method" />
+
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="shipment_id"/>
+        </constraint>
+        <constraint xsi:type="foreign"
+                    referenceId="DEALER4DEALER_SHIPMENT_MAGENTO_SHIPMENT_ID_SALES_SHIPMENT_ENTITY_ID"
+                    table="dealer4dealer_shipment"
+                    column="magento_shipment_id"
+                    referenceTable="sales_shipment"
+                    referenceColumn="entity_id"
+                    onDelete="CASCADE"
+        />
+        <constraint xsi:type="foreign"
+                    referenceId="DEALER4DEALER_SHIPMENT_MAGENTO_CUSTOMER_ID_CUSTOMER_ENTITY_ID"
+                    table="dealer4dealer_shipment"
+                    column="customer_id"
+                    referenceTable="customer_entity"
+                    referenceColumn="entity_id"
+                    onDelete="CASCADE"
+        />
+        <constraint xsi:type="foreign"
+                    referenceId="DEALER4DEALER_SHIPMENT_ORDER_ID_DEALER4DEALER_ORDER_ORDER_ID"
+                    table="dealer4dealer_shipment"
+                    column="order_id"
+                    referenceTable="dealer4dealer_order"
+                    referenceColumn="order_id"
+                    onDelete="CASCADE"
+        />
+        <constraint xsi:type="foreign"
+                    referenceId="DEALER4DEALER_SHIPMENT_INVOICE_ID_DEALER4DEALER_INVOICE_INVOICE_ID"
+                    table="dealer4dealer_shipment"
+                    column="invoice_id"
+                    referenceTable="dealer4dealer_invoice"
+                    referenceColumn="invoice_id"
+                    onDelete="CASCADE"
+        />
+        <constraint xsi:type="foreign"
+                    referenceId="DEALER4DEALER_SHIPMENT_SHIPPING_ADDRESS_ID_DEALER4DEALER_ORDERADDRESS_ORDERADDRESS_ID"
+                    table="dealer4dealer_shipment"
+                    column="shipping_address_id"
+                    referenceTable="dealer4dealer_orderaddress"
+                    referenceColumn="orderaddress_id"
+                    onDelete="CASCADE"
+        />
+        <constraint xsi:type="foreign"
+                    referenceId="DEALER4DEALER_SHIPMENT_BILLING_ADDRESS_ID_DEALER4DEALER_ORDERADDRESS_ORDERADDRESS_ID"
+                    table="dealer4dealer_shipment"
+                    column="billing_address_id"
+                    referenceTable="dealer4dealer_orderaddress"
+                    referenceColumn="orderaddress_id"
+                    onDelete="CASCADE"
+        />
+    </table>
+
+    <!-- Dealer4Dealer Shipment Item Table -->
+    <table name="dealer4dealer_shipmentitem" resource="default" engine="innodb" comment="Dealer4Dealer Substitute Shipment Item Table">
+        <column xsi:type="int" name="shipmentitem_id" padding="11" unsigned="true" nullable="false" identity="true" comment="Entity ID" />
+        <column xsi:type="int" name="shipment_id" padding="11" unsigned="true" comment="Shipment ID" />
+        <column xsi:type="decimal" name="row_total" nullable="false" comment="Row Total" />
+        <column xsi:type="decimal" name="price" comment="Price" />
+        <column xsi:type="decimal" name="weight" comment="Base Price" />
+        <column xsi:type="decimal" name="qty" nullable="false" comment="Quantity" />
+        <column xsi:type="varchar" name="name" comment="Name" />
+        <column xsi:type="varchar" name="sku" comment="SKU" />
+        <column xsi:type="text" name="description" comment="Description" />
+        <column xsi:type="text" name="additional_data" comment="Additional Data" />
+
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="shipmentitem_id"/>
+        </constraint>
+        <constraint xsi:type="foreign"
+                    referenceId="DEALER4DEALER_SHIPMENTITEM_SHIPMENT_ID_DEALER4DEALER_SHIPMENT_SHIPMENT_ID"
+                    table="dealer4dealer_shipmentitem"
+                    column="shipment_id"
+                    referenceTable="dealer4dealer_shipment"
+                    referenceColumn="shipment_id"
+                    onDelete="CASCADE"
+        />
+    </table>
+
+    <!-- Dealer4Dealer Order Invoice Relation Table -->
+    <table name="dealer4dealer_orderinvoicerelation" resource="default" engine="innodb" comment="Dealer4Dealer Substitute Invoice Table">
+        <column xsi:type="int" name="order_id" padding="11" unsigned="true" nullable="false" comment="Dealer4Dealer Order ID" />
+        <column xsi:type="int" name="invoice_id" padding="11" unsigned="true" nullable="false" comment="Dealer4Dealer Invoice ID" />
+
+        <constraint xsi:type="unique" referenceId="DEALER4DEALER_ORDERINVOICERELATION_ORDER_ID_INVOICE_ID">
+            <column name="order_id"/>
+            <column name="invoice_id"/>
+        </constraint>
+
+        <constraint xsi:type="foreign"
+                    referenceId="DEALER4DEALER_ORDERINVOICERELATION_ORDER_ID_DEALER4DEALER_ORDER_ORDER_ID"
+                    table="dealer4dealer_orderinvoicerelation"
+                    column="order_id"
+                    referenceTable="dealer4dealer_order"
+                    referenceColumn="order_id"
+                    onDelete="CASCADE"
+        />
+        <constraint xsi:type="foreign"
+                    referenceId="DEALER4DEALER_ORDERINVOICERELATION_INVOICE_ID_DEALER4DEALER_INVOICE_INVOICE_ID"
+                    table="dealer4dealer_orderinvoicerelation"
+                    column="invoice_id"
+                    referenceTable="dealer4dealer_invoice"
+                    referenceColumn="invoice_id"
+                    onDelete="CASCADE"
+        />
+    </table>
+
+    <!-- Dealer4Dealer Attachment Table -->
+    <table name="dealer4dealer_substituteorder_attachment" resource="default" engine="innodb" comment="Dealer4Dealer Substitute Order Attachment Table">
+        <column xsi:type="int" name="attachment_id" padding="11" unsigned="true" nullable="false" identity="true" comment="Attachment ID" />
+        <column xsi:type="int" name="magento_customer_id" padding="11" unsigned="true" nullable="false" comment="Magento Customer ID" />
+        <column xsi:type="varchar" name="file" nullable="false" comment="File" />
+        <column xsi:type="varchar" name="entity_type" nullable="false" comment="Entity Type" />
+        <column xsi:type="decimal" name="entity_type_identifier" nullable="false" comment="Entity Type Identifier" />
+
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="attachment_id"/>
+        </constraint>
+        <constraint xsi:type="foreign"
+                    referenceId="DEALER4DEALER_SUBSTITUTEORDER_ATTACHMENT_MAGENTO_CUSTOMER_ID_CUSTOMER_ENTITY_ID"
+                    table="dealer4dealer_substituteorder_attachment"
+                    column="magento_customer_id"
+                    referenceTable="customer_entity"
+                    referenceColumn="entity_id"
+                    onDelete="CASCADE"
+        />
+    </table>
+</schema>

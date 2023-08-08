@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A Magento 2 module named Dealer4Dealer\SubstituteOrders
  * Copyright (C) 2017 Maikel Martens
@@ -24,7 +25,7 @@
  *
  * @author     Magento Core Team <core@magentocommerce.com>
  */
-namespace Dealer4Dealer\SubstituteOrders\src\Block\Order;
+namespace Dealer4Dealer\SubstituteOrders\Block\Order;
 
 use function Dealer4Dealer\SubstituteOrders\Block\Order\__;
 
@@ -75,6 +76,7 @@ class Items extends \Magento\Sales\Block\Items\AbstractItems
             $comments->setEntity($order)->setTitle(__('Order Attachments'));
             $html = $comments->toHtml();
         }
+
         return $html;
     }
 }

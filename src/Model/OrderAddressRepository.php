@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A Magento 2 module named Dealer4Dealer\SubstituteOrders
  * Copyright (C) 2017 Maikel Martens
@@ -19,13 +20,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Dealer4Dealer\SubstituteOrders\src\Model;
+namespace Dealer4Dealer\SubstituteOrders\Model;
 
 use Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterfaceFactory;
 use Dealer4Dealer\SubstituteOrders\Model\OrderAddressFactory;
 use Magento\Framework\Api\DataObjectHelper;
 use Magento\Framework\Reflection\DataObjectProcessor;
-use Dealer4Dealer\SubstituteOrders\src\Model\ResourceModel\OrderAddress as ResourceOrderAddress;
+use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\OrderAddress as ResourceOrderAddress;
 use Magento\Framework\Api\SortOrder;
 use Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressSearchResultsInterfaceFactory;
 use Magento\Store\Model\StoreManagerInterface;
@@ -33,12 +34,12 @@ use Magento\Framework\Exception\CouldNotSaveException;
 use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\OrderAddress\CollectionFactory as OrderAddressCollectionFactory;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Exception\CouldNotDeleteException;
-use Dealer4Dealer\SubstituteOrders\src\Api\OrderAddressRepositoryInterface;
+use Dealer4Dealer\SubstituteOrders\Api\OrderAddressRepositoryInterface;
+
 use function Dealer4Dealer\SubstituteOrders\Model\__;
 
 class OrderAddressRepository implements OrderAddressRepositoryInterface
 {
-
     /*
      * @var StoreManagerInterface
      */
@@ -79,7 +80,6 @@ class OrderAddressRepository implements OrderAddressRepositoryInterface
      */
     protected $searchResultsFactory;
 
-
     /**
      * @param ResourceOrderAddress $resource
      * @param OrderAddressFactory $orderAddressFactory
@@ -114,7 +114,7 @@ class OrderAddressRepository implements OrderAddressRepositoryInterface
      * {@inheritdoc}
      */
     public function save(
-        \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderAddressInterface $orderAddress
+        \Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface $orderAddress
     ) {
         /* if (empty($orderAddress->getStoreId())) {
             $storeId = $this->storeManager->getStore()->getId();
@@ -123,11 +123,14 @@ class OrderAddressRepository implements OrderAddressRepositoryInterface
         try {
             $this->resource->save($orderAddress);
         } catch (\Exception $exception) {
-            throw new CouldNotSaveException(__(
-                'Could not save the orderAddress: %1',
-                $exception->getMessage()
-            ));
+            throw new CouldNotSaveException(
+                __(
+                    'Could not save the orderAddress: %1',
+                    $exception->getMessage()
+                )
+            );
         }
+
         return $orderAddress;
     }
 
@@ -141,6 +144,7 @@ class OrderAddressRepository implements OrderAddressRepositoryInterface
         if (!$orderAddress->getId()) {
             throw new NoSuchEntityException(__('OrderAddress with id "%1" does not exist.', $orderAddressId));
         }
+
         return $orderAddress;
     }
 
@@ -151,11 +155,18 @@ class OrderAddressRepository implements OrderAddressRepositoryInterface
         \Magento\Sales\Api\Data\OrderAddressInterface $address
     ) {
         $orderAddress = $this->orderAddressFactory->create();
-        $orderAddress->setName(implode(" ", array_filter([
-            $address->getFirstname(),
-            $address->getMiddlename(),
-            $address->getLastname(),
-        ])));
+        $orderAddress->setName(
+            implode(
+                " ",
+                array_filter(
+                    [
+                    $address->getFirstname(),
+                    $address->getMiddlename(),
+                    $address->getLastname(),
+                    ]
+                )
+            )
+        );
         $orderAddress->setCompany($address->getCompany());
         // TODO: Make full address
         return $this->save($orderAddress);
@@ -177,10 +188,12 @@ class OrderAddressRepository implements OrderAddressRepositoryInterface
                     $collection->addStoreFilter($filter->getValue(), false);
                     continue;
                 }
+
                 $condition = $filter->getConditionType() ?: 'eq';
                 $collection->addFieldToFilter($filter->getField(), [$condition => $filter->getValue()]);
             }
         }
+
         $searchResults->setTotalCount($collection->getSize());
         $sortOrders = $criteria->getSortOrders();
         if ($sortOrders) {
@@ -192,6 +205,7 @@ class OrderAddressRepository implements OrderAddressRepositoryInterface
                 );
             }
         }
+
         $collection->setCurPage($criteria->getCurrentPage());
         $collection->setPageSize($criteria->getPageSize());
         $items = [];
@@ -201,13 +215,14 @@ class OrderAddressRepository implements OrderAddressRepositoryInterface
             $this->dataObjectHelper->populateWithArray(
                 $orderAddressData,
                 $orderAddressModel->getData(),
-                'Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderAddressInterface'
+                'Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface'
             );
             $items[] = $this->dataObjectProcessor->buildOutputDataArray(
                 $orderAddressData,
-                'Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderAddressInterface'
+                'Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface'
             );
         }
+
         $searchResults->setItems($items);
         return $searchResults;
     }
@@ -216,16 +231,19 @@ class OrderAddressRepository implements OrderAddressRepositoryInterface
      * {@inheritdoc}
      */
     public function delete(
-        \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderAddressInterface $orderAddress
+        \Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface $orderAddress
     ) {
         try {
             $this->resource->delete($orderAddress);
         } catch (\Exception $exception) {
-            throw new CouldNotDeleteException(__(
-                'Could not delete the OrderAddress: %1',
-                $exception->getMessage()
-            ));
+            throw new CouldNotDeleteException(
+                __(
+                    'Could not delete the OrderAddress: %1',
+                    $exception->getMessage()
+                )
+            );
         }
+
         return true;
     }
 

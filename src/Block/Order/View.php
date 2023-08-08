@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A Magento 2 module named Dealer4Dealer\SubstituteOrders
  * Copyright (C) 2017 Maikel Martens
@@ -19,7 +20,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Dealer4Dealer\SubstituteOrders\src\Block\Order;
+namespace Dealer4Dealer\SubstituteOrders\Block\Order;
 
 use function Dealer4Dealer\SubstituteOrders\Block\Order\__;
 
@@ -58,7 +59,7 @@ class View extends \Magento\Framework\View\Element\Template
     }
 
     /**
-     * @return \Dealer4Dealer\SubstituteOrders\src\Model\Order
+     * @return \Dealer4Dealer\SubstituteOrders\Model\Order
      */
     public function getOrder()
     {

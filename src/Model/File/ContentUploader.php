@@ -1,22 +1,24 @@
 <?php
+
 /**
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-namespace Dealer4Dealer\SubstituteOrders\src\Model\File;
+
+namespace Dealer4Dealer\SubstituteOrders\Model\File;
 
 use Dealer4Dealer\SubstituteOrders\Model\File\LinkConfig;
 use Magento\MediaStorage\Helper\File\Storage;
 use Magento\MediaStorage\Helper\File\Storage\Database;
 use Magento\MediaStorage\Model\File\Uploader;
 use Magento\MediaStorage\Model\File\Validator\NotProtectedExtension;
-use Dealer4Dealer\SubstituteOrders\src\Api\Data\File\ContentInterface;
-use Dealer4Dealer\SubstituteOrders\src\Model\Attachment as AttachmentConfig;
+use Dealer4Dealer\SubstituteOrders\Api\Data\File\ContentInterface;
+use Dealer4Dealer\SubstituteOrders\Model\Attachment as AttachmentConfig;
 use Magento\Downloadable\Model\Sample as SampleConfig;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem;
 
-class ContentUploader extends Uploader implements \Dealer4Dealer\SubstituteOrders\src\Api\Data\File\ContentUploaderInterface
+class ContentUploader extends Uploader implements \Dealer4Dealer\SubstituteOrders\Api\Data\File\ContentUploaderInterface
 {
     /**
      * Default MIME type
@@ -114,6 +116,7 @@ class ContentUploader extends Uploader implements \Dealer4Dealer\SubstituteOrder
         if (!file_exists($this->_file['tmp_name'])) {
             throw new \InvalidArgumentException('There was an error during file content upload.');
         }
+
         $this->_fileExists = true;
         $this->_uploadType = self::SINGLE_STYLE;
         $this->setAllowRenameFiles(true);

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A Magento 2 module named Dealer4Dealer\SubstituteOrders
  * Copyright (C) 2017 Maikel Martens
@@ -19,11 +20,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Dealer4Dealer\SubstituteOrders\src\Model\Order\Address;
+namespace Dealer4Dealer\SubstituteOrders\Model\Order\Address;
 
 use Magento\Sales\Model\Order\Address;
 use Magento\Directory\Helper\Data as DirectoryHelper;
 use Magento\Directory\Model\CountryFactory;
+
 use function Dealer4Dealer\SubstituteOrders\Model\Order\Address\__;
 
 /**
@@ -74,7 +76,7 @@ class Validator
      * @param \Magento\Sales\Model\Order\Address $address
      * @return array
      */
-    public function validate(\Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderAddressInterface $address)
+    public function validate(\Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface $address)
     {
         $warnings = [];
         foreach ($this->required as $code => $label) {
@@ -82,12 +84,15 @@ class Validator
                 $warnings[] = sprintf('%s is a required field', $label);
             }
         }
+
         if (!filter_var($address->getEmail(), FILTER_VALIDATE_EMAIL)) {
             $warnings[] = 'Email has a wrong format';
         }
+
         if (!filter_var(in_array($address->getAddressType(), [Address::TYPE_BILLING, Address::TYPE_SHIPPING]))) {
             $warnings[] = 'Address type doesn\'t match required options';
         }
+
         return $warnings;
     }
 
@@ -100,7 +105,7 @@ class Validator
      *
      * @param Address $address
      */
-    public function validateForCustomer(\Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderAddressInterface $address)
+    public function validateForCustomer(\Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface $address)
     {
         if ($address->getShouldIgnoreValidation()) {
             return true;
@@ -111,15 +116,19 @@ class Validator
         if ($this->isEmpty($address->getFirstname())) {
             $errors[] = __('Please enter the first name.');
         }
+
         if ($this->isEmpty($address->getLastname())) {
             $errors[] = __('Please enter the last name.');
         }
+
         if ($this->isEmpty($address->getStreetLine(1))) {
             $errors[] = __('Please enter the street.');
         }
+
         if ($this->isEmpty($address->getCity())) {
             $errors[] = __('Please enter the city.');
         }
+
         if ($this->isEmpty($address->getTelephone())) {
             $errors[] = __('Please enter the phone number.');
         }
@@ -129,9 +138,11 @@ class Validator
         if ($this->isZipRequired($countryId) && $this->isEmpty($address->getPostcode())) {
             $errors[] = __('Please enter the zip/postal code.');
         }
+
         if ($this->isEmpty($countryId)) {
             $errors[] = __('Please enter the country.');
         }
+
         if ($this->isStateRequired($countryId) && $this->isEmpty($address->getRegionId())) {
             $errors[] = __('Please enter the state/province.');
         }

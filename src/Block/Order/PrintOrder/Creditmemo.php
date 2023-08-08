@@ -1,11 +1,14 @@
 <?php
+
 /**
  * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-namespace Dealer4Dealer\SubstituteOrders\src\Block\Order\PrintOrder;
+
+namespace Dealer4Dealer\SubstituteOrders\Block\Order\PrintOrder;
 
 use Magento\Framework\View\Element\AbstractBlock;
+
 use function Magento\Sales\Block\Order\PrintOrder\__;
 
 /**
@@ -124,6 +127,7 @@ class Creditmemo extends \Magento\Sales\Block\Items\AbstractItems
             $totals->setCreditmemo($creditmemo);
             $html = $totals->toHtml();
         }
+
         return $html;
     }
 

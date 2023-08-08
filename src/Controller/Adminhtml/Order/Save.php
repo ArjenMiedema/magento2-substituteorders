@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A Magento 2 module named Dealer4Dealer\SubstituteOrders
  * Copyright (C) 2017 Maikel Martens
@@ -19,14 +20,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Dealer4Dealer\SubstituteOrders\src\Controller\Adminhtml\Order;
+namespace Dealer4Dealer\SubstituteOrders\Controller\Adminhtml\Order;
 
 use Magento\Framework\Exception\LocalizedException;
+
 use function Dealer4Dealer\SubstituteOrders\Controller\Adminhtml\Order\__;
 
 class Save extends \Magento\Backend\App\Action
 {
-
     protected $dataPersistor;
 
     /**
@@ -53,33 +54,35 @@ class Save extends \Magento\Backend\App\Action
         $data = $this->getRequest()->getPostValue();
         if ($data) {
             $id = $this->getRequest()->getParam('order_id');
-        
-            $model = $this->_objectManager->create('Dealer4Dealer\SubstituteOrders\src\Model\Order')->load($id);
+
+            $model = $this->_objectManager->create('Dealer4Dealer\SubstituteOrders\Model\Order')->load($id);
             if (!$model->getId() && $id) {
                 $this->messageManager->addError(__('This Order no longer exists.'));
                 return $resultRedirect->setPath('*/*/');
             }
-        
+
             $model->setData($data);
-        
+
             try {
                 $model->save();
                 $this->messageManager->addSuccess(__('You saved the Order.'));
                 $this->dataPersistor->clear('dealer4dealer_substituteorders_order');
-        
+
                 if ($this->getRequest()->getParam('back')) {
                     return $resultRedirect->setPath('*/*/edit', ['order_id' => $model->getId()]);
                 }
+
                 return $resultRedirect->setPath('*/*/');
             } catch (LocalizedException $e) {
                 $this->messageManager->addError($e->getMessage());
             } catch (\Exception $e) {
                 $this->messageManager->addException($e, __('Something went wrong while saving the Order.'));
             }
-        
+
             $this->dataPersistor->set('dealer4dealer_substituteorders_order', $data);
             return $resultRedirect->setPath('*/*/edit', ['order_id' => $this->getRequest()->getParam('order_id')]);
         }
+
         return $resultRedirect->setPath('*/*/');
     }
 }

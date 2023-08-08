@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A Magento 2 module named Dealer4Dealer\SubstituteOrders
  * Copyright (C) 2017 Maikel Martens
@@ -19,13 +20,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Dealer4Dealer\SubstituteOrders\src\Controller\Adminhtml\Order;
+namespace Dealer4Dealer\SubstituteOrders\Controller\Adminhtml\Order;
 
 use function Dealer4Dealer\SubstituteOrders\Controller\Adminhtml\Order\__;
 
-class Delete extends \Dealer4Dealer\SubstituteOrders\src\Controller\Adminhtml\Order
+class Delete extends \Dealer4Dealer\SubstituteOrders\Controller\Adminhtml\Order
 {
-
     /**
      * Delete action
      *
@@ -40,7 +40,7 @@ class Delete extends \Dealer4Dealer\SubstituteOrders\src\Controller\Adminhtml\Or
         if ($id) {
             try {
                 // init model and delete
-                $model = $this->_objectManager->create('Dealer4Dealer\SubstituteOrders\src\Model\Order');
+                $model = $this->_objectManager->create('Dealer4Dealer\SubstituteOrders\Model\Order');
                 $model->load($id);
                 $model->delete();
                 // display success message
@@ -54,6 +54,7 @@ class Delete extends \Dealer4Dealer\SubstituteOrders\src\Controller\Adminhtml\Or
                 return $resultRedirect->setPath('*/*/edit', ['order_id' => $id]);
             }
         }
+
         // display error message
         $this->messageManager->addError(__('We can\'t find a Order to delete.'));
         // go to grid

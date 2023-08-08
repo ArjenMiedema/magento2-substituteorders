@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A Magento 2 module named Dealer4Dealer\SubstituteOrders
  * Copyright (C) 2017 Maikel Martens
@@ -19,11 +20,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Dealer4Dealer\SubstituteOrders\src\Model;
+namespace Dealer4Dealer\SubstituteOrders\Model;
 
 use Dealer4Dealer\SubstituteOrders\Model\ResourceModel;
-use Dealer4Dealer\SubstituteOrders\src\Api\Data\InvoiceInterface;
-use Dealer4Dealer\SubstituteOrders\src\Model\AdditionalData;
+use Dealer4Dealer\SubstituteOrders\Api\Data\InvoiceInterface;
+use Dealer4Dealer\SubstituteOrders\Model\AdditionalData;
 
 class Invoice extends \Magento\Framework\Model\AbstractModel implements InvoiceInterface
 {
@@ -68,17 +69,17 @@ class Invoice extends \Magento\Framework\Model\AbstractModel implements InvoiceI
     protected $orderInvoiceRelationFactory;
 
     /**
-     * @var \Dealer4Dealer\SubstituteOrders\src\Api\OrderAddressRepositoryInterface
+     * @var \Dealer4Dealer\SubstituteOrders\Api\OrderAddressRepositoryInterface
      */
     protected $addressRepository;
 
     /**
-     * @var \Dealer4Dealer\SubstituteOrders\src\Api\AttachmentRepositoryInterface
+     * @var \Dealer4Dealer\SubstituteOrders\Api\AttachmentRepositoryInterface
      */
     protected $attachmentRepository;
 
     /**
-     * @var \Dealer4Dealer\SubstituteOrders\src\Api\InvoiceItemRepositoryInterface
+     * @var \Dealer4Dealer\SubstituteOrders\Api\InvoiceItemRepositoryInterface
      */
     protected $itemRepository;
 
@@ -88,20 +89,19 @@ class Invoice extends \Magento\Framework\Model\AbstractModel implements InvoiceI
     protected $_additionalData = null;
     protected $_attachments = null;
 
-
     public function __construct(
-        \Magento\Framework\Model\Context                                            $context,
-        \Magento\Framework\Registry                                                 $registry,
-        \Magento\Framework\App\Config\ScopeConfigInterface                          $scopeConfig,
-        \Magento\Store\Model\StoreManagerInterface                                  $storeManager,
+        \Magento\Framework\Model\Context $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Dealer4Dealer\SubstituteOrders\Model\ResourceModel\Order\CollectionFactory $orderCollectionFactory,
-        \Dealer4Dealer\SubstituteOrders\Model\OrderInvoiceRelationFactory           $orderInvoiceRelationFactory,
-        \Dealer4Dealer\SubstituteOrders\src\Api\InvoiceItemRepositoryInterface      $orderItems,
-        \Dealer4Dealer\SubstituteOrders\src\Api\OrderAddressRepositoryInterface     $orderAddress,
-        \Dealer4Dealer\SubstituteOrders\src\Api\AttachmentRepositoryInterface       $attachmentRepository,
-        \Magento\Framework\Model\ResourceModel\AbstractResource                     $resource = null,
-        \Magento\Framework\Data\Collection\AbstractDb                               $resourceCollection = null,
-        array                                                                       $data = []
+        \Dealer4Dealer\SubstituteOrders\Model\OrderInvoiceRelationFactory $orderInvoiceRelationFactory,
+        \Dealer4Dealer\SubstituteOrders\Api\InvoiceItemRepositoryInterface $orderItems,
+        \Dealer4Dealer\SubstituteOrders\Api\OrderAddressRepositoryInterface $orderAddress,
+        \Dealer4Dealer\SubstituteOrders\Api\AttachmentRepositoryInterface $attachmentRepository,
+        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        array $data = []
     ) {
         $this->storeManager = $storeManager;
         $this->scopeConfig = $scopeConfig;
@@ -118,7 +118,7 @@ class Invoice extends \Magento\Framework\Model\AbstractModel implements InvoiceI
      */
     protected function _construct()
     {
-        $this->_init('Dealer4Dealer\SubstituteOrders\src\Model\ResourceModel\Invoice');
+        $this->_init('Dealer4Dealer\SubstituteOrders\Model\ResourceModel\Invoice');
     }
 
     public function save()
@@ -143,6 +143,7 @@ class Invoice extends \Magento\Framework\Model\AbstractModel implements InvoiceI
                 } catch (\Exception $e) { // @codingStandardsIgnoreLine
 
                 }
+
                 $this->_shippingAddress->setId($this->getData(self::SHIPPING_ADDRESS_ID));
             }
 
@@ -160,6 +161,7 @@ class Invoice extends \Magento\Framework\Model\AbstractModel implements InvoiceI
                 } catch (\Exception $e) { // @codingStandardsIgnoreLine
 
                 }
+
                 $this->_billingAddress->setId($this->getData(self::BILLING_ADDRESS_ID));
             }
 
@@ -185,10 +187,12 @@ class Invoice extends \Magento\Framework\Model\AbstractModel implements InvoiceI
             foreach ($this->getData(self::ORDER_IDS) as $orderId) {
                 if (!isset($activeIds[$orderId])) {
                     $relation = $this->orderInvoiceRelationFactory->create();
-                    $relation->setData([
+                    $relation->setData(
+                        [
                         'order_id' => $orderId,
                         'invoice_id' => $this->getId()
-                    ]);
+                        ]
+                    );
                     $relation->save();
                 }
             }
@@ -294,13 +298,14 @@ class Invoice extends \Magento\Framework\Model\AbstractModel implements InvoiceI
 
             }
         }
+
         return $this->_shippingAddress;
     }
 
     /**
      * @inheritDoc
      */
-    public function setShippingAddress(\Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderAddressInterface $shipping_address)
+    public function setShippingAddress(\Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface $shipping_address)
     {
         $this->_shippingAddress = $shipping_address;
         return $this;
@@ -318,13 +323,14 @@ class Invoice extends \Magento\Framework\Model\AbstractModel implements InvoiceI
 
             }
         }
+
         return $this->_billingAddress;
     }
 
     /**
      * @inheritDoc
      */
-    public function setBillingAddress(\Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderAddressInterface $billing_address)
+    public function setBillingAddress(\Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface $billing_address)
     {
         $this->_billingAddress = $billing_address;
         return $this;
@@ -361,6 +367,7 @@ class Invoice extends \Magento\Framework\Model\AbstractModel implements InvoiceI
                 $items[] = $item;
             }
         }
+
         return $items;
     }
 
@@ -382,9 +389,7 @@ class Invoice extends \Magento\Framework\Model\AbstractModel implements InvoiceI
         return $this->orderCollectionFactory->create()->filterByInvoice($this);
     }
 
-
     /* Standard getters and setters */
-
 
     /**
      * @inheritDoc
@@ -558,7 +563,7 @@ class Invoice extends \Magento\Framework\Model\AbstractModel implements InvoiceI
     /**
      * @inheritDoc
      */
-    public function getBaseGrandtotal()
+    public function getBaseGrandTotal()
     {
         return $this->getData(self::BASE_GRANDTOTAL);
     }
@@ -566,9 +571,9 @@ class Invoice extends \Magento\Framework\Model\AbstractModel implements InvoiceI
     /**
      * @inheritDoc
      */
-    public function setBaseGrandtotal($base_grandtotal)
+    public function setBaseGrandTotal($base_grandTotal)
     {
-        return $this->setData(self::BASE_GRANDTOTAL, $base_grandtotal);
+        return $this->setData(self::BASE_GRANDTOTAL, $base_grandTotal);
     }
 
     /**
@@ -730,6 +735,7 @@ class Invoice extends \Magento\Framework\Model\AbstractModel implements InvoiceI
                 }
             }
         }
+
         return $this->_additionalData;
     }
 
@@ -745,9 +751,9 @@ class Invoice extends \Magento\Framework\Model\AbstractModel implements InvoiceI
     /**
      * @inheritDoc
      */
-    public function setAttachments(array $fileContent)
+    public function setAttachments(array $attachments)
     {
-        return $this->setData(self::FILE_CONTENT, $fileContent);
+        return $this->setData(self::FILE_CONTENT, $attachments);
     }
 
     /**
@@ -766,13 +772,14 @@ class Invoice extends \Magento\Framework\Model\AbstractModel implements InvoiceI
 
             foreach ($attachments as $file) {
                 $files[] = [
-                    'file'=>$file->getFile(),
+                    'file' => $file->getFile(),
                     'attachment_id' => $file->getAttachmentId()
                 ];
             }
 
             $this->_attachments = $files;
         }
+
         return $this->_attachments;
     }
 }

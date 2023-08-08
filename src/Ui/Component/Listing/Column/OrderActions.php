@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A Magento 2 module named Dealer4Dealer\SubstituteOrders
  * Copyright (C) 2017 Maikel Martens
@@ -19,13 +20,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Dealer4Dealer\SubstituteOrders\src\Ui\Component\Listing\Column;
+namespace Dealer4Dealer\SubstituteOrders\Ui\Component\Listing\Column;
 
 use function Dealer4Dealer\SubstituteOrders\Ui\Component\Listing\Column\__;
 
 class OrderActions extends \Magento\Ui\Component\Listing\Columns\Column
 {
-
     const URL_PATH_EDIT = 'dealer4dealer_substituteorders/order/edit';
     const URL_PATH_DELETE = 'dealer4dealer_substituteorders/order/delete';
     const URL_PATH_DETAILS = 'dealer4dealer_substituteorders/order/details';

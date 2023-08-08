@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A Magento 2 module named Dealer4Dealer\SubstituteOrders
  * Copyright (C) 2017 Maikel Martens
@@ -19,13 +20,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Dealer4Dealer\SubstituteOrders\src\Block\Order;
+namespace Dealer4Dealer\SubstituteOrders\Block\Order;
 
 use Magento\Sales\Model\Order\Address;
 use Magento\Framework\View\Element\Template\Context as TemplateContext;
 use Magento\Framework\Registry;
 use Magento\Payment\Helper\Data as PaymentHelper;
-use Dealer4Dealer\SubstituteOrders\src\Model\Order\Address\Renderer as AddressRenderer;
+use Dealer4Dealer\SubstituteOrders\Model\Order\Address\Renderer as AddressRenderer;
+
 use function Dealer4Dealer\SubstituteOrders\Block\Order\__;
 
 /**
@@ -114,7 +116,7 @@ class Info extends \Magento\Framework\View\Element\Template
      * @param Address $address
      * @return null|string
      */
-    public function getFormattedAddress(\Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderAddressInterface $address)
+    public function getFormattedAddress(\Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface $address)
     {
         return $this->addressRenderer->format($address, 'html');
     }

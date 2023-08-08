@@ -1,13 +1,11 @@
 <?php
 
+namespace Dealer4Dealer\SubstituteOrders\Model;
 
-namespace Dealer4Dealer\SubstituteOrders\src\Model;
-
-use Dealer4Dealer\SubstituteOrders\src\Api\Data\AttachmentInterface;
+use Dealer4Dealer\SubstituteOrders\Api\Data\AttachmentInterface;
 
 class Attachment extends \Magento\Framework\Model\AbstractModel implements AttachmentInterface
 {
-
     /**
      * @var string
      */
@@ -28,7 +26,7 @@ class Attachment extends \Magento\Framework\Model\AbstractModel implements Attac
      */
     protected function _construct()
     {
-        $this->_init('Dealer4Dealer\SubstituteOrders\src\Model\ResourceModel\Attachment');
+        $this->_init('Dealer4Dealer\SubstituteOrders\Model\ResourceModel\Attachment');
     }
 
     /**
@@ -37,17 +35,17 @@ class Attachment extends \Magento\Framework\Model\AbstractModel implements Attac
      */
     public function getAttachmentId()
     {
-        return $this->getData(self::ATTACHEMENT_ID);
+        return $this->getData(self::ATTACHMENT_ID);
     }
 
     /**
      * Set attachment_id
      * @param string $attachmentId
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\AttachmentInterface
+     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\AttachmentInterface
      */
     public function setAttachmentId($attachmentId)
     {
-        return $this->setData(self::ATTACHEMENT_ID, $attachmentId);
+        return $this->setData(self::ATTACHMENT_ID, $attachmentId);
     }
 
     /**
@@ -61,12 +59,14 @@ class Attachment extends \Magento\Framework\Model\AbstractModel implements Attac
 
     /**
      * Set magento_customer_identifier
-     * @param string $magento_customer_identifier
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\AttachmentInterface
+     *
+     * @param string $customerId
+     *
+     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\AttachmentInterface
      */
-    public function setMagentoCustomerIdentifier($magento_customer_identifier)
+    public function setMagentoCustomerIdentifier($customerId)
     {
-        return $this->setData(self::MAGENTO_CUSTOMER_IDENTIFIER, $magento_customer_identifier);
+        return $this->setData(self::MAGENTO_CUSTOMER_IDENTIFIER, $customerId);
     }
 
     /**
@@ -81,7 +81,7 @@ class Attachment extends \Magento\Framework\Model\AbstractModel implements Attac
     /**
      * Set file
      * @param string $file
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\AttachmentInterface
+     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\AttachmentInterface
      */
     public function setFile($file)
     {
@@ -99,12 +99,14 @@ class Attachment extends \Magento\Framework\Model\AbstractModel implements Attac
 
     /**
      * Set entity_type
-     * @param string $entity_type
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\AttachmentInterface
+     *
+     * @param string $entityType
+     *
+     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\AttachmentInterface
      */
-    public function setEntityType($entity_type)
+    public function setEntityType($entityType)
     {
-        return $this->setData(self::ENTITY_TYPE, $entity_type);
+        return $this->setData(self::ENTITY_TYPE, $entityType);
     }
 
     /**
@@ -118,21 +120,23 @@ class Attachment extends \Magento\Framework\Model\AbstractModel implements Attac
 
     /**
      * Set entity_type_identifier
-     * @param string $entity_type_identifier
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\AttachmentInterface
+     *
+     * @param string $identifier
+     *
+     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\AttachmentInterface
      */
-    public function setEntityTypeIdentifier($entity_type_identifier)
+    public function setEntityTypeIdentifier($identifier)
     {
-        return $this->setData(self::ENTITY_TYPE_IDENTIFIER, $entity_type_identifier);
+        return $this->setData(self::ENTITY_TYPE_IDENTIFIER, $identifier);
     }
 
     /**
      * Set file content
      *
-     * @param \Dealer4Dealer\SubstituteOrders\src\Api\Data\File\ContentInterface $fileContent
+     * @param \Dealer4Dealer\SubstituteOrders\Api\Data\File\ContentInterface $fileContent
      * @return $this
      */
-    public function setFileContent(\Dealer4Dealer\SubstituteOrders\src\Api\Data\File\ContentInterface $fileContent = null)
+    public function setFileContent(\Dealer4Dealer\SubstituteOrders\Api\Data\File\ContentInterface $fileContent = null)
     {
         return $this->setData(self::FILE_CONTENT, $fileContent);
     }
@@ -140,7 +144,7 @@ class Attachment extends \Magento\Framework\Model\AbstractModel implements Attac
     /**
      * Return file content
      *
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\File\ContentInterface|null
+     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\File\ContentInterface|null
      */
     public function getFileContent()
     {
@@ -152,7 +156,7 @@ class Attachment extends \Magento\Framework\Model\AbstractModel implements Attac
      *
      * @return string
      */
-    public function getBasePath($entityType,$customerIdentifier = '0')
+    public function getBasePath($entityType, $customerIdentifier = '0')
     {
         return 'customer/substitute_order/files/' . $customerIdentifier . '/' . $entityType;
     }

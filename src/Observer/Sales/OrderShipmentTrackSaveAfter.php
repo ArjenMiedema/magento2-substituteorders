@@ -1,53 +1,57 @@
 <?php
 
+declare(strict_types=1);
 
-namespace Dealer4Dealer\SubstituteOrders\src\Observer\Sales;
+namespace Dealer4Dealer\SubstituteOrders\Observer\Sales;
 
+use Dealer4Dealer\SubstituteOrders\Api\ShipmentRepositoryInterface;
+use Dealer4Dealer\SubstituteOrders\Model\ShipmentTracking;
+use Exception;
+use Magento\Framework\Event\Observer;
+use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Sales\Model\Order\Shipment\Track;
 
-class OrderShipmentTrackSaveAfter implements \Magento\Framework\Event\ObserverInterface
+class OrderShipmentTrackSaveAfter implements ObserverInterface
 {
-
-    /** @var \Dealer4Dealer\SubstituteOrders\src\Api\ShipmentRepositoryInterface  */
-    protected $shipmentRepo;
-
     public function __construct(
-        \Dealer4Dealer\SubstituteOrders\src\Api\ShipmentRepositoryInterface $shipmentRepo
+        private readonly ShipmentRepositoryInterface $shipmentRepository
     ) {
-        $this->shipmentRepo = $shipmentRepo;
     }
 
     /**
      * Execute observer
      *
-     * @param \Magento\Framework\Event\Observer $observer
+     * @param Observer $observer
      * @return void
      */
     public function execute(
-        \Magento\Framework\Event\Observer $observer
+        Observer $observer
     ) {
-        $track = $observer->getTrack();
+        /** @var Track $track */
+        $track = $observer->getData('track');
+
         try {
             $shipment = $track->getShipment();
-        } catch (\Exception $e) {
+        } catch (Exception) {
             return;
         }
 
         try {
-            /* @var $substitute \Dealer4Dealer\SubstituteOrders\src\Api\Data\ShipmentInterface */
-            $subShipment = $this->shipmentRepo->getByIncrementId($shipment->getIncrementId());
-        } catch (LocalizedException $e) {
+            $subShipment = $this->shipmentRepository->getByIncrementId($shipment->getIncrementId());
+        } catch (LocalizedException) {
             return;
         }
 
         # update all trackers
         $trackers = [];
         foreach ($shipment->getTracks() as $track) {
-            $trackers[] = new \Dealer4Dealer\SubstituteOrders\src\Model\ShipmentTracking(
+            $trackers[] = new ShipmentTracking(
                 $track->getTitle(),
                 $track->getTrackNumber()
             );
         }
+
         $subShipment->setTracking($trackers);
         $subShipment->save();
     }

@@ -1,17 +1,19 @@
 <?php
+
 /**
  * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-namespace Dealer4Dealer\SubstituteOrders\src\Block\Order;
+
+namespace Dealer4Dealer\SubstituteOrders\Block\Order;
 
 use Dealer4Dealer\SubstituteOrders\Block\Order\Address;
 use Magento\Framework\View\Element\AbstractBlock;
+
 use function Dealer4Dealer\SubstituteOrders\Block\Order\__;
 
 /**
  * Order information for print
- *
  */
 class PrintShipment extends \Magento\Sales\Block\Items\AbstractItems
 {

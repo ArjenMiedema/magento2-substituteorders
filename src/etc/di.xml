@@ -1,5 +1,6 @@
 <?xml version="1.0" ?>
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
 
     <type name="Magento\Framework\Console\CommandList">
         <arguments>
@@ -9,9 +10,7 @@
         </arguments>
     </type>
 
-
     <preference for="Dealer4Dealer\SubstituteOrders\Api\Data\AdditionalDataInterface" type="Dealer4Dealer\SubstituteOrders\Model\AdditionalData"/>
-
     <preference for="Dealer4Dealer\SubstituteOrders\Api\OrderManagementInterface" type="Dealer4Dealer\SubstituteOrders\Model\OrderManagement"/>
     <preference for="Dealer4Dealer\SubstituteOrders\Api\OrderAddressManagementInterface" type="Dealer4Dealer\SubstituteOrders\Model\OrderAddressManagement"/>
     <preference for="Dealer4Dealer\SubstituteOrders\Api\OrderItemsManagementInterface" type="Dealer4Dealer\SubstituteOrders\Model\OrderItemsManagement"/>

@@ -1,13 +1,16 @@
 <?php
+
 /**
  * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-namespace Dealer4Dealer\SubstituteOrders\src\Model\Order;
+
+namespace Dealer4Dealer\SubstituteOrders\Model\Order;
 
 use Magento\Framework\Api\AttributeValueFactory;
 use Magento\Sales\Model\AbstractModel;
 use Magento\Sales\Api\Data\OrderItemInterface;
+
 use function Dealer4Dealer\SubstituteOrders\Model\Order\__;
 
 /**
@@ -160,6 +163,7 @@ class Item extends AbstractModel implements OrderItemInterface
             $item->setHasChildren(true);
             $item->addChildItem($this);
         }
+
         return $this;
     }
 
@@ -281,6 +285,7 @@ class Item extends AbstractModel implements OrderItemInterface
         if (!$backordered && $this->getHasChildren()) {
             $backordered = (double)$this->_getQtyChildrenBackordered();
         }
+
         $canceled = (double)$this->getQtyCanceled();
         $invoiced = (double)$this->getQtyInvoiced();
         $ordered = (double)$this->getQtyOrdered();
@@ -292,6 +297,7 @@ class Item extends AbstractModel implements OrderItemInterface
         if (!$invoiced && !$shipped && !$refunded && !$canceled && !$backordered) {
             return self::STATUS_PENDING;
         }
+
         if ($shipped && $invoiced && $actuallyOrdered == $shipped) {
             return self::STATUS_SHIPPED;
         }
@@ -355,9 +361,11 @@ class Item extends AbstractModel implements OrderItemInterface
         if (self::$_statuses === null) {
             self::getStatuses();
         }
+
         if (isset(self::$_statuses[$statusId])) {
             return self::$_statuses[$statusId];
         }
+
         return __('Unknown Status');
     }
 
@@ -379,6 +387,7 @@ class Item extends AbstractModel implements OrderItemInterface
                 $this->getDiscountTaxCompensationAmount() * $this->getQtyCanceled() / $this->getQtyOrdered()
             );
         }
+
         return $this;
     }
 
@@ -402,6 +411,7 @@ class Item extends AbstractModel implements OrderItemInterface
                 self::STATUS_MIXED => __('Mixed'),
             ];
         }
+
         return self::$_statuses;
     }
 
@@ -416,6 +426,7 @@ class Item extends AbstractModel implements OrderItemInterface
         if ($price === null) {
             return $this->getPrice();
         }
+
         return $price;
     }
 
@@ -455,9 +466,11 @@ class Item extends AbstractModel implements OrderItemInterface
         if ($code === null) {
             return $options;
         }
+
         if (isset($options[$code])) {
             return $options[$code];
         }
+
         return null;
     }
 
@@ -472,6 +485,7 @@ class Item extends AbstractModel implements OrderItemInterface
         if ($productType) {
             return $productType;
         }
+
         return null;
     }
 
@@ -515,12 +529,14 @@ class Item extends AbstractModel implements OrderItemInterface
             $options = $this->getProductOptions();
         }
 
-        if (isset(
-            $options['product_calculations']
-        ) && $options['product_calculations'] == \Magento\Catalog\Model\Product\Type\AbstractType::CALCULATE_CHILD
+        if (
+            isset(
+                $options['product_calculations']
+            ) && $options['product_calculations'] == \Magento\Catalog\Model\Product\Type\AbstractType::CALCULATE_CHILD
         ) {
             return true;
         }
+
         return false;
     }
 
@@ -556,12 +572,14 @@ class Item extends AbstractModel implements OrderItemInterface
             $options = $this->getProductOptions();
         }
 
-        if (isset(
-            $options['shipment_type']
-        ) && $options['shipment_type'] == \Magento\Catalog\Model\Product\Type\AbstractType::SHIPMENT_SEPARATELY
+        if (
+            isset(
+                $options['shipment_type']
+            ) && $options['shipment_type'] == \Magento\Catalog\Model\Product\Type\AbstractType::SHIPMENT_SEPARATELY
         ) {
             return true;
         }
+
         return false;
     }
 
@@ -609,6 +627,7 @@ class Item extends AbstractModel implements OrderItemInterface
                 return true;
             }
         }
+
         return false;
     }
 
@@ -624,6 +643,7 @@ class Item extends AbstractModel implements OrderItemInterface
         if (!$option) {
             $option = [];
         }
+
         $buyRequest = new \Magento\Framework\DataObject($option);
         $buyRequest->setQty($this->getQtyOrdered() * 1);
         return $buyRequest;
@@ -642,8 +662,10 @@ class Item extends AbstractModel implements OrderItemInterface
             } catch (\Magento\Framework\Exception\NoSuchEntityException $noEntityException) {
                 $product = null;
             }
+
             $this->setProduct($product);
         }
+
         return $this->getData('product');
     }
 
@@ -658,10 +680,12 @@ class Item extends AbstractModel implements OrderItemInterface
         if ($storeId) {
             return $this->_storeManager->getStore($storeId);
         }
+
         return $this->_storeManager->getStore();
     }
 
     //@codeCoverageIgnoreStart
+
     /**
      * Returns additional_data
      *
@@ -2350,5 +2374,6 @@ class Item extends AbstractModel implements OrderItemInterface
     {
         return $this->_setExtensionAttributes($extensionAttributes);
     }
+
     //@codeCoverageIgnoreEnd
 }

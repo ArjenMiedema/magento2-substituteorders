@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A Magento 2 module named Dealer4Dealer\SubstituteOrders
  * Copyright (C) 2017 Maikel Martens
@@ -19,15 +20,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Dealer4Dealer\SubstituteOrders\src\Model;
+namespace Dealer4Dealer\SubstituteOrders\Model;
 
-use Dealer4Dealer\SubstituteOrders\src\Model\Shipment;
+use Dealer4Dealer\SubstituteOrders\Model\Shipment;
 use Magento\Framework\Exception\NoSuchEntityException;
+
 use function Dealer4Dealer\SubstituteOrders\Model\__;
 
-class ShipmentManagement implements \Dealer4Dealer\SubstituteOrders\src\Api\ShipmentManagementInterface
+class ShipmentManagement implements \Dealer4Dealer\SubstituteOrders\Api\ShipmentManagementInterface
 {
-
     /*
      * @var \Dealer4Dealer\SubstituteOrders\Model\ShipmentFactory
      */
@@ -49,10 +50,10 @@ class ShipmentManagement implements \Dealer4Dealer\SubstituteOrders\src\Api\Ship
     protected $shipmentRepository;
 
     public function __construct(
-        \Dealer4Dealer\SubstituteOrders\Model\ShipmentFactory          $shipmentFactory,
-        \Dealer4Dealer\SubstituteOrders\Model\OrderAddressFactory      $addressFactory,
-        \Dealer4Dealer\SubstituteOrders\src\Model\AttachmentRepository $attachmentRepository,
-        \Dealer4Dealer\SubstituteOrders\src\Model\ShipmentRepository   $shipmentRepository
+        \Dealer4Dealer\SubstituteOrders\Model\ShipmentFactory $shipmentFactory,
+        \Dealer4Dealer\SubstituteOrders\Model\OrderAddressFactory $addressFactory,
+        \Dealer4Dealer\SubstituteOrders\Model\AttachmentRepository $attachmentRepository,
+        \Dealer4Dealer\SubstituteOrders\Model\ShipmentRepository $shipmentRepository
     ) {
         $this->shipmentFactory = $shipmentFactory;
         $this->addressFactory = $addressFactory;
@@ -63,7 +64,7 @@ class ShipmentManagement implements \Dealer4Dealer\SubstituteOrders\src\Api\Ship
     /**
      * {@inheritdoc}
      */
-    public function getShipment($id)
+    public function getShipmentById($id)
     {
         $shipment = $this->shipmentFactory->create()->load($id);
 
@@ -118,15 +119,15 @@ class ShipmentManagement implements \Dealer4Dealer\SubstituteOrders\src\Api\Ship
     /**
      * {@inheritdoc}
      *
-     * @param \Dealer4Dealer\SubstituteOrders\src\Api\Data\ShipmentInterface $shipment
+     * @param \Dealer4Dealer\SubstituteOrders\Api\Data\ShipmentInterface $shipment
      */
     public function putShipment($shipment)
     {
-        /** @var $oldShipment \Dealer4Dealer\SubstituteOrders\src\Api\Data\ShipmentInterface */
+        /** @var $oldShipment \Dealer4Dealer\SubstituteOrders\Api\Data\ShipmentInterface */
 
-        if ($shipment->getId()){
+        if ($shipment->getId()) {
             $oldShipment = $this->shipmentFactory->create()->load($shipment->getId());
-        } else if($shipment->getIncrementId())  {
+        } elseif ($shipment->getIncrementId()) {
             $oldShipment = $this->shipmentFactory->create()->load($shipment->getIncrementId(), "increment_id");
         }
 
@@ -135,12 +136,14 @@ class ShipmentManagement implements \Dealer4Dealer\SubstituteOrders\src\Api\Ship
         }
 
         $oldShipment->setData(array_merge($oldShipment->getData(), $shipment->getData()));
-        if ($shipment->getShippingAddress()){
+        if ($shipment->getShippingAddress()) {
             $oldShipment->setShippingAddress($shipment->getShippingAddress());
         }
+
         if ($shipment->getBillingAddress()) {
             $oldShipment->setBillingAddress($shipment->getBillingAddress());
         }
+
         $oldShipment->setItems($shipment->getItems());
         $oldShipment->setTracking($shipment->getTracking());
         $oldShipment->setAdditionalData($shipment->getAdditionalData());
@@ -155,7 +158,7 @@ class ShipmentManagement implements \Dealer4Dealer\SubstituteOrders\src\Api\Ship
     /**
      * {@inheritdoc}
      */
-    public function deleteShipment($id)
+    public function deleteShipmentById($id)
     {
         $shipment = $this->shipmentFactory->create()->load($id);
 
@@ -169,7 +172,7 @@ class ShipmentManagement implements \Dealer4Dealer\SubstituteOrders\src\Api\Ship
     }
 
     /**
-     * @param \Dealer4Dealer\SubstituteOrders\src\Api\Data\ShipmentInterface $shipment
+     * @param \Dealer4Dealer\SubstituteOrders\Api\Data\ShipmentInterface $shipment
      */
     public function saveAttachment($shipment)
     {

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A Magento 2 module named Dealer4Dealer\SubstituteOrders
  * Copyright (C) 2017 Maikel Martens
@@ -19,13 +20,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Dealer4Dealer\SubstituteOrders\src\Controller\Adminhtml\Order;
+namespace Dealer4Dealer\SubstituteOrders\Controller\Adminhtml\Order;
 
 use function Dealer4Dealer\SubstituteOrders\Controller\Adminhtml\Order\__;
 
 class InlineEdit extends \Magento\Backend\App\Action
 {
-
     protected $jsonFactory;
 
     /**
@@ -51,7 +51,7 @@ class InlineEdit extends \Magento\Backend\App\Action
         $resultJson = $this->jsonFactory->create();
         $error = false;
         $messages = [];
-        
+
         if ($this->getRequest()->getParam('isAjax')) {
             $postItems = $this->getRequest()->getParam('items', []);
             if (!count($postItems)) {
@@ -60,7 +60,7 @@ class InlineEdit extends \Magento\Backend\App\Action
             } else {
                 foreach (array_keys($postItems) as $modelid) {
                     /** @var \Magento\Cms\Model\Block $block */
-                    $model = $this->_objectManager->create('Dealer4Dealer\SubstituteOrders\src\Model\Order')->load($modelid);
+                    $model = $this->_objectManager->create('Dealer4Dealer\SubstituteOrders\Model\Order')->load($modelid);
                     try {
                         $model->setData(array_merge($model->getData(), $postItems[$modelid]));
                         $model->save();
@@ -71,10 +71,12 @@ class InlineEdit extends \Magento\Backend\App\Action
                 }
             }
         }
-        
-        return $resultJson->setData([
+
+        return $resultJson->setData(
+            [
             'messages' => $messages,
             'error' => $error
-        ]);
+            ]
+        );
     }
 }

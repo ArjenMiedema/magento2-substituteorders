@@ -1,11 +1,9 @@
 <?php
 
-
-namespace Dealer4Dealer\SubstituteOrders\src\Model\ResourceModel\Attachment;
+namespace Dealer4Dealer\SubstituteOrders\Model\ResourceModel\Attachment;
 
 class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
 {
-
     /**
      * Define resource model
      *
@@ -14,8 +12,8 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     protected function _construct()
     {
         $this->_init(
-            'Dealer4Dealer\SubstituteOrders\src\Model\Attachment',
-            'Dealer4Dealer\SubstituteOrders\src\Model\ResourceModel\Attachment'
+            'Dealer4Dealer\SubstituteOrders\Model\Attachment',
+            'Dealer4Dealer\SubstituteOrders\Model\ResourceModel\Attachment'
         );
     }
 }

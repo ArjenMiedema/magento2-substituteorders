@@ -1,9 +1,10 @@
 <?php
 
-namespace Dealer4Dealer\SubstituteOrders\src\Block\Order\Search;
+namespace Dealer4Dealer\SubstituteOrders\Block\Order\Search;
 
 use Magento\Customer\Api\CustomerMetadataInterface;
 use Magento\Framework\Api\ArrayObjectSearch;
+
 use function Dealer4Dealer\SubstituteOrders\Block\Order\Search\__;
 
 class DatePickerField extends \Magento\Customer\Block\Widget\AbstractWidget
@@ -109,9 +110,11 @@ class DatePickerField extends \Magento\Customer\Block\Widget\AbstractWidget
             if ($filterCode == 'date') {
                 $data['format'] = $this->getDateFormat();
             }
+
             $filter = $this->filterFactory->create($filterCode, $data);
             return $filter;
         }
+
         return false;
     }
 
@@ -127,6 +130,7 @@ class DatePickerField extends \Magento\Customer\Block\Widget\AbstractWidget
         if ($filter) {
             $value = $filter->outputFilter($value);
         }
+
         return $value;
     }
 
@@ -171,7 +175,8 @@ class DatePickerField extends \Magento\Customer\Block\Widget\AbstractWidget
      */
     public function getFieldHtml()
     {
-        $this->dateElement->setData([
+        $this->dateElement->setData(
+            [
             'extra_params' => $this->getHtmlExtraParams(),
             'name' => $this->getHtmlId(),
             'id' => $this->getHtmlId(),
@@ -184,7 +189,8 @@ class DatePickerField extends \Magento\Customer\Block\Widget\AbstractWidget
             'change_month' => 'true',
             'change_year' => 'true',
             'show_on' => 'both'
-        ]);
+            ]
+        );
         return $this->dateElement->getHtml();
     }
 
@@ -266,6 +272,7 @@ class DatePickerField extends \Magento\Customer\Block\Widget\AbstractWidget
         if ($stripNonInputChars) {
             $mapping['/[^medy]/i'] = '\\1';
         }
+
         $mapping['/m{1,5}/i'] = '%1$s';
         $mapping['/e{1,5}/i'] = '%2$s';
         $mapping['/d{1,5}/i'] = '%2$s';
@@ -294,6 +301,7 @@ class DatePickerField extends \Magento\Customer\Block\Widget\AbstractWidget
                 return date("Y/m/d", $minDateValue);
             }
         }
+
         return null;
     }
 
@@ -315,6 +323,7 @@ class DatePickerField extends \Magento\Customer\Block\Widget\AbstractWidget
                 return date("Y/m/d", $maxDateValue);
             }
         }
+
         return null;
     }
 

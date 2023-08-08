@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A Magento 2 module named Dealer4Dealer\SubstituteOrders
  * Copyright (C) 2017 Maikel Martens
@@ -19,7 +20,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Dealer4Dealer\SubstituteOrders\src\Block\Order;
+namespace Dealer4Dealer\SubstituteOrders\Block\Order;
 
 use function Dealer4Dealer\SubstituteOrders\Block\Order\__;
 
@@ -28,7 +29,6 @@ use function Dealer4Dealer\SubstituteOrders\Block\Order\__;
  */
 class Recent extends \Magento\Framework\View\Element\Template
 {
-
     const DEFAULT_PAGE_SIZE = 10;
 
     /**
@@ -81,12 +81,13 @@ class Recent extends \Magento\Framework\View\Element\Template
         $collection = $this->orderCollectionFactory->create();
 
         $customerSelectionId = $magentoCustomerId;
-        if ($selectOrderBySetting === 'external_customer_id' && $externalCustomerIdAttribute !== null && $externalCustomerIdAttribute->getValue() !== ''){
+        if ($selectOrderBySetting === 'external_customer_id' && $externalCustomerIdAttribute !== null && $externalCustomerIdAttribute->getValue() !== '') {
             $customerSelectionId = $externalCustomerIdAttribute->getValue();
             $collection->addFieldToFilter($selectOrderBySetting, $customerSelectionId);
         } else {
             $collection->addFieldToFilter('magento_customer_id', $customerSelectionId);
         }
+
         $collection->setOrder('order_date')
             ->setOrder('magento_increment_id')
             ->setPageSize(5)

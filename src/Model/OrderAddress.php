@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A Magento 2 module named Dealer4Dealer\SubstituteOrders
  * Copyright (C) 2017 Maikel Martens
@@ -19,14 +20,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Dealer4Dealer\SubstituteOrders\src\Model;
+namespace Dealer4Dealer\SubstituteOrders\Model;
 
-use Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderAddressInterface;
-use Dealer4Dealer\SubstituteOrders\src\Model\AdditionalData;
+use Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface;
+use Dealer4Dealer\SubstituteOrders\Model\AdditionalData;
 
 class OrderAddress extends \Magento\Framework\Model\AbstractModel implements OrderAddressInterface
 {
-
     /**
      * @var string
      */
@@ -49,7 +49,7 @@ class OrderAddress extends \Magento\Framework\Model\AbstractModel implements Ord
      */
     protected function _construct()
     {
-        $this->_init('Dealer4Dealer\SubstituteOrders\src\Model\ResourceModel\OrderAddress');
+        $this->_init('Dealer4Dealer\SubstituteOrders\Model\ResourceModel\OrderAddress');
     }
 
     public function save()
@@ -77,35 +77,39 @@ class OrderAddress extends \Magento\Framework\Model\AbstractModel implements Ord
         if ($this->getPrefix()) {
             $name .= $this->getPrefix() . ' ';
         }
+
         $name .= $this->getFirstname();
         if ($this->getMiddlename()) {
             $name .= ' ' . $this->getMiddlename();
         }
+
         $name .= ' ' . $this->getLastname();
         if ($this->getSuffix()) {
             $name .= ' ' . $this->getSuffix();
         }
+
         return $name;
     }
-
 
     /**
      * Get orderaddress_id
      * @return string
      */
-    public function getOrderaddressId()
+    public function getOrderAddressId()
     {
         return $this->getData(self::ORDERADDRESS_ID);
     }
 
     /**
      * Set orderaddress_id
-     * @param string $orderaddressId
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderAddressInterface
+     *
+     * @param string $orderAddressId
+     *
+     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface
      */
-    public function setOrderaddressId($orderaddressId)
+    public function setOrderAddressId($orderAddressId)
     {
-        return $this->setData(self::ORDERADDRESS_ID, $orderaddressId);
+        return $this->setData(self::ORDERADDRESS_ID, $orderAddressId);
     }
 
     /**
@@ -120,7 +124,7 @@ class OrderAddress extends \Magento\Framework\Model\AbstractModel implements Ord
     /**
      * Set name
      * @param string $name
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderAddressInterface
+     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface
      */
     public function setFirstname($name)
     {
@@ -139,7 +143,7 @@ class OrderAddress extends \Magento\Framework\Model\AbstractModel implements Ord
     /**
      * Set name
      * @param string $name
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderAddressInterface
+     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface
      */
     public function setMiddlename($name)
     {
@@ -158,7 +162,7 @@ class OrderAddress extends \Magento\Framework\Model\AbstractModel implements Ord
     /**
      * Set name
      * @param string $name
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderAddressInterface
+     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface
      */
     public function setLastname($name)
     {
@@ -177,7 +181,7 @@ class OrderAddress extends \Magento\Framework\Model\AbstractModel implements Ord
     /**
      * Set name
      * @param string $name
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderAddressInterface
+     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface
      */
     public function setSuffix($name)
     {
@@ -196,7 +200,7 @@ class OrderAddress extends \Magento\Framework\Model\AbstractModel implements Ord
     /**
      * Set name
      * @param string $name
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderAddressInterface
+     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface
      */
     public function setPrefix($name)
     {
@@ -215,7 +219,7 @@ class OrderAddress extends \Magento\Framework\Model\AbstractModel implements Ord
     /**
      * Set company
      * @param string $company
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderAddressInterface
+     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface
      */
     public function setCompany($company)
     {
@@ -234,7 +238,7 @@ class OrderAddress extends \Magento\Framework\Model\AbstractModel implements Ord
     /**
      * Set street
      * @param string $street
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderAddressInterface
+     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface
      */
     public function setStreet($street)
     {
@@ -253,7 +257,7 @@ class OrderAddress extends \Magento\Framework\Model\AbstractModel implements Ord
     /**
      * Set postcode
      * @param string $postcode
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderAddressInterface
+     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface
      */
     public function setPostcode($postcode)
     {
@@ -272,7 +276,7 @@ class OrderAddress extends \Magento\Framework\Model\AbstractModel implements Ord
     /**
      * Set city
      * @param string $city
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderAddressInterface
+     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface
      */
     public function setCity($city)
     {
@@ -291,7 +295,7 @@ class OrderAddress extends \Magento\Framework\Model\AbstractModel implements Ord
     /**
      * Set country
      * @param string $country
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderAddressInterface
+     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface
      */
     public function setCountry($country)
     {
@@ -310,7 +314,7 @@ class OrderAddress extends \Magento\Framework\Model\AbstractModel implements Ord
     /**
      * Set phone
      * @param string $phone
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderAddressInterface
+     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface
      */
     public function setTelephone($phone)
     {
@@ -329,7 +333,7 @@ class OrderAddress extends \Magento\Framework\Model\AbstractModel implements Ord
     /**
      * Set fax
      * @param string $fax
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderAddressInterface
+     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface
      */
     public function setFax($fax)
     {
@@ -351,6 +355,7 @@ class OrderAddress extends \Magento\Framework\Model\AbstractModel implements Ord
                 }
             }
         }
+
         return $this->_additionalData;
     }
 

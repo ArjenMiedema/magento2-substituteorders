@@ -6,14 +6,6 @@
 			<item name="deps" xsi:type="string">dealer4dealer_order_index.dealer4dealer_order_grid_data_source</item>
 		</item>
 		<item name="spinner" xsi:type="string">dealer4dealer_order_columns</item>
-		<item name="buttons" xsi:type="array">
-			<!-- <item name="add" xsi:type="array">
-				<item name="name" xsi:type="string">add</item>
-				<item name="label" xsi:type="string">Add new Order</item>
-				<item name="class" xsi:type="string">primary</item>
-				<item name="url" xsi:type="string">*/*/new</item>
-			</item> -->
-		</item>
 	</argument>
 	<dataSource name="dealer4dealer_order_grid_data_source">
 		<argument name="dataProvider" xsi:type="configurableObject">
@@ -67,13 +59,6 @@
 				</item>
 			</item>
 		</argument>
-		<!-- <selectionsColumn name="ids">
-			<argument name="data" xsi:type="array">
-				<item name="config" xsi:type="array">
-					<item name="indexField" xsi:type="string">order_id</item>
-				</item>
-			</argument>
-		</selectionsColumn> -->
 		<column name="order_id">
 			<argument name="data" xsi:type="array">
 				<item name="config" xsi:type="array">
@@ -97,13 +82,6 @@
 				</item>
 			</argument>
 		</column>
-		<!-- <actionsColumn class="Dealer4Dealer\SubstituteOrders\Ui\Component\Listing\Column\OrderActions" name="actions">
-			<argument name="data" xsi:type="array">
-				<item name="config" xsi:type="array">
-					<item name="indexField" xsi:type="string">order_id</item>
-				</item>
-			</argument>
-		</actionsColumn> -->
         <column name="magento_increment_id">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
@@ -112,7 +90,6 @@
                 </item>
             </argument>
         </column>
-        
         <column name="po_number">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
@@ -130,7 +107,6 @@
 				</item>
 			</argument>
 		</column>
-		
         <column name="magento_customer_id">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">

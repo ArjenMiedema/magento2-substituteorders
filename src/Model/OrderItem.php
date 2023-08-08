@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A Magento 2 module named Dealer4Dealer\SubstituteOrders
  * Copyright (C) 2017 Maikel Martens
@@ -19,14 +20,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Dealer4Dealer\SubstituteOrders\src\Model;
+namespace Dealer4Dealer\SubstituteOrders\Model;
 
-use Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderItemInterface;
-use Dealer4Dealer\SubstituteOrders\src\Model\AdditionalData;
+use Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface;
+use Dealer4Dealer\SubstituteOrders\Model\AdditionalData;
 
 class OrderItem extends \Magento\Framework\Model\AbstractModel implements OrderItemInterface
 {
-
     /**
      * @var string
      */
@@ -67,7 +67,7 @@ class OrderItem extends \Magento\Framework\Model\AbstractModel implements OrderI
      */
     protected function _construct()
     {
-        $this->_init('Dealer4Dealer\SubstituteOrders\src\Model\ResourceModel\OrderItem');
+        $this->_init('Dealer4Dealer\SubstituteOrders\Model\ResourceModel\OrderItem');
     }
 
     public function save()
@@ -96,7 +96,7 @@ class OrderItem extends \Magento\Framework\Model\AbstractModel implements OrderI
     /**
      * Set orderitem_id
      * @param string $orderitemId
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderItemInterface
+     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
      */
     public function setOrderitemId($orderitemId)
     {
@@ -105,7 +105,7 @@ class OrderItem extends \Magento\Framework\Model\AbstractModel implements OrderI
 
     /**
      * Get order
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderInterface
+     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderInterface
      */
     public function getOrder()
     {
@@ -114,13 +114,14 @@ class OrderItem extends \Magento\Framework\Model\AbstractModel implements OrderI
             # TODO: Order save crashes on this line
             //            $this->_order = $order->load($orderId);
         }
+
         return $this->_order;
     }
 
     /**
      * Set order
-     * @param \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderInterface $order
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderItemInterface
+     * @param \Dealer4Dealer\SubstituteOrders\Api\Data\OrderInterface $order
+     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
      */
     public function setOrder($order)
     {
@@ -132,7 +133,7 @@ class OrderItem extends \Magento\Framework\Model\AbstractModel implements OrderI
     /**
      * Set order_id
      * @param string $order_id
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderItemInterface
+     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
      */
     public function setOrderId($orderId)
     {
@@ -176,7 +177,7 @@ class OrderItem extends \Magento\Framework\Model\AbstractModel implements OrderI
     /**
      * Set name
      * @param string $name
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderItemInterface
+     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
      */
     public function setName($name)
     {
@@ -195,7 +196,7 @@ class OrderItem extends \Magento\Framework\Model\AbstractModel implements OrderI
     /**
      * Set sku
      * @param string $sku
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderItemInterface
+     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
      */
     public function setSku($sku)
     {
@@ -214,7 +215,7 @@ class OrderItem extends \Magento\Framework\Model\AbstractModel implements OrderI
     /**
      * Set base_price
      * @param string $base_price
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderItemInterface
+     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
      */
     public function setBasePrice($base_price)
     {
@@ -233,7 +234,7 @@ class OrderItem extends \Magento\Framework\Model\AbstractModel implements OrderI
     /**
      * Set price
      * @param string $price
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderItemInterface
+     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
      */
     public function setPrice($price)
     {
@@ -252,7 +253,7 @@ class OrderItem extends \Magento\Framework\Model\AbstractModel implements OrderI
     /**
      * Set base_row_total
      * @param string $base_row_total
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderItemInterface
+     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
      */
     public function setBaseRowTotal($base_row_total)
     {
@@ -271,7 +272,7 @@ class OrderItem extends \Magento\Framework\Model\AbstractModel implements OrderI
     /**
      * Set row_total
      * @param string $row_total
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderItemInterface
+     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
      */
     public function setRowTotal($row_total)
     {
@@ -290,7 +291,7 @@ class OrderItem extends \Magento\Framework\Model\AbstractModel implements OrderI
     /**
      * Set base_tax_amount
      * @param string $base_tax_amount
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderItemInterface
+     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
      */
     public function setBaseTaxAmount($base_tax_amount)
     {
@@ -309,7 +310,7 @@ class OrderItem extends \Magento\Framework\Model\AbstractModel implements OrderI
     /**
      * Set tax_amount
      * @param string $tax_amount
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderItemInterface
+     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
      */
     public function setTaxAmount($tax_amount)
     {
@@ -328,7 +329,7 @@ class OrderItem extends \Magento\Framework\Model\AbstractModel implements OrderI
     /**
      * Set qty
      * @param string $qty
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderItemInterface
+     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
      */
     public function setQty($qty)
     {
@@ -350,6 +351,7 @@ class OrderItem extends \Magento\Framework\Model\AbstractModel implements OrderI
                 }
             }
         }
+
         return $this->_additionalData;
     }
 
@@ -374,7 +376,7 @@ class OrderItem extends \Magento\Framework\Model\AbstractModel implements OrderI
     /**
      * Set base_discount_amount
      * @param string $base_discount_amount
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderItemInterface
+     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
      */
     public function setBaseDiscountAmount($base_discount_amount)
     {
@@ -393,7 +395,7 @@ class OrderItem extends \Magento\Framework\Model\AbstractModel implements OrderI
     /**
      * Set discount_amount
      * @param string $discount_amount
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderItemInterface
+     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
      */
     public function setDiscountAmount($discount_amount)
     {

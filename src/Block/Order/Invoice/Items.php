@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
@@ -9,7 +10,7 @@
  *
  * @author     Magento Core Team <core@magentocommerce.com>
  */
-namespace Dealer4Dealer\SubstituteOrders\src\Block\Order\Invoice;
+namespace Dealer4Dealer\SubstituteOrders\Block\Order\Invoice;
 
 use Dealer4Dealer\SubstituteOrders\Block\Order\Invoice\Magento;
 use Dealer4Dealer\SubstituteOrders\Block\Order\Invoice\order;
@@ -57,7 +58,8 @@ class Items extends \Magento\Sales\Block\Items\AbstractItems
      * @param Magento order id $id
      * @return order
      */
-    public function getOrderById($id) {
+    public function getOrderById($id)
+    {
         return $this->_orderRepository->get($id);
     }
 
@@ -93,6 +95,7 @@ class Items extends \Magento\Sales\Block\Items\AbstractItems
             $totals->setInvoice($invoice);
             $html = $totals->toHtml();
         }
+
         return $html;
     }
 
@@ -110,6 +113,7 @@ class Items extends \Magento\Sales\Block\Items\AbstractItems
             $comments->setEntity($invoice)->setTitle(__('About Your Invoice'));
             $html = $comments->toHtml();
         }
+
         return $html;
     }
 
@@ -127,6 +131,7 @@ class Items extends \Magento\Sales\Block\Items\AbstractItems
             $comments->setEntity($invoice)->setTitle(__('Invoice Attachments'));
             $html = $comments->toHtml();
         }
+
         return $html;
     }
 }

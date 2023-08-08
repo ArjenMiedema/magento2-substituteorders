@@ -1,251 +1,94 @@
 <?php
-/**
- * A Magento 2 module named Dealer4Dealer\SubstituteOrders
- * Copyright (C) 2017 Maikel Martens
- *
- * This file is part of Dealer4Dealer\SubstituteOrders.
- *
- * Dealer4Dealer\SubstituteOrders is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
 
-namespace Dealer4Dealer\SubstituteOrders\src\Api\Data;
+declare(strict_types=1);
+
+namespace Dealer4Dealer\SubstituteOrders\Api\Data;
 
 interface OrderItemInterface
 {
+    public const ORDERITEM_ID = 'orderitem_id',
+        ORDER_ID = 'order_id',
+        INVOICE_ID = 'invoice_id',
+        SKU = 'sku',
+        NAME = 'name',
+        PRICE = 'price',
+        QTY = 'qty',
+        TAX_AMOUNT = 'tax_amount',
+        DISCOUNT_AMOUNT = 'discount_amount',
+        ROW_TOTAL = 'row_total',
+        BASE_PRICE = 'base_price',
+        BASE_TAX_AMOUNT = 'base_tax_amount',
+        BASE_DISCOUNT_AMOUNT = 'base_discount_amount',
+        BASE_ROW_TOTAL = 'base_row_total',
+        ADDITIONAL_DATA = 'additional_data';
 
-    const ORDERITEM_ID          = 'orderitem_id';
-    const ORDER_ID              = 'order_id';
-    const INVOICE_ID            = 'invoice_id';
-    const SKU                   = 'sku';
-    const NAME                  = 'name';
-    const PRICE                 = 'price';
-    const QTY                   = 'qty';
-    const TAX_AMOUNT            = 'tax_amount';
-    const DISCOUNT_AMOUNT       = 'discount_amount';
-    const ROW_TOTAL             = 'row_total';
-    const BASE_PRICE            = 'base_price';
-    const BASE_TAX_AMOUNT       = 'base_tax_amount';
-    const BASE_DISCOUNT_AMOUNT  = 'base_discount_amount';
-    const BASE_ROW_TOTAL        = 'base_row_total';
-    const ADDITIONAL_DATA       = 'additional_data';
+    public function getOrderitemId(): ?int;
 
+    public function setOrderitemId(int $orderitemId): self;
 
-    /**
-     * Get orderitem_id
-     * @return string|null
-     */
-    public function getOrderitemId();
+    public function getOrder(): ?OrderInterface;
 
-    /**
-     * Set orderitem_id
-     * @param string $orderitem_id
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
-     */
-    public function setOrderitemId($orderitemId);
+    public function setOrder(OrderInterface $order): self;
 
-    /**
-     * Get order_id
-     * @return string|null
-     */
-    public function getOrder();
+    public function getOrderId(): ?int;
 
-    /**
-     * Set order_id
-     * @param string $order_id
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
-     */
-    public function setOrder($order_id);
+    public function setOrderId(int $orderId): self;
 
-    /**
-     * Get order_id
-     * @return string|null
-     */
-    public function getOrderId();
+    public function getInvoiceId(): ?int;
 
-    /**
-     * Set order_id
-     * @param string $order_id
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
-     */
-    public function setOrderId($order_id);
+    public function setInvoiceId(int $invoiceId): self;
 
-    /**
-     * Get invoice id
-     * @return string|null
-     */
-    public function getInvoiceId();
+    public function getName(): ?string;
 
-    /**
-     * Set invoiceId
-     * @param string $invoiceId
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
-     */
-    public function setInvoiceId($invoiceId);
+    public function setName(string $name): self;
+
+    public function getSku(): ?string;
+
+    public function setSku(string $sku): self;
+
+    public function getBasePrice(): ?float;
+
+    public function setBasePrice(float $basePrice): self;
+
+    public function getPrice(): ?float;
+
+    public function setPrice(float $price): self;
+
+    public function getBaseRowTotal(): ?float;
+
+    public function setBaseRowTotal(float $baseRowTotal): self;
+
+    public function getRowTotal(): ?float;
+
+    public function setRowTotal(float $rowTotal): self;
+
+    public function getBaseTaxAmount(): ?float;
+
+    public function setBaseTaxAmount(float $baseTaxAmount): self;
+
+    public function getTaxAmount(): ?float;
+
+    public function setTaxAmount(float $taxAmount): self;
+
+    public function getQty(): ?float;
+
+    public function setQty(float $qty): self;
 
     /**
-     * Get name
-     * @return string|null
+     * @return AdditionalDataInterface[]
      */
-    public function getName();
+    public function getAdditionalData(): array;
 
     /**
-     * Set name
-     * @param string $name
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
+     * @param AdditionalDataInterface[] $additionalData
      */
-    public function setName($name);
+    public function setAdditionalData(array $additionalData): self;
 
-    /**
-     * Get sku
-     * @return string|null
-     */
-    public function getSku();
+    public function getBaseDiscountAmount(): ?float;
 
-    /**
-     * Set sku
-     * @param string $sku
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
-     */
-    public function setSku($sku);
+    public function setBaseDiscountAmount(float $baseDiscountAmount): self;
 
-    /**
-     * Get base_price
-     * @return string|null
-     */
-    public function getBasePrice();
+    public function getDiscountAmount(): ?float;
 
-    /**
-     * Set base_price
-     * @param string $base_price
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
-     */
-    public function setBasePrice($base_price);
-
-    /**
-     * Get price
-     * @return string|null
-     */
-    public function getPrice();
-
-    /**
-     * Set price
-     * @param string $price
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
-     */
-    public function setPrice($price);
-
-    /**
-     * Get base_row_total
-     * @return string|null
-     */
-    public function getBaseRowTotal();
-
-    /**
-     * Set base_row_total
-     * @param string $base_row_total
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
-     */
-    public function setBaseRowTotal($base_row_total);
-
-    /**
-     * Get row_total
-     * @return string|null
-     */
-    public function getRowTotal();
-
-    /**
-     * Set row_total
-     * @param string $row_total
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
-     */
-    public function setRowTotal($row_total);
-
-    /**
-     * Get base_tax_amount
-     * @return string|null
-     */
-    public function getBaseTaxAmount();
-
-    /**
-     * Set base_tax_amount
-     * @param string $base_tax_amount
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
-     */
-    public function setBaseTaxAmount($base_tax_amount);
-
-    /**
-     * Get tax_amount
-     * @return string|null
-     */
-    public function getTaxAmount();
-
-    /**
-     * Set tax_amount
-     * @param string $tax_amount
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
-     */
-    public function setTaxAmount($tax_amount);
-
-    /**
-     * Get qty
-     * @return string|null
-     */
-    public function getQty();
-
-    /**
-     * Set qty
-     * @param string $qty
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
-     */
-    public function setQty($qty);
-
-    /**
-     * Get additional_data
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\AdditionalDataInterface[]
-     */
-    public function getAdditionalData();
-
-    /**
-     * Set additional_data
-     * @param \Dealer4Dealer\SubstituteOrders\src\Api\Data\AdditionalDataInterface[] $additional_data
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
-     */
-    public function setAdditionalData($additional_data);
-
-    /**
-     * Get base_discount_amount
-     * @return string|null
-     */
-    public function getBaseDiscountAmount();
-
-    /**
-     * Set base_discount_amount
-     * @param string $base_discount_amount
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
-     */
-    public function setBaseDiscountAmount($base_discount_amount);
-
-    /**
-     * Get discount_amount
-     * @return string|null
-     */
-    public function getDiscountAmount();
-
-    /**
-     * Set discount_amount
-     * @param string $discount_amount
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
-     */
-    public function setDiscountAmount($discount_amount);
+    public function setDiscountAmount(float $discountAmount): self;
 }

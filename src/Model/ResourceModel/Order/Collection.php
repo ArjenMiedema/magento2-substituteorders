@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A Magento 2 module named Dealer4Dealer\SubstituteOrders
  * Copyright (C) 2017 Maikel Martens
@@ -19,11 +20,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Dealer4Dealer\SubstituteOrders\src\Model\ResourceModel\Order;
+namespace Dealer4Dealer\SubstituteOrders\Model\ResourceModel\Order;
 
 class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
 {
-
     /**
      * Define resource model
      *
@@ -32,8 +32,8 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     protected function _construct()
     {
         $this->_init(
-            'Dealer4Dealer\SubstituteOrders\src\Model\Order',
-            'Dealer4Dealer\SubstituteOrders\src\Model\ResourceModel\Order'
+            'Dealer4Dealer\SubstituteOrders\Model\Order',
+            'Dealer4Dealer\SubstituteOrders\Model\ResourceModel\Order'
         );
     }
 

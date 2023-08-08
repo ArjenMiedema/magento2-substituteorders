@@ -1,44 +1,16 @@
 <?php
-/**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
- */
-namespace Dealer4Dealer\SubstituteOrders\src\Api\Data\File;
 
-/**
- * @codeCoverageIgnore
- * @api
- * @since 100.0.2
- */
+declare(strict_types=1);
+
+namespace Dealer4Dealer\SubstituteOrders\Api\Data\File;
+
 interface ContentInterface
 {
-    /**
-     * Retrieve data (base64 encoded content)
-     *
-     * @return string
-     */
-    public function getFileData();
+    public function getFileData(): string;
 
-    /**
-     * Set data (base64 encoded content)
-     *
-     * @param string $fileData
-     * @return $this
-     */
-    public function setFileData($fileData);
+    public function setFileData(string $fileData): self;
 
-    /**
-     * Retrieve file name
-     *
-     * @return string
-     */
-    public function getName();
+    public function getName(): string;
 
-    /**
-     * Set file name
-     *
-     * @param string $name
-     * @return $this
-     */
-    public function setName($name);
+    public function setName(string $name): self;
 }

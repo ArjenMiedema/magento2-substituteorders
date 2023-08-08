@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A Magento 2 module named Dealer4Dealer\SubstituteOrders
  * Copyright (C) 2017 Maikel Martens
@@ -19,7 +20,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Dealer4Dealer\SubstituteOrders\src\Block\Order\History;
+namespace Dealer4Dealer\SubstituteOrders\Block\Order\History;
 
 /**
  * Sales order history extra container block
@@ -27,7 +28,7 @@ namespace Dealer4Dealer\SubstituteOrders\src\Block\Order\History;
 class Container extends \Magento\Framework\View\Element\Template
 {
     /**
-     * @var \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderInterface
+     * @var \Dealer4Dealer\SubstituteOrders\Api\Data\OrderInterface
      */
     protected $order;
 
@@ -37,7 +38,7 @@ class Container extends \Magento\Framework\View\Element\Template
      * @param \Magento\Sales\Api\Data\OrderInterface $order
      * @return $this
      */
-    public function setOrder(\Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderInterface $order)
+    public function setOrder(\Dealer4Dealer\SubstituteOrders\Api\Data\OrderInterface $order)
     {
         $this->order = $order;
         return $this;
@@ -46,7 +47,7 @@ class Container extends \Magento\Framework\View\Element\Template
     /**
      * Get order
      *
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderInterface
+     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderInterface
      */
     private function getOrder()
     {
@@ -70,6 +71,7 @@ class Container extends \Magento\Framework\View\Element\Template
                 $child->setOrder($this->getOrder());
             }
         }
+
         return parent::getChildHtml($alias, $useCache);
     }
 }

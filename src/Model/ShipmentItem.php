@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A Magento 2 module named Dealer4Dealer\SubstituteOrders
  * Copyright (C) 2017 Maikel Martens
@@ -19,11 +20,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Dealer4Dealer\SubstituteOrders\src\Model;
+namespace Dealer4Dealer\SubstituteOrders\Model;
 
-use Dealer4Dealer\SubstituteOrders\src\Api\Data\ShipmentItemInterface;
-use Dealer4Dealer\SubstituteOrders\src\Model\ResourceModel\ShipmentItem as ResourceShipmentItem;
-use Dealer4Dealer\SubstituteOrders\src\Model\AdditionalData;
+use Dealer4Dealer\SubstituteOrders\Api\Data\ShipmentItemInterface;
+use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\ShipmentItem as ResourceShipmentItem;
+use Dealer4Dealer\SubstituteOrders\Model\AdditionalData;
 
 class ShipmentItem extends \Magento\Framework\Model\AbstractModel implements ShipmentItemInterface
 {
@@ -69,7 +70,7 @@ class ShipmentItem extends \Magento\Framework\Model\AbstractModel implements Shi
     /**
      * @inheritDoc
      */
-    public function getShipmentitemId()
+    public function getShipmentItemId()
     {
         return $this->getData(self::SHIPMENTITEM_ID);
     }
@@ -77,9 +78,9 @@ class ShipmentItem extends \Magento\Framework\Model\AbstractModel implements Shi
     /**
      * @inheritDoc
      */
-    public function setShipmentitemId($shipmentitemId)
+    public function setShipmentItemId($shipmentItemId)
     {
-        return $this->setData(self::SHIPMENTITEM_ID, $shipmentitemId);
+        return $this->setData(self::SHIPMENTITEM_ID, $shipmentItemId);
     }
 
     /**
@@ -225,6 +226,7 @@ class ShipmentItem extends \Magento\Framework\Model\AbstractModel implements Shi
                 }
             }
         }
+
         return $this->_additionalData;
     }
 

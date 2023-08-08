@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
@@ -9,7 +10,7 @@
  *
  * @author     Magento Core Team <core@magentocommerce.com>
  */
-namespace Dealer4Dealer\SubstituteOrders\src\Block\Order\Shipment;
+namespace Dealer4Dealer\SubstituteOrders\Block\Order\Shipment;
 
 use Dealer4Dealer\SubstituteOrders\Block\Order\Shipment\Magento;
 use Dealer4Dealer\SubstituteOrders\Block\Order\Shipment\order;
@@ -47,11 +48,13 @@ class Items extends \Magento\Sales\Block\Items\AbstractItems
      * @param Magento order id $id
      * @return order
      */
-    public function getOrderById($id) {
+    public function getOrderById($id)
+    {
         return $this->_orderRepository->get($id);
     }
 
-    public function getShipment() {
+    public function getShipment()
+    {
         return $this->_coreRegistry->registry('current_shipment');
     }
 
@@ -106,6 +109,7 @@ class Items extends \Magento\Sales\Block\Items\AbstractItems
             $comments->setEntity($shipment)->setTitle(__('About Your Shipment'));
             $html = $comments->toHtml();
         }
+
         return $html;
     }
 
@@ -123,6 +127,7 @@ class Items extends \Magento\Sales\Block\Items\AbstractItems
             $comments->setEntity($shipment)->setTitle(__('Shipment Attachments'));
             $html = $comments->toHtml();
         }
+
         return $html;
     }
 

@@ -1,12 +1,15 @@
 <?php
+
 /**
  * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-namespace Dealer4Dealer\SubstituteOrders\src\Block\Order\PrintOrder;
+
+namespace Dealer4Dealer\SubstituteOrders\Block\Order\PrintOrder;
 
 use Dealer4Dealer\SubstituteOrders\Block\Order\PrintOrder\Address;
 use Magento\Framework\View\Element\AbstractBlock;
+
 use function Dealer4Dealer\SubstituteOrders\Block\Order\PrintOrder\__;
 
 /**
@@ -39,11 +42,11 @@ class Invoice extends \Magento\Sales\Block\Items\AbstractItems
      * @param array $data
      */
     public function __construct(
-        \Magento\Framework\View\Element\Template\Context                 $context,
-        \Magento\Framework\Registry                                      $registry,
-        \Magento\Payment\Helper\Data                                     $paymentHelper,
-        \Dealer4Dealer\SubstituteOrders\src\Model\Order\Address\Renderer $addressRenderer,
-        array                                                            $data = []
+        \Magento\Framework\View\Element\Template\Context $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Payment\Helper\Data $paymentHelper,
+        \Dealer4Dealer\SubstituteOrders\Model\Order\Address\Renderer $addressRenderer,
+        array $data = []
     ) {
         $this->addressRenderer = $addressRenderer;
         $this->_paymentHelper = $paymentHelper;
@@ -123,6 +126,7 @@ class Invoice extends \Magento\Sales\Block\Items\AbstractItems
             $totals->setInvoice($invoice);
             $html = $totals->toHtml();
         }
+
         return $html;
     }
 
@@ -132,7 +136,7 @@ class Invoice extends \Magento\Sales\Block\Items\AbstractItems
      * @param Address $address
      * @return null|string
      */
-    public function getFormattedAddress(\Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderAddressInterface $address)
+    public function getFormattedAddress(\Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface $address)
     {
         return $this->addressRenderer->format($address, 'html');
     }

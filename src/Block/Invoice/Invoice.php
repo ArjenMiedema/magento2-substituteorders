@@ -1,72 +1,47 @@
 <?php
-/**
- * A Magento 2 module named Dealer4Dealer\SubstituteOrders
- * Copyright (C) 2017 Maikel Martens
- *
- * This file is part of Dealer4Dealer\SubstituteOrders.
- *
- * Dealer4Dealer\SubstituteOrders is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
 
-namespace Dealer4Dealer\SubstituteOrders\src\Block\Invoice;
+declare(strict_types=1);
 
-use function Dealer4Dealer\SubstituteOrders\Block\Invoice\__;
+namespace Dealer4Dealer\SubstituteOrders\Block\Invoice;
+
+use Dealer4Dealer\SubstituteOrders\Api\Data\OrderInterface;
+use Dealer4Dealer\SubstituteOrders\Api\InvoiceRepositoryInterface;
+use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\Invoice\CollectionFactory;
+use Magento\Customer\Model\Session;
+use Magento\Framework\Data\Collection;
+use Magento\Framework\View\Element\Template;
+use Magento\Framework\View\Element\Template\Context;
+use Magento\Theme\Block\Html\Pager;
 
 /**
  * Substitute Invoice history block
  */
-class Invoice extends \Magento\Framework\View\Element\Template
+class Invoice extends Template
 {
+    private const DEFAULT_PAGE_SIZE = 10;
 
-    const DEFAULT_PAGE_SIZE = 10;
-
-    /**
-     * @var string
-     */
     protected $_template = 'order/history.phtml';
 
-    /*
-     * @var \Magento\Customer\Model\Session
-     */
-    protected $customerSession;
-
-    /**
-     * @var \Dealer4Dealer\SubstituteOrders\Model\ResourceModel\Invoice\CollectionFactory
-     */
-    private $invoiceCollectionFactory;
-
-
     public function __construct(
-        \Magento\Framework\View\Element\Template\Context $context,
-        \Dealer4Dealer\SubstituteOrders\Model\ResourceModel\Invoice\CollectionFactory $invoiceCollectionFactory,
-        \Magento\Customer\Model\Session $customerSession,
+        Context $context,
+        private readonly CollectionFactory $invoiceCollectionFactory,
+        private readonly Session $customerSession,
         array $data = []
     ) {
-    
-        $this->customerSession = $customerSession;
         parent::__construct($context, $data);
-        $this->invoiceCollectionFactory = $invoiceCollectionFactory;
     }
 
-    protected function _prepareLayout()
+    protected function _prepareLayout(): void
     {
         parent::_prepareLayout();
-        $this->pageConfig->getTitle()->set(__('Orders'));
+
+        $this->pageConfig
+            ->getTitle()
+            ->set(__('Orders'));
 
         if ($this->getInvoiceCollection()) {
             $pager = $this->getLayout()->createBlock(
-                'Magento\Theme\Block\Html\Pager',
+                Pager::class,
                 'dealer4dealer.orders.pager'
             );
 
@@ -79,10 +54,11 @@ class Invoice extends \Magento\Framework\View\Element\Template
         }
     }
 
-    public function getInvoiceCollection()
+    public function getInvoiceCollection(): Collection
     {
-        $customerId = $this->customerSession->getCustomer()->getId();
+        $customerId = $this->customerSession->getCustomerId();
 
+        /** @var InvoiceRepositoryInterface&Collection $collection */
         $collection = $this->invoiceCollectionFactory->create();
         $collection
             ->addFieldToFilter('magento_customer_id', $customerId)
@@ -92,34 +68,28 @@ class Invoice extends \Magento\Framework\View\Element\Template
         return $collection;
     }
 
-    public function getCurrentPage()
+    public function getCurrentPage(): int
     {
-        return $this->getRequest()->getParam('p', 1);
+        return (int) $this->getRequest()->getParam('p', 1);
     }
 
-    public function getPageSize()
+    public function getPageSize(): int
     {
-        return $this->getRequest()->getParam('limit', self::DEFAULT_PAGE_SIZE);
+        return (int) $this->getRequest()->getParam('limit', self::DEFAULT_PAGE_SIZE);
     }
 
-    public function getPagerHtml()
+    public function getPagerHtml(): string
     {
         return $this->getChildHtml('pager');
     }
 
-    public function getViewUrl($order)
+    public function getViewUrl(OrderInterface $order): string
     {
         return $this->getUrl('*/*/view', ['id' => $order->getId()]);
     }
 
-    public function getReorderUrl($order)
+    public function getReorderUrl(OrderInterface $order): string
     {
         return $this->getUrl('*/*/reorder', ['id' => $order->getId()]);
-    }
-
-    //TODO: Trung remove this harcoded shitty shizzle
-    public function getDownloadPdfLink($invoiceId)
-    {
-        return $this->getUrl('substituteorderspdf/index/downloadPdf', ['id' => $invoiceId]);
     }
 }

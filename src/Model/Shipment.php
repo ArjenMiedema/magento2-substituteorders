@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A Magento 2 module named Dealer4Dealer\SubstituteOrders
  * Copyright (C) 2017 Maikel Martens
@@ -19,15 +20,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Dealer4Dealer\SubstituteOrders\src\Model;
+namespace Dealer4Dealer\SubstituteOrders\Model;
 
-use Dealer4Dealer\SubstituteOrders\src\Api\Data\ShipmentInterface;
-use Dealer4Dealer\SubstituteOrders\src\Model\AdditionalData;
-use Dealer4Dealer\SubstituteOrders\src\Model\ShipmentTracking;
+use Dealer4Dealer\SubstituteOrders\Api\Data\ShipmentInterface;
+use Dealer4Dealer\SubstituteOrders\Model\AdditionalData;
+use Dealer4Dealer\SubstituteOrders\Model\ShipmentTracking;
 
 class Shipment extends \Magento\Framework\Model\AbstractModel implements ShipmentInterface
 {
-
     /**
      * @var string
      */
@@ -80,18 +80,17 @@ class Shipment extends \Magento\Framework\Model\AbstractModel implements Shipmen
     protected $_additionalData = null;
     protected $_attachments = null;
 
-
     public function __construct(
-        \Magento\Framework\Model\Context                                        $context,
-        \Magento\Framework\Registry                                             $registry,
-        \Magento\Framework\App\Config\ScopeConfigInterface                      $scopeConfig,
-        \Magento\Store\Model\StoreManagerInterface                              $storeManager,
-        \Dealer4Dealer\SubstituteOrders\src\Api\ShipmentItemRepositoryInterface $shipmentItems,
-        \Dealer4Dealer\SubstituteOrders\src\Api\OrderAddressRepositoryInterface $orderAddress,
-        \Dealer4Dealer\SubstituteOrders\src\Api\AttachmentRepositoryInterface   $attachmentRepository,
-        \Magento\Framework\Model\ResourceModel\AbstractResource                 $resource = null,
-        \Magento\Framework\Data\Collection\AbstractDb                           $resourceCollection = null,
-        array                                                                   $data = []
+        \Magento\Framework\Model\Context $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Dealer4Dealer\SubstituteOrders\Api\ShipmentItemRepositoryInterface $shipmentItems,
+        \Dealer4Dealer\SubstituteOrders\Api\OrderAddressRepositoryInterface $orderAddress,
+        \Dealer4Dealer\SubstituteOrders\Api\AttachmentRepositoryInterface $attachmentRepository,
+        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        array $data = []
     ) {
         $this->storeManager = $storeManager;
         $this->scopeConfig = $scopeConfig;
@@ -106,9 +105,8 @@ class Shipment extends \Magento\Framework\Model\AbstractModel implements Shipmen
      */
     protected function _construct()
     {
-        $this->_init('Dealer4Dealer\SubstituteOrders\src\Model\ResourceModel\Shipment');
+        $this->_init('Dealer4Dealer\SubstituteOrders\Model\ResourceModel\Shipment');
     }
-
 
     /**
      * Saves Shipment object and related objects (address and items)
@@ -145,6 +143,7 @@ class Shipment extends \Magento\Framework\Model\AbstractModel implements Shipmen
                 } catch (\Exception $e) { // @codingStandardsIgnoreLine
 
                 }
+
                 $this->_shippingAddress->setId($this->getData(self::SHIPPING_ADDRESS_ID));
             }
 
@@ -162,6 +161,7 @@ class Shipment extends \Magento\Framework\Model\AbstractModel implements Shipmen
                 } catch (\Exception $e) { // @codingStandardsIgnoreLine
 
                 }
+
                 $this->_billingAddress->setId($this->getData(self::BILLING_ADDRESS_ID));
             }
 
@@ -274,13 +274,14 @@ class Shipment extends \Magento\Framework\Model\AbstractModel implements Shipmen
 
             }
         }
+
         return $this->_shippingAddress;
     }
 
     /**
      * @inheritDoc
      */
-    public function setShippingAddress(\Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderAddressInterface $shipping_address)
+    public function setShippingAddress(\Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface $shipping_address)
     {
         $this->_shippingAddress = $shipping_address;
         return $this;
@@ -298,13 +299,14 @@ class Shipment extends \Magento\Framework\Model\AbstractModel implements Shipmen
 
             }
         }
+
         return $this->_billingAddress;
     }
 
     /**
      * @inheritDoc
      */
-    public function setBillingAddress(\Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderAddressInterface $billing_address)
+    public function setBillingAddress(\Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface $billing_address)
     {
         $this->_billingAddress = $billing_address;
         return $this;
@@ -330,7 +332,6 @@ class Shipment extends \Magento\Framework\Model\AbstractModel implements Shipmen
         return $this->_items;
     }
 
-
     /**
      * @inheritDoc
      */
@@ -346,6 +347,7 @@ class Shipment extends \Magento\Framework\Model\AbstractModel implements Shipmen
                 }
             }
         }
+
         return $this->_tracking;
     }
 
@@ -357,9 +359,9 @@ class Shipment extends \Magento\Framework\Model\AbstractModel implements Shipmen
         if (is_string($tracking)) {
             $tracking = json_decode($tracking);
         }
+
         return $this->_tracking = $tracking;
     }
-
 
     /**
      * @inheritDoc
@@ -376,6 +378,7 @@ class Shipment extends \Magento\Framework\Model\AbstractModel implements Shipmen
                 }
             }
         }
+
         return $this->_additionalData;
     }
 
@@ -388,10 +391,7 @@ class Shipment extends \Magento\Framework\Model\AbstractModel implements Shipmen
         return $this;
     }
 
-
-
     /* Standard getters and setters */
-
 
     /**
      * @inheritDoc
@@ -577,13 +577,14 @@ class Shipment extends \Magento\Framework\Model\AbstractModel implements Shipmen
 
             foreach ($attachments as $file) {
                 $files[] = [
-                    'file'=>$file->getFile(),
+                    'file' => $file->getFile(),
                     'attachment_id' => $file->getAttachmentId()
                 ];
             }
 
             $this->_attachments = $files;
         }
+
         return $this->_attachments;
     }
 

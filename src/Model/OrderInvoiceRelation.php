@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A Magento 2 module named Dealer4Dealer/SubstituteOrders
  * Copyright (C) 2017 Maikel Martens
@@ -19,38 +20,42 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Dealer4Dealer\SubstituteOrders\src\Model;
+namespace Dealer4Dealer\SubstituteOrders\Model;
 
-use Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderInvoiceRelationInterface;
+use Dealer4Dealer\SubstituteOrders\Api\Data\OrderInvoiceRelationInterface;
 
 class OrderInvoiceRelation extends \Magento\Framework\Model\AbstractModel implements OrderInvoiceRelationInterface
 {
-
     /**
      * @return void
      */
     protected function _construct()
     {
-        $this->_init('Dealer4Dealer\SubstituteOrders\src\Model\ResourceModel\OrderInvoiceRelation');
+        $this->_init('Dealer4Dealer\SubstituteOrders\Model\ResourceModel\OrderInvoiceRelation');
     }
 
     /**
      * Get orderinvoicerelation_id
      * @return string
      */
-    public function getOrderinvoicerelationId()
+    public function getOrderInvoiceRelationId()
     {
         return $this->getData(self::ORDERINVOICERELATION_ID);
     }
 
     /**
      * Set orderinvoicerelation_id
-     * @param string $orderinvoicerelationId
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderInvoiceRelationInterface
+     *
+     * @param string $orderInvoiceRelationId
+     *
+     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderInvoiceRelationInterface
      */
-    public function setOrderinvoicerelationId($orderinvoicerelationId)
+    public function setOrderInvoiceRelationId($orderInvoiceRelationId)
     {
-        return $this->setData(self::ORDERINVOICERELATION_ID, $orderinvoicerelationId);
+        return $this->setData(
+            self::ORDERINVOICERELATION_ID,
+            $orderInvoiceRelationId
+        );
     }
 
     /**
@@ -65,7 +70,7 @@ class OrderInvoiceRelation extends \Magento\Framework\Model\AbstractModel implem
     /**
      * Set order_id
      * @param string $order_id
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderInvoiceRelationInterface
+     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderInvoiceRelationInterface
      */
     public function setOrderId($order_id)
     {
@@ -84,7 +89,7 @@ class OrderInvoiceRelation extends \Magento\Framework\Model\AbstractModel implem
     /**
      * Set invoice_id
      * @param string $invoice_id
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderInvoiceRelationInterface
+     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderInvoiceRelationInterface
      */
     public function setInvoiceId($invoice_id)
     {

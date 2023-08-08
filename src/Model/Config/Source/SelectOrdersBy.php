@@ -1,5 +1,6 @@
 <?php
-namespace Dealer4Dealer\SubstituteOrders\src\Model\Config\Source;
+
+namespace Dealer4Dealer\SubstituteOrders\Model\Config\Source;
 
 use function Dealer4Dealer\SubstituteOrders\Model\Config\Source\__;
 
@@ -9,7 +10,7 @@ class SelectOrdersBy implements \Magento\Framework\Option\ArrayInterface
     {
         return [['value' => 'magento_customer_id', 'label' => __('Magento Customer ID')], ['value' => 'external_customer_id', 'label' => __('External Customer ID')]];
     }
-    
+
     public function toArray()
     {
         return ['magento_customer_id' => __('Magento Customer ID'), 'external_customer_id' => __('External Customer ID')];

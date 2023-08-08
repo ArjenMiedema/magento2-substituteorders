@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A Magento 2 module named Dealer4Dealer\SubstituteOrders
  * Copyright (C) 2017 Maikel Martens
@@ -19,11 +20,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Dealer4Dealer\SubstituteOrders\src\Model;
+namespace Dealer4Dealer\SubstituteOrders\Model;
 
-use Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderInterface;
-use Dealer4Dealer\SubstituteOrders\src\Api\ShipmentRepositoryInterface;
-use Dealer4Dealer\SubstituteOrders\src\Model\AdditionalData;
+use Dealer4Dealer\SubstituteOrders\Api\Data\OrderInterface;
+use Dealer4Dealer\SubstituteOrders\Api\ShipmentRepositoryInterface;
+use Dealer4Dealer\SubstituteOrders\Model\AdditionalData;
 
 class Order extends \Magento\Framework\Model\AbstractModel implements OrderInterface
 {
@@ -89,19 +90,19 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     protected $_attachments = null;
 
     public function __construct(
-        \Magento\Framework\Model\Context                                              $context,
-        \Magento\Framework\Registry                                                   $registry,
-        \Magento\Framework\App\Config\ScopeConfigInterface                            $scopeConfig,
-        \Magento\Store\Model\StoreManagerInterface                                    $storeManager,
-        \Dealer4Dealer\SubstituteOrders\src\Api\OrderItemRepositoryInterface          $orderItems,
-        \Dealer4Dealer\SubstituteOrders\src\Api\OrderAddressRepositoryInterface       $orderAddress,
+        \Magento\Framework\Model\Context $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Dealer4Dealer\SubstituteOrders\Api\OrderItemRepositoryInterface $orderItems,
+        \Dealer4Dealer\SubstituteOrders\Api\OrderAddressRepositoryInterface $orderAddress,
         \Dealer4Dealer\SubstituteOrders\Model\ResourceModel\Invoice\CollectionFactory $invoiceCollectionFactory,
-        \Dealer4Dealer\SubstituteOrders\Model\OrderInvoiceRelationFactory             $orderInvoiceRelationFactory,
-        \Dealer4Dealer\SubstituteOrders\src\Api\ShipmentRepositoryInterface           $shipmentRepository,
-        \Dealer4Dealer\SubstituteOrders\src\Api\AttachmentRepositoryInterface         $attachmentRepository,
-        \Magento\Framework\Model\ResourceModel\AbstractResource                       $resource = null,
-        \Magento\Framework\Data\Collection\AbstractDb                                 $resourceCollection = null,
-        array                                                                         $data = []
+        \Dealer4Dealer\SubstituteOrders\Model\OrderInvoiceRelationFactory $orderInvoiceRelationFactory,
+        \Dealer4Dealer\SubstituteOrders\Api\ShipmentRepositoryInterface $shipmentRepository,
+        \Dealer4Dealer\SubstituteOrders\Api\AttachmentRepositoryInterface $attachmentRepository,
+        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        array $data = []
     ) {
         $this->storeManager = $storeManager;
         $this->scopeConfig = $scopeConfig;
@@ -119,7 +120,7 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
      */
     protected function _construct()
     {
-        $this->_init('Dealer4Dealer\SubstituteOrders\src\Model\ResourceModel\Order');
+        $this->_init('Dealer4Dealer\SubstituteOrders\Model\ResourceModel\Order');
     }
 
     public function save()
@@ -144,6 +145,7 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
                 } catch (\Exception $e) { // @codingStandardsIgnoreLine
 
                 }
+
                 $this->_shippingAddress->setId($this->getData(self::SHIPPING_ADDRESS_ID));
             }
 
@@ -161,6 +163,7 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
                 } catch (\Exception $e) { // @codingStandardsIgnoreLine
 
                 }
+
                 $this->_billingAddress->setId($this->getData(self::BILLING_ADDRESS_ID));
             }
 
@@ -186,10 +189,12 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
             foreach ($this->getData(self::INVOICE_IDS) as $invoiceId) {
                 if (!isset($activeIds[$invoiceId])) {
                     $relation = $this->orderInvoiceRelationFactory->create();
-                    $relation->setData([
+                    $relation->setData(
+                        [
                         'order_id' => $this->getId(),
                         'invoice_id' => $invoiceId
-                    ]);
+                        ]
+                    );
                     $relation->save();
                 }
             }
@@ -372,20 +377,22 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
 
     /**
      * {@inheritDoc}
-     * @see \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderInterface::getExternalCustomerId()
+     * @see \Dealer4Dealer\SubstituteOrders\Api\Data\OrderInterface::getExternalCustomerId()
      */
-    public function getExternalCustomerId(){
-        return $this->getData(self::EXTERNAL_CUSTOMER_ID);    
+    public function getExternalCustomerId()
+    {
+        return $this->getData(self::EXTERNAL_CUSTOMER_ID);
     }
-    
+
     /**
      * {@inheritDoc}
-     * @see \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderInterface::setExternalCustomerId()
+     * @see \Dealer4Dealer\SubstituteOrders\Api\Data\OrderInterface::setExternalCustomerId()
      */
-    public function setExternalCustomerId($external_customer_id){
+    public function setExternalCustomerId($external_customer_id)
+    {
         return $this->setData(self::EXTERNAL_CUSTOMER_ID, $external_customer_id);
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -526,13 +533,14 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
 
             }
         }
+
         return $this->_shippingAddress;
     }
 
     /**
      * @inheritDoc
      */
-    public function setShippingAddress(\Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderAddressInterface $shipping_address)
+    public function setShippingAddress(\Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface $shipping_address)
     {
         $this->_shippingAddress = $shipping_address;
         return $this;
@@ -550,13 +558,14 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
 
             }
         }
+
         return $this->_billingAddress;
     }
 
     /**
      * @inheritDoc
      */
-    public function setBillingAddress(\Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderAddressInterface $billing_address)
+    public function setBillingAddress(\Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface $billing_address)
     {
         $this->_billingAddress = $billing_address;
         return $this;
@@ -726,12 +735,13 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
      * @param \Magento\Sales\Model\Order\Item $item
      * @return $this
      */
-    public function addItem(\Dealer4Dealer\SubstituteOrders\src\Model\Order\Item $item)
+    public function addItem(\Dealer4Dealer\SubstituteOrders\Model\Order\Item $item)
     {
         $item->setOrder($this);
         if (!$item->getId()) {
             $this->setItems(array_merge($this->getItems(), [$item]));
         }
+
         return $this;
     }
 
@@ -746,6 +756,7 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
                 $items[] = $item;
             }
         }
+
         return $items;
     }
 
@@ -796,6 +807,7 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
                 }
             }
         }
+
         return $this->_additionalData;
     }
 
@@ -830,7 +842,6 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
         return $this->getData('shipping_method');
     }
 
-
     /**
      * @inheritDoc
      */
@@ -855,13 +866,14 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
 
             foreach ($attachments as $file) {
                 $files[] = [
-                    'file'=>$file->getFile(),
+                    'file' => $file->getFile(),
                     'attachment_id' => $file->getAttachmentId()
                 ];
             }
 
             $this->_attachments = $files;
         }
+
         return $this->_attachments;
     }
 }

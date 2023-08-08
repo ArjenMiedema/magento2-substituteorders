@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A Magento 2 module named Dealer4Dealer\SubstituteOrders
  * Copyright (C) 2017 Maikel Martens
@@ -19,14 +20,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Dealer4Dealer\SubstituteOrders\src\Model;
+namespace Dealer4Dealer\SubstituteOrders\Model;
 
-use Dealer4Dealer\SubstituteOrders\src\Api\Data\InvoiceItemInterface;
-use Dealer4Dealer\SubstituteOrders\src\Model\AdditionalData;
+use Dealer4Dealer\SubstituteOrders\Api\Data\InvoiceItemInterface;
+use Dealer4Dealer\SubstituteOrders\Model\AdditionalData;
 
 class InvoiceItem extends \Magento\Framework\Model\AbstractModel implements InvoiceItemInterface
 {
-
     /**
      * @var string
      */
@@ -49,7 +49,7 @@ class InvoiceItem extends \Magento\Framework\Model\AbstractModel implements Invo
      */
     protected function _construct()
     {
-        $this->_init('Dealer4Dealer\SubstituteOrders\src\Model\ResourceModel\InvoiceItem');
+        $this->_init('Dealer4Dealer\SubstituteOrders\Model\ResourceModel\InvoiceItem');
     }
 
     public function save()
@@ -273,6 +273,7 @@ class InvoiceItem extends \Magento\Framework\Model\AbstractModel implements Invo
                 }
             }
         }
+
         return $this->_additionalData;
     }
 

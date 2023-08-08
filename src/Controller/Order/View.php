@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A Magento 2 module named Dealer4Dealer\SubstituteOrders
  * Copyright (C) 2017 Maikel Martens
@@ -19,7 +20,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Dealer4Dealer\SubstituteOrders\src\Controller\Order;
+namespace Dealer4Dealer\SubstituteOrders\Controller\Order;
 
 use Magento\Framework\App\RequestInterface;
 
@@ -81,6 +82,7 @@ class View extends \Magento\Framework\App\Action\Action
         if (!$this->customerSession->authenticate($loginUrl)) {
             $this->_actionFlag->set('', self::FLAG_NO_DISPATCH, true);
         }
+
         return parent::dispatch($request);
     }
 
@@ -144,20 +146,24 @@ class View extends \Magento\Framework\App\Action\Action
         );
 
         $customerSelectionId = $customerId;
-        if ($selectOrderBySetting === 'external_customer_id' && $externalCustomerIdAttribute !== null && $externalCustomerIdAttribute->getValue() !== ''){
+        if ($selectOrderBySetting === 'external_customer_id' && $externalCustomerIdAttribute !== null && $externalCustomerIdAttribute->getValue() !== '') {
             $customerSelectionId = $externalCustomerIdAttribute->getValue();
 
-            $event = new \Magento\Framework\DataObject([
+            $event = new \Magento\Framework\DataObject(
+                [
                 'order' => $order,
                 'customer' => $mCustomer,
                 'hasAccess' => $order->getData($selectOrderBySetting) == $customerSelectionId,
-            ]);
+                ]
+            );
         } else {
-            $event = new \Magento\Framework\DataObject([
+            $event = new \Magento\Framework\DataObject(
+                [
                 'order' => $order,
                 'customer' => $mCustomer,
                 'hasAccess' => $order->getData('magento_customer_id') == $customerSelectionId,
-            ]);
+                ]
+            );
         }
 
         $this->_eventManager->dispatch(

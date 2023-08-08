@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A Magento 2 module named Dealer4Dealer\SubstituteOrders
  * Copyright (C) 2017 Maikel Martens
@@ -22,7 +23,7 @@
 /**
  * Block of links in Order view page
  */
-namespace Dealer4Dealer\SubstituteOrders\src\Block\Order\Info;
+namespace Dealer4Dealer\SubstituteOrders\Block\Order\Info;
 
 use Magento\Customer\Model\Context;
 

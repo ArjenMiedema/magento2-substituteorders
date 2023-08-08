@@ -1,96 +1,39 @@
 <?php
 
+namespace Dealer4Dealer\SubstituteOrders\Api\Data;
 
-namespace Dealer4Dealer\SubstituteOrders\src\Api\Data;
+use Dealer4Dealer\SubstituteOrders\Api\Data\File\ContentInterface;
 
 interface AttachmentInterface
 {
+    public const ENTITY_TYPE = 'entity_type',
+        ENTITY_TYPE_IDENTIFIER = 'entity_type_identifier',
+        FILE = 'file',
+        MAGENTO_CUSTOMER_IDENTIFIER = 'magento_customer_identifier',
+        ATTACHMENT_ID = 'attachment_id',
+        FILE_CONTENT = 'file_content';
 
-    const ENTITY_TYPE = 'entity_type';
-    const ENTITY_TYPE_IDENTIFIER = 'entity_type_identifier';
-    const FILE = 'file';
-    const MAGENTO_CUSTOMER_IDENTIFIER = 'magento_customer_identifier';
-    const ATTACHEMENT_ID = 'attachment_id';
-    const FILE_CONTENT = 'file_content';
+    public function getAttachmentId(): ?int;
 
+    public function setAttachmentId(int $attachmentId): self;
 
-    /**
-     * Get attachment_id
-     * @return string|null
-     */
-    public function getAttachmentId();
+    public function getMagentoCustomerIdentifier(): ?int;
 
-    /**
-     * Set attachment_id
-     * @param string $attachment_id
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\AttachmentInterface
-     */
-    public function setAttachmentId($attachmentId);
+    public function setMagentoCustomerIdentifier(int $customerId): self;
 
-    /**
-     * Get magento_customer_identifier
-     * @return string|null
-     */
-    public function getMagentoCustomerIdentifier();
+    public function getFile(): ?string;
 
-    /**
-     * Set magento_customer_identifier
-     * @param string $magento_customer_identifier
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\AttachmentInterface
-     */
-    public function setMagentoCustomerIdentifier($magento_customer_identifier);
+    public function setFile(string $file);
 
-    /**
-     * Get file
-     * @return string|null
-     */
-    public function getFile();
+    public function getEntityType(): ?string;
 
-    /**
-     * Set file
-     * @param string $file
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\AttachmentInterface
-     */
-    public function setFile($file);
+    public function setEntityType(string $entityType): self;
 
-    /**
-     * Get type
-     * @return string|null
-     */
-    public function getEntityType();
+    public function getEntityTypeIdentifier(): ?string;
 
-    /**
-     * Set type
-     * @param string $entity_type
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\AttachmentInterface
-     */
-    public function setEntityType($entity_type);
+    public function setEntityTypeIdentifier(string $identifier): self;
 
-    /**
-     * Get type
-     * @return string|null
-     */
-    public function getEntityTypeIdentifier();
+    public function getFileContent(): ?ContentInterface;
 
-    /**
-     * Set type
-     * @param string $entity_type_identifier
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\AttachmentInterface
-     */
-    public function setEntityTypeIdentifier($entity_type_identifier);
-
-    /**
-     * Return file content
-     *
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\File\ContentInterface|null
-     */
-    public function getFileContent();
-
-    /**
-     * Set file content
-     *
-     * @param \Dealer4Dealer\SubstituteOrders\src\Api\Data\File\ContentInterface $fileContent
-     * @return $this
-     */
-    public function setFileContent(\Dealer4Dealer\SubstituteOrders\src\Api\Data\File\ContentInterface $fileContent = null);
+    public function setFileContent(?ContentInterface $fileContent = null): self;
 }

@@ -1,11 +1,9 @@
 <?php
 
-
-namespace Dealer4Dealer\SubstituteOrders\src\Model\ResourceModel;
+namespace Dealer4Dealer\SubstituteOrders\Model\ResourceModel;
 
 class Attachment extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
-
     /**
      * Define resource model
      *

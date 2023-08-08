@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A Magento 2 module named Dealer4Dealer\SubstituteOrders
  * Copyright (C) 2017 Maikel Martens
@@ -19,7 +20,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Dealer4Dealer\SubstituteOrders\src\Block\Order;
+namespace Dealer4Dealer\SubstituteOrders\Block\Order;
 
 use function Dealer4Dealer\SubstituteOrders\Block\Order\__;
 
@@ -28,7 +29,6 @@ use function Dealer4Dealer\SubstituteOrders\Block\Order\__;
  */
 class History extends \Magento\Framework\View\Element\Template
 {
-
     const DEFAULT_PAGE_SIZE = 10;
 
     /** @var string */
@@ -73,7 +73,7 @@ class History extends \Magento\Framework\View\Element\Template
                 'dealer4dealer.orders.pager'
             );
 
-            $pager->setAvailableLimit([10=>10,15=>15,20=>20])
+            $pager->setAvailableLimit([10 => 10, 15 => 15, 20 => 20])
                 ->setShowPerPage(true)
                 ->setCollection($this->getOrderCollection());
 
@@ -88,7 +88,7 @@ class History extends \Magento\Framework\View\Element\Template
         $magentoCustomerId = $this->customerSession->getCustomer()->getid();
         $magentoCustomer = $this->_customerRepository->getById($magentoCustomerId);
 
-        /* @var $collection \Dealer4Dealer\SubstituteOrders\src\Model\ResourceModel\Order\Collection */
+        /* @var $collection \Dealer4Dealer\SubstituteOrders\Model\ResourceModel\Order\Collection */
         $collection = $this->orderCollectionFactory->create();
 
         if ($this->getRequest()->getParam('date_from')) {
@@ -127,10 +127,10 @@ class History extends \Magento\Framework\View\Element\Template
         $selectOrderBySetting = $this->_scopeConfig->getValue(
             'substitute/general/select_orders_by',
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
-            );
+        );
 
         $customerSelectionId = $magentoCustomerId;
-        if ($selectOrderBySetting === 'external_customer_id' && $externalCustomerIdAttribute !== null && $externalCustomerIdAttribute->getValue() !== ''){
+        if ($selectOrderBySetting === 'external_customer_id' && $externalCustomerIdAttribute !== null && $externalCustomerIdAttribute->getValue() !== '') {
             $customerSelectionId = $externalCustomerIdAttribute->getValue();
             $collection->addFieldToFilter($selectOrderBySetting, $customerSelectionId);
         } else {

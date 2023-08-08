@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A Magento 2 module named Dealer4Dealer\SubstituteOrders
  * Copyright (C) 2017 Maikel Martens
@@ -19,18 +20,18 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Dealer4Dealer\SubstituteOrders\src\Model;
+namespace Dealer4Dealer\SubstituteOrders\Model;
 
 use Dealer4Dealer\SubstituteOrders\Model\InvoiceFactory;
 use Dealer4Dealer\SubstituteOrders\Model\InvoiceItemFactory;
 use Dealer4Dealer\SubstituteOrders\Model\OrderAddressFactory;
-use Dealer4Dealer\SubstituteOrders\src\Model\Invoice;
+use Dealer4Dealer\SubstituteOrders\Model\Invoice;
 use Magento\Framework\Exception\NoSuchEntityException;
+
 use function Dealer4Dealer\SubstituteOrders\Model\__;
 
-class InvoiceManagement implements \Dealer4Dealer\SubstituteOrders\src\Api\InvoiceManagementInterface
+class InvoiceManagement implements \Dealer4Dealer\SubstituteOrders\Api\InvoiceManagementInterface
 {
-
     /**
      * @var InvoiceFactory
      */
@@ -60,12 +61,12 @@ class InvoiceManagement implements \Dealer4Dealer\SubstituteOrders\src\Api\Invoi
     protected $orderFactory;
 
     public function __construct(
-        \Dealer4Dealer\SubstituteOrders\Model\InvoiceFactory           $invoiceFactory,
-        \Dealer4Dealer\SubstituteOrders\Model\OrderAddressFactory      $addressFactory,
-        \Dealer4Dealer\SubstituteOrders\Model\InvoiceItemFactory       $invoiceItemFactory,
-        \Dealer4Dealer\SubstituteOrders\Model\OrderFactory             $orderFactory,
-        \Dealer4Dealer\SubstituteOrders\src\Model\AttachmentRepository $attachmentRepository,
-        \Dealer4Dealer\SubstituteOrders\src\Model\InvoiceRepository    $invoiceRepository
+        \Dealer4Dealer\SubstituteOrders\Model\InvoiceFactory $invoiceFactory,
+        \Dealer4Dealer\SubstituteOrders\Model\OrderAddressFactory $addressFactory,
+        \Dealer4Dealer\SubstituteOrders\Model\InvoiceItemFactory $invoiceItemFactory,
+        \Dealer4Dealer\SubstituteOrders\Model\OrderFactory $orderFactory,
+        \Dealer4Dealer\SubstituteOrders\Model\AttachmentRepository $attachmentRepository,
+        \Dealer4Dealer\SubstituteOrders\Model\InvoiceRepository $invoiceRepository
     ) {
         $this->invoiceFactory = $invoiceFactory;
         $this->addressFactory = $addressFactory;

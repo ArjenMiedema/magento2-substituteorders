@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A Magento 2 module named Dealer4Dealer\SubstituteOrders
  * Copyright (C) 2017 Maikel Martens
@@ -19,9 +20,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Dealer4Dealer\SubstituteOrders\src\Block\Order;
+namespace Dealer4Dealer\SubstituteOrders\Block\Order;
 
 use Magento\Sales\Model\Order;
+
 use function Dealer4Dealer\SubstituteOrders\Block\Order\__;
 
 class Totals extends \Magento\Framework\View\Element\Template
@@ -75,6 +77,7 @@ class Totals extends \Magento\Framework\View\Element\Template
                 $child->initTotals();
             }
         }
+
         return parent::_beforeToHtml();
     }
 
@@ -145,6 +148,7 @@ class Totals extends \Magento\Framework\View\Element\Template
             } else {
                 $discountLabel = __('Discount');
             }
+
             $this->_totals['discount'] = new \Magento\Framework\DataObject(
                 [
                     'code' => 'discount',
@@ -178,6 +182,7 @@ class Totals extends \Magento\Framework\View\Element\Template
                 ]
             );
         }
+
         return $this;
     }
 
@@ -200,11 +205,13 @@ class Totals extends \Magento\Framework\View\Element\Template
                     $totals[$total->getCode()] = $total;
                 }
             }
+
             if (!$added) {
                 $last = array_pop($totals);
                 $totals[$total->getCode()] = $total;
                 $totals[$last->getCode()] = $last;
             }
+
             $this->_totals = $totals;
         } elseif ($after == 'last') {
             $this->_totals[$total->getCode()] = $total;
@@ -216,6 +223,7 @@ class Totals extends \Magento\Framework\View\Element\Template
             $this->_totals[$total->getCode()] = $total;
             $this->_totals[$last->getCode()] = $last;
         }
+
         return $this;
     }
 
@@ -232,6 +240,7 @@ class Totals extends \Magento\Framework\View\Element\Template
             if (!is_array($before)) {
                 $before = [$before];
             }
+
             foreach ($before as $beforeTotals) {
                 if (isset($this->_totals[$beforeTotals])) {
                     $totals = [];
@@ -239,13 +248,16 @@ class Totals extends \Magento\Framework\View\Element\Template
                         if ($code == $beforeTotals) {
                             $totals[$total->getCode()] = $total;
                         }
+
                         $totals[$code] = $item;
                     }
+
                     $this->_totals = $totals;
                     return $this;
                 }
             }
         }
+
         $totals = [];
         $first = array_shift($this->_totals);
         $totals[$first->getCode()] = $first;
@@ -253,6 +265,7 @@ class Totals extends \Magento\Framework\View\Element\Template
         foreach ($this->_totals as $code => $item) {
             $totals[$code] = $item;
         }
+
         $this->_totals = $totals;
         return $this;
     }
@@ -268,6 +281,7 @@ class Totals extends \Magento\Framework\View\Element\Template
         if (isset($this->_totals[$code])) {
             return $this->_totals[$code];
         }
+
         return false;
     }
 
@@ -320,6 +334,7 @@ class Totals extends \Magento\Framework\View\Element\Template
                 }
             }
         }
+
         return $totals;
     }
 
@@ -334,6 +349,7 @@ class Totals extends \Magento\Framework\View\Element\Template
         if (!$total->getIsFormated()) {
             return $this->getOrder()->formatPrice($total->getValue());
         }
+
         return $total->getValue();
     }
 }

@@ -6,7 +6,7 @@
 
 // @codingStandardsIgnoreFile
 
-namespace Dealer4Dealer\SubstituteOrders\src\Block\Order\Item\Renderer;
+namespace Dealer4Dealer\SubstituteOrders\Block\Order\Item\Renderer;
 
 use Magento\Sales\Model\Order\CreditMemo\Item as CreditMemoItem;
 use Magento\Sales\Model\Order\Invoice\Item as InvoiceItem;
@@ -86,7 +86,7 @@ class DefaultRenderer extends \Magento\Framework\View\Element\Template
      */
     public function getOrderItem()
     {
-        if ($this->getItem() instanceof \Dealer4Dealer\SubstituteOrders\src\Model\Order\Item) {
+        if ($this->getItem() instanceof \Dealer4Dealer\SubstituteOrders\Model\Order\Item) {
             return $this->getItem();
         } else {
             return $this->getItem()->getOrderItem();

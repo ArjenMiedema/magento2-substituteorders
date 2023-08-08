@@ -1,9 +1,11 @@
 <?php
+
 /**
  * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-namespace Dealer4Dealer\SubstituteOrders\src\Block\Order;
+
+namespace Dealer4Dealer\SubstituteOrders\Block\Order;
 
 /**
  * Sales order link
@@ -58,12 +60,14 @@ class Link extends \Magento\Framework\View\Element\Html\Link\Current
      */
     protected function _toHtml()
     {
-        if ($this->hasKey()
+        if (
+            $this->hasKey()
             && method_exists($this->getOrder(), 'has' . $this->getKey())
             && !$this->getOrder()->{'has' . $this->getKey()}()
         ) {
             return '';
         }
+
         return parent::_toHtml();
     }
 }

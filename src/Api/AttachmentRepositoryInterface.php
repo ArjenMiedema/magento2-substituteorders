@@ -1,70 +1,60 @@
 <?php
 
+declare(strict_types=1);
 
-namespace Dealer4Dealer\SubstituteOrders\src\Api;
+namespace Dealer4Dealer\SubstituteOrders\Api;
 
 use Magento\Framework\Api\SearchCriteriaInterface;
+use Dealer4Dealer\SubstituteOrders\Api\Data\AttachmentInterface;
+use Dealer4Dealer\SubstituteOrders\Api\Data\AttachmentSearchResultsInterface;
 
 interface AttachmentRepositoryInterface
 {
-
-
     /**
-     * Save Attachment
-     * @param \Dealer4Dealer\SubstituteOrders\src\Api\Data\AttachmentInterface $attachment
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\AttachmentInterface
-     * @throws \Magento\Framework\Exception\LocalizedException
+     * @param AttachmentInterface $attachment
+     *
+     * @return AttachmentInterface
      */
-    public function save(
-        \Dealer4Dealer\SubstituteOrders\src\Api\Data\AttachmentInterface $attachment
-    );
+    public function save(AttachmentInterface $attachment): AttachmentInterface;
 
     /**
-     * Retrieve Attachment
-     * @param string $attachmentId
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\AttachmentInterface
-     * @throws \Magento\Framework\Exception\LocalizedException
+     * @param int $attachmentId
+     *
+     * @return AttachmentInterface
      */
-    public function getById($attachmentId);
+    public function getById(int $attachmentId): AttachmentInterface;
 
     /**
-     * Retrieve Attachment matching the specified criteria.
-     * @param \Magento\Framework\Api\SearchCriteriaInterface $searchCriteria
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\AttachmentSearchResultsInterface
-     * @throws \Magento\Framework\Exception\LocalizedException
+     * @param SearchCriteriaInterface $searchCriteria
+     *
+     * @return AttachmentSearchResultsInterface
      */
-    public function getList(
-        \Magento\Framework\Api\SearchCriteriaInterface $searchCriteria
-    );
+    public function getList(SearchCriteriaInterface $searchCriteria): AttachmentSearchResultsInterface;
 
     /**
-     * Delete Attachment
-     * @param \Dealer4Dealer\SubstituteOrders\src\Api\Data\AttachmentInterface $attachment
-     * @return bool true on success
-     * @throws \Magento\Framework\Exception\LocalizedException
+     * @param AttachmentInterface $attachment
+     *
+     * @return bool
      */
-    public function delete(
-        \Dealer4Dealer\SubstituteOrders\src\Api\Data\AttachmentInterface $attachment
-    );
+    public function delete(AttachmentInterface $attachment): bool;
 
     /**
-     * Delete Attachment by ID
-     * @param string $attachmentId
-     * @return bool true on success
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
-     * @throws \Magento\Framework\Exception\LocalizedException
+     * @param int $attachmentId
+     *
+     * @return bool
      */
-    public function deleteById($attachmentId);
+    public function deleteById(int $attachmentId): bool;
 
     /**
-     * Retrieve Shipments for given order.
      * @param string $entityTypeIdentifier
+     * @param string $magentoCustomerIdentifier
      * @param string $entityType
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\AttachmentSearchResultsInterface
+     *
+     * @return AttachmentSearchResultsInterface
      */
     public function getAttachmentsByEntityTypeIdentifier(
-        $entityTypeIdentifier,
-        $magentoCustomerIdentifier,
-        $entityType = 'order'
-    );
+        string $entityTypeIdentifier,
+        string $magentoCustomerIdentifier,
+        string $entityType
+    ): AttachmentSearchResultsInterface;
 }

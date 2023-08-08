@@ -20,7 +20,7 @@
  *
  * @codingStandardsIgnoreFile
  */
-/* @var $block \Dealer4Dealer\SubstituteOrders\src\Block\Order\History */
+/* @var $block \Dealer4Dealer\SubstituteOrders\Block\Order\History */
 
 ?>
 <?php $_orders = $block->getOrderCollection(); ?>
@@ -41,7 +41,7 @@
                 </tr>
             </thead>
             <tbody>
-                <?php /* @var $_order \Dealer4Dealer\SubstituteOrders\src\Model\Order */ foreach ($_orders as $_order): ?>
+                <?php /* @var $_order \Dealer4Dealer\SubstituteOrders\Model\Order */ foreach ($_orders as $_order): ?>
                     <tr>
                         <td data-th="<?php echo $block->escapeHtml(__('Order #')) ?>" class="col id">
                             <span><?php /* @escapeNotVerified */ echo $_order->getRealOrderId(); ?></span>

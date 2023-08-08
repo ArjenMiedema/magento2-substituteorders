@@ -7,7 +7,7 @@
 // @codingStandardsIgnoreFile
 
 ?>
-<?php /** @var  $block \Dealer4Dealer\SubstituteOrders\src\Block\Order\Shipment\Items */ ?>
+<?php /** @var  $block \Dealer4Dealer\SubstituteOrders\Block\Order\Shipment\Items */ ?>
 <?php $_order = $block->getOrder() ?>
 
 <div class="actions-toolbar">
@@ -17,7 +17,7 @@
 </div>
 
 <?php if(count($_order->getShipmentCollection()) > 0): ?>
-    <?php /** @var $_shipment \Dealer4Dealer\SubstituteOrders\src\Model\Shipment */ ?>
+    <?php /** @var $_shipment \Dealer4Dealer\SubstituteOrders\Model\Shipment */ ?>
     <?php foreach ($_order->getShipmentCollection() as $_shipment): ?>
         <div class="order-title">
             <strong>

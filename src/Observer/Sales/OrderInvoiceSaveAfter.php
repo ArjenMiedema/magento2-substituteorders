@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A Magento 2 module named Dealer4Dealer\SubstituteOrders
  * Copyright (C) 2017 Maikel Martens
@@ -19,13 +20,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Dealer4Dealer\SubstituteOrders\src\Observer\Sales;
+namespace Dealer4Dealer\SubstituteOrders\Observer\Sales;
 
 use Magento\Framework\Exception\LocalizedException;
 
 class OrderInvoiceSaveAfter implements \Magento\Framework\Event\ObserverInterface
 {
-
     /**
      * @var \Psr\Log\LoggerInterface
      */
@@ -47,7 +47,7 @@ class OrderInvoiceSaveAfter implements \Magento\Framework\Event\ObserverInterfac
     protected $invoiceItemFactory;
 
     /**
-     * @var \Dealer4Dealer\SubstituteOrders\src\Api\InvoiceRepositoryInterface
+     * @var \Dealer4Dealer\SubstituteOrders\Api\InvoiceRepositoryInterface
      */
     protected $invoiceRepository;
 
@@ -57,12 +57,12 @@ class OrderInvoiceSaveAfter implements \Magento\Framework\Event\ObserverInterfac
     protected $orderFactory;
 
     public function __construct(
-        \Psr\Log\LoggerInterface                                           $logger,
-        \Dealer4Dealer\SubstituteOrders\Model\InvoiceFactory               $invoiceFactory,
-        \Dealer4Dealer\SubstituteOrders\Model\OrderAddressFactory          $addressFactory,
-        \Dealer4Dealer\SubstituteOrders\Model\InvoiceItemFactory           $invoiceItemFactory,
-        \Dealer4Dealer\SubstituteOrders\src\Api\InvoiceRepositoryInterface $invoiceRepo,
-        \Dealer4Dealer\SubstituteOrders\Model\OrderFactory                 $orderFactory
+        \Psr\Log\LoggerInterface $logger,
+        \Dealer4Dealer\SubstituteOrders\Model\InvoiceFactory $invoiceFactory,
+        \Dealer4Dealer\SubstituteOrders\Model\OrderAddressFactory $addressFactory,
+        \Dealer4Dealer\SubstituteOrders\Model\InvoiceItemFactory $invoiceItemFactory,
+        \Dealer4Dealer\SubstituteOrders\Api\InvoiceRepositoryInterface $invoiceRepo,
+        \Dealer4Dealer\SubstituteOrders\Model\OrderFactory $orderFactory
     ) {
         $this->logger = $logger;
 
@@ -87,7 +87,7 @@ class OrderInvoiceSaveAfter implements \Magento\Framework\Event\ObserverInterfac
         $invoice = $observer->getInvoice();
 
         try {
-            /** @var $substitute \Dealer4Dealer\SubstituteOrders\src\Api\Data\InvoiceInterface */
+            /** @var $substitute \Dealer4Dealer\SubstituteOrders\Api\Data\InvoiceInterface */
             $substitute = $this->invoiceRepository->getByMagentoInvoiceId($invoice->getId());
         } catch (LocalizedException $e) {
             $substitute = $this->invoiceFactory->create();
@@ -102,7 +102,7 @@ class OrderInvoiceSaveAfter implements \Magento\Framework\Event\ObserverInterfac
         $substitute->setBaseDiscountAmount($invoice->getBaseDiscountAmount());
         $substitute->setBaseShippingAmount($invoice->getBaseShippingAmount());
         $substitute->setBaseSubtotal($invoice->getBaseSubtotal());
-        $substitute->setBaseGrandtotal($invoice->getBaseGrandTotal());
+        $substitute->setBaseGrandTotal($invoice->getBaseGrandTotal());
         $substitute->setTaxAmount($invoice->getTaxAmount());
         $substitute->setDiscountAmount($invoice->getDiscountAmount());
         $substitute->setShippingAmount($invoice->getShippingAmount());

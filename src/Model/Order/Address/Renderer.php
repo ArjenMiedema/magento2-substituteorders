@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A Magento 2 module named Dealer4Dealer\SubstituteOrders
  * Copyright (C) 2017 Maikel Martens
@@ -19,7 +20,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Dealer4Dealer\SubstituteOrders\src\Model\Order\Address;
+namespace Dealer4Dealer\SubstituteOrders\Model\Order\Address;
 
 use Magento\Customer\Model\Address\Config as AddressConfig;
 use Magento\Framework\Event\ManagerInterface as EventManager;
@@ -61,7 +62,7 @@ class Renderer
      * @param string $type
      * @return string|null
      */
-    public function format(\Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderAddressInterface $address, $type)
+    public function format(\Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface $address, $type)
     {
         /* Fix to show address */
         $address->setData('country_id', $address->getCountry());
@@ -70,6 +71,7 @@ class Renderer
         if (!$formatType || !$formatType->getRenderer()) {
             return null;
         }
+
         $this->eventManager->dispatch('customer_address_format', ['type' => $formatType, 'address' => $address]);
         return $formatType->getRenderer()->renderArray($address->getData());
     }

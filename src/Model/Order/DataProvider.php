@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A Magento 2 module named Dealer4Dealer\SubstituteOrders
  * Copyright (C) 2017 Maikel Martens
@@ -19,14 +20,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Dealer4Dealer\SubstituteOrders\src\Model\Order;
+namespace Dealer4Dealer\SubstituteOrders\Model\Order;
 
 use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\Order\CollectionFactory;
 use Magento\Framework\App\Request\DataPersistorInterface;
 
 class DataProvider extends \Magento\Ui\DataProvider\AbstractDataProvider
 {
-
     protected $collection;
 
     protected $dataPersistor;
@@ -68,10 +68,12 @@ class DataProvider extends \Magento\Ui\DataProvider\AbstractDataProvider
         if (isset($this->loadedData)) {
             return $this->loadedData;
         }
+
         $items = $this->collection->getItems();
         foreach ($items as $model) {
             $this->loadedData[$model->getId()] = $model->getData();
         }
+
         $data = $this->dataPersistor->get('dealer4dealer_substituteorders_order');
 
         if (!empty($data)) {

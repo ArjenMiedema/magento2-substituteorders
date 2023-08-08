@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A Magento 2 module named Dealer4Dealer\SubstituteOrders
  * Copyright (C) 2017 Maikel Martens
@@ -19,9 +20,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Dealer4Dealer\SubstituteOrders\src\Model;
+namespace Dealer4Dealer\SubstituteOrders\Model;
 
-use Dealer4Dealer\SubstituteOrders\src\Api\InvoiceItemRepositoryInterface;
+use Dealer4Dealer\SubstituteOrders\Api\InvoiceItemRepositoryInterface;
 use Dealer4Dealer\SubstituteOrders\Api\Data\InvoiceItemSearchResultsInterfaceFactory;
 use Dealer4Dealer\SubstituteOrders\Api\Data\InvoiceItemInterfaceFactory;
 use Magento\Framework\Api\DataObjectHelper;
@@ -32,15 +33,15 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\Reflection\DataObjectProcessor;
 use Dealer4Dealer\SubstituteOrders\Model\InvoiceItemFactory;
-use Dealer4Dealer\SubstituteOrders\src\Model\ResourceModel\InvoiceItem as ResourceInvoiceItem;
+use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\InvoiceItem as ResourceInvoiceItem;
 use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\InvoiceItem\CollectionFactory as InvoiceItemCollectionFactory;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Eav\Model\Entity\Collection\AbstractCollection;
+
 use function Dealer4Dealer\SubstituteOrders\Model\__;
 
 class InvoiceItemRepository implements InvoiceitemRepositoryInterface
 {
-
     /**
      * @var ResourceInvoiceItem
      */
@@ -90,7 +91,6 @@ class InvoiceItemRepository implements InvoiceitemRepositoryInterface
      */
     private $sortOrderBuilder;
 
-
     /**
      * @param ResourceInvoiceItem $resource
      * @param InvoiceItemFactory $invoiceItemFactory
@@ -113,7 +113,7 @@ class InvoiceItemRepository implements InvoiceitemRepositoryInterface
         \Magento\Framework\Api\SearchCriteriaBuilder $searchCriteriaBuilder,
         SortOrderBuilder $sortOrderBuilder
     ) {
-    
+
         $this->resource = $resource;
         $this->invoiceItemFactory = $invoiceItemFactory;
         $this->invoiceItemCollectionFactory = $invoiceItemCollectionFactory;
@@ -130,16 +130,19 @@ class InvoiceItemRepository implements InvoiceitemRepositoryInterface
      * {@inheritdoc}
      */
     public function save(
-        \Dealer4Dealer\SubstituteOrders\src\Api\Data\InvoiceItemInterface $invoiceItem
+        \Dealer4Dealer\SubstituteOrders\Api\Data\InvoiceItemInterface $invoiceItem
     ) {
         try {
             $this->resource->save($invoiceItem);
         } catch (\Exception $exception) {
-            throw new CouldNotSaveException(__(
-                'Could not save the invoiceItem: %1',
-                $exception->getMessage()
-            ));
+            throw new CouldNotSaveException(
+                __(
+                    'Could not save the invoiceItem: %1',
+                    $exception->getMessage()
+                )
+            );
         }
+
         return $invoiceItem;
     }
 
@@ -153,6 +156,7 @@ class InvoiceItemRepository implements InvoiceitemRepositoryInterface
         if (!$invoiceItem->getId()) {
             throw new NoSuchEntityException(__('Invoice_item with id "%1" does not exist.', $invoiceItemId));
         }
+
         return $invoiceItem;
     }
 
@@ -162,7 +166,7 @@ class InvoiceItemRepository implements InvoiceitemRepositoryInterface
     public function getList(
         \Magento\Framework\Api\SearchCriteriaInterface $criteria
     ) {
-    
+
         $searchResults = $this->searchResultsFactory->create();
         $searchResults->setSearchCriteria($criteria);
 
@@ -173,6 +177,7 @@ class InvoiceItemRepository implements InvoiceitemRepositoryInterface
                 $collection->addFieldToFilter($filter->getField(), [$condition => $filter->getValue()]);
             }
         }
+
         $searchResults->setTotalCount($collection->getSize());
         $sortOrders = $criteria->getSortOrders();
         if ($sortOrders) {
@@ -184,6 +189,7 @@ class InvoiceItemRepository implements InvoiceitemRepositoryInterface
                 );
             }
         }
+
         $collection->setCurPage($criteria->getCurrentPage());
         $collection->setPageSize($criteria->getPageSize());
         $items = [];
@@ -193,11 +199,12 @@ class InvoiceItemRepository implements InvoiceitemRepositoryInterface
             $this->dataObjectHelper->populateWithArray(
                 $invoiceItemData,
                 $invoiceItemModel->getData(),
-                'Dealer4Dealer\SubstituteOrders\src\Api\Data\InvoiceItemInterface'
+                'Dealer4Dealer\SubstituteOrders\Api\Data\InvoiceItemInterface'
             );
 
             $items[] = $invoiceItemData;
         }
+
         $searchResults->setItems($items);
         return $searchResults;
     }
@@ -206,17 +213,20 @@ class InvoiceItemRepository implements InvoiceitemRepositoryInterface
      * {@inheritdoc}
      */
     public function delete(
-        \Dealer4Dealer\SubstituteOrders\src\Api\Data\InvoiceItemInterface $invoiceItem
+        \Dealer4Dealer\SubstituteOrders\Api\Data\InvoiceItemInterface $invoiceItem
     ) {
-    
+
         try {
             $this->resource->delete($invoiceItem);
         } catch (\Exception $exception) {
-            throw new CouldNotDeleteException(__(
-                'Could not delete the Invoice_item: %1',
-                $exception->getMessage()
-            ));
+            throw new CouldNotDeleteException(
+                __(
+                    'Could not delete the Invoice_item: %1',
+                    $exception->getMessage()
+                )
+            );
         }
+
         return true;
     }
 

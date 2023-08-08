@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A Magento 2 module named Dealer4Dealer\SubstituteOrders
  * Copyright (C) 2017 Maikel Martens
@@ -19,20 +20,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Dealer4Dealer\SubstituteOrders\src\Api\Data;
+namespace Dealer4Dealer\SubstituteOrders\Api\Data;
 
 interface OrderSearchResultsInterface extends \Magento\Framework\Api\SearchResultsInterface
 {
     /**
-     * Get Order list.
-     * @return \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderInterface[]
+     * @return OrderInterface[]
      */
-    public function getItems();
+    public function getItems(): array;
 
     /**
-     * Set magento_order_id list.
-     * @param \Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderInterface[] $items
-     * @return $this
+     * @param OrderInterface[] $items
      */
-    public function setItems(array $items);
+    public function setItems(array $items): self;
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A Magento 2 module named Dealer4Dealer\SubstituteOrders
  * Copyright (C) 2017 Maikel Martens
@@ -19,14 +20,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Dealer4Dealer\SubstituteOrders\src\Controller\Order;
+namespace Dealer4Dealer\SubstituteOrders\Controller\Order;
 
 use Magento\Framework\App\RequestInterface;
+
 use function Dealer4Dealer\SubstituteOrders\Controller\Order\__;
 
 class Reorder extends \Magento\Framework\App\Action\Action
 {
-
     /*
      * @var \Magento\Framework\Controller\Result\ForwardFactory
      */
@@ -56,7 +57,6 @@ class Reorder extends \Magento\Framework\App\Action\Action
      * @var \Magento\Sales\Api\OrderRepositoryInterface
      */
     protected $orderRepository;
-
 
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
@@ -89,6 +89,7 @@ class Reorder extends \Magento\Framework\App\Action\Action
         if (!$this->customerSession->authenticate($loginUrl)) {
             $this->_actionFlag->set('', self::FLAG_NO_DISPATCH, true);
         }
+
         return parent::dispatch($request);
     }
 
@@ -105,11 +106,10 @@ class Reorder extends \Magento\Framework\App\Action\Action
         $incrementId = $subOrder->getMagentoOrderId();
 
         $magentoOrderFound = false;
-        try{
+        try {
             $magentoOrder = $this->orderRepository->get($incrementId);
             $magentoOrderFound = true;
-        }
-        catch(\Exception $exception){
+        } catch (\Exception $exception) {
         }
 
         // empty when order from External Platform
@@ -127,13 +127,14 @@ class Reorder extends \Magento\Framework\App\Action\Action
      * @param $incrementId
      * @return
      */
-    public function reorderByOrderItems($subOrder, $incrementId) {
+    public function reorderByOrderItems($subOrder, $incrementId)
+    {
 
         $customer = $this->customerSession->getCustomer();
 
         if ($subOrder && $subOrder->getId() && $this->canReOrder($subOrder, $customer)) {
             $order = $this->orderRepository->get($incrementId);
-            
+
             $errors = [];
             foreach ($order->getItems() as $item) {
                 try {
@@ -144,6 +145,7 @@ class Reorder extends \Magento\Framework\App\Action\Action
                     $errors[] = __("We can\'t add %1 item to your shopping cart right now.", $item->getName());
                 }
             }
+
             $this->cart->save();
             foreach ($errors as $error) {
                 if ($this->customerSession->getUseNotice(true)) {
@@ -167,7 +169,8 @@ class Reorder extends \Magento\Framework\App\Action\Action
      * @param $orderId
      * @return
      */
-    public function reorderByProduct($orderId) {
+    public function reorderByProduct($orderId)
+    {
 
         $customer = $this->customerSession->getCustomer();
         $order = $this->orderFactory->create()->load($orderId);
@@ -176,6 +179,7 @@ class Reorder extends \Magento\Framework\App\Action\Action
             foreach ($order->getItems() as $item) {
                 $itemQty[$item['sku']] = $item['qty'];
             }
+
             $productCollection = $this->getProductCollection($itemQty);
             $errors = [];
             foreach ($productCollection as $product) {
@@ -189,6 +193,7 @@ class Reorder extends \Magento\Framework\App\Action\Action
                     $errors[] = __("We can\'t add %1 item to your shopping cart right now.", $product->getName());
                 }
             }
+
             $this->cart->save();
             foreach ($errors as $error) {
                 if ($this->customerSession->getUseNotice(true)) {
@@ -197,9 +202,11 @@ class Reorder extends \Magento\Framework\App\Action\Action
                     $this->messageManager->addError($error);
                 }
             }
+
             $resultRedirect = $this->resultRedirectFactory->create();
             return $resultRedirect->setPath('checkout/cart');
         }
+
         $resultForward = $this->resultForwardFactory->create();
         return $resultForward->forward('noroute');
     }
@@ -211,11 +218,13 @@ class Reorder extends \Magento\Framework\App\Action\Action
      */
     public function canReOrder($order, $customer)
     {
-        $event = new \Magento\Framework\DataObject([
+        $event = new \Magento\Framework\DataObject(
+            [
             'order' => $order,
             'customer' => $customer,
             'hasAccess' => $order->getData('magento_customer_id') == $customer->getId(),
-        ]);
+            ]
+        );
 
         $this->_eventManager->dispatch(
             'substituteorder_customer_has_order_access',

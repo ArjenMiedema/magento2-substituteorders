@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A Magento 2 module named Dealer4Dealer\SubstituteOrders
  * Copyright (C) 2017 Maikel Martens
@@ -19,13 +20,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Dealer4Dealer\SubstituteOrders\src\Model\Config\Source;
+namespace Dealer4Dealer\SubstituteOrders\Model\Config\Source;
 
 use function Dealer4Dealer\SubstituteOrders\Model\Config\Source\__;
 
 class RealOrderId implements \Magento\Framework\Option\ArrayInterface
 {
-
     public function toOptionArray()
     {
         return [['value' => 'magento', 'label' => __('Magento')], ['value' => 'external', 'label' => __('External')]];

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A Magento 2 module named Dealer4Dealer\SubstituteOrders
  * Copyright (C) 2017 Maikel Martens
@@ -19,7 +20,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Dealer4Dealer\SubstituteOrders\src\Model;
+namespace Dealer4Dealer\SubstituteOrders\Model;
 
 use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\Shipment\CollectionFactory as ShipmentCollectionFactory;
 use Dealer4Dealer\SubstituteOrders\Model\ShipmentFactory;
@@ -30,16 +31,16 @@ use Magento\Framework\Api\SortOrder;
 use Dealer4Dealer\SubstituteOrders\Api\Data\ShipmentSearchResultsInterfaceFactory;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Exception\CouldNotSaveException;
-use Dealer4Dealer\SubstituteOrders\src\Model\ResourceModel\Shipment as ResourceShipment;
+use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\Shipment as ResourceShipment;
 use Magento\Framework\Api\DataObjectHelper;
 use Magento\Framework\Exception\CouldNotDeleteException;
-use Dealer4Dealer\SubstituteOrders\src\Api\ShipmentRepositoryInterface;
+use Dealer4Dealer\SubstituteOrders\Api\ShipmentRepositoryInterface;
 use Magento\Store\Model\StoreManagerInterface;
+
 use function Dealer4Dealer\SubstituteOrders\Model\__;
 
 class ShipmentRepository implements ShipmentRepositoryInterface
 {
-
     /*
      * @var ShipmentFactory
      */
@@ -85,7 +86,6 @@ class ShipmentRepository implements ShipmentRepositoryInterface
      */
     protected $searchCriteriaBuilder;
 
-
     /**
      * @param ResourceShipment $resource
      * @param ShipmentFactory $shipmentFactory
@@ -122,7 +122,7 @@ class ShipmentRepository implements ShipmentRepositoryInterface
      * {@inheritdoc}
      */
     public function save(
-        \Dealer4Dealer\SubstituteOrders\src\Api\Data\ShipmentInterface $shipment
+        \Dealer4Dealer\SubstituteOrders\Api\Data\ShipmentInterface $shipment
     ) {
         /* if (empty($shipment->getStoreId())) {
             $storeId = $this->storeManager->getStore()->getId();
@@ -131,11 +131,14 @@ class ShipmentRepository implements ShipmentRepositoryInterface
         try {
             $this->resource->save($shipment);
         } catch (\Exception $exception) {
-            throw new CouldNotSaveException(__(
-                'Could not save the shipment: %1',
-                $exception->getMessage()
-            ));
+            throw new CouldNotSaveException(
+                __(
+                    'Could not save the shipment: %1',
+                    $exception->getMessage()
+                )
+            );
         }
+
         return $shipment;
     }
 
@@ -149,6 +152,7 @@ class ShipmentRepository implements ShipmentRepositoryInterface
         if (!$shipment->getId()) {
             throw new NoSuchEntityException(__('Shipment with id "%1" does not exist.', $shipmentId));
         }
+
         return $shipment;
     }
 
@@ -159,6 +163,7 @@ class ShipmentRepository implements ShipmentRepositoryInterface
         if (!$shipment->getId()) {
             throw new NoSuchEntityException(__('Shipment with increment Id "%1" does not exist.', $incrementId));
         }
+
         return $shipment;
     }
 
@@ -178,10 +183,12 @@ class ShipmentRepository implements ShipmentRepositoryInterface
                     $collection->addStoreFilter($filter->getValue(), false);
                     continue;
                 }
+
                 $condition = $filter->getConditionType() ?: 'eq';
                 $collection->addFieldToFilter($filter->getField(), [$condition => $filter->getValue()]);
             }
         }
+
         $searchResults->setTotalCount($collection->getSize());
         $sortOrders = $criteria->getSortOrders();
         if ($sortOrders) {
@@ -193,6 +200,7 @@ class ShipmentRepository implements ShipmentRepositoryInterface
                 );
             }
         }
+
         $collection->setCurPage($criteria->getCurrentPage());
         $collection->setPageSize($criteria->getPageSize());
         $items = [];
@@ -202,10 +210,11 @@ class ShipmentRepository implements ShipmentRepositoryInterface
             $this->dataObjectHelper->populateWithArray(
                 $shipmentData,
                 $shipmentModel->getData(),
-                'Dealer4Dealer\SubstituteOrders\src\Api\Data\ShipmentInterface'
+                'Dealer4Dealer\SubstituteOrders\Api\Data\ShipmentInterface'
             );
             $items[] = $shipmentData;
         }
+
         $searchResults->setItems($items);
         return $searchResults;
     }
@@ -214,16 +223,19 @@ class ShipmentRepository implements ShipmentRepositoryInterface
      * {@inheritdoc}
      */
     public function delete(
-        \Dealer4Dealer\SubstituteOrders\src\Api\Data\ShipmentInterface $shipment
+        \Dealer4Dealer\SubstituteOrders\Api\Data\ShipmentInterface $shipment
     ) {
         try {
             $this->resource->delete($shipment);
         } catch (\Exception $exception) {
-            throw new CouldNotDeleteException(__(
-                'Could not delete the Shipment: %1',
-                $exception->getMessage()
-            ));
+            throw new CouldNotDeleteException(
+                __(
+                    'Could not delete the Shipment: %1',
+                    $exception->getMessage()
+                )
+            );
         }
+
         return true;
     }
 
@@ -235,7 +247,7 @@ class ShipmentRepository implements ShipmentRepositoryInterface
         return $this->delete($this->getById($shipmentId));
     }
 
-    public function getShipmentsByOrder(\Dealer4Dealer\SubstituteOrders\src\Api\Data\OrderInterface $order)
+    public function getShipmentsByOrder(\Dealer4Dealer\SubstituteOrders\Api\Data\OrderInterface $order)
     {
         $searchCriteria = $this->searchCriteriaBuilder->addFilter('order_id', $order->getId(), 'eq')->create();
         $results = $this->getList($searchCriteria);

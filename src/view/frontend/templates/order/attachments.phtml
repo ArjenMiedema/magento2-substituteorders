@@ -1,6 +1,6 @@
 <?php
 
-/* @var $block \Dealer4Dealer\SubstituteOrders\src\Block\Order\Attachment */
+/* @var $block \Dealer4Dealer\SubstituteOrders\Block\Order\Attachment */
 $attachments = $block->getAttachments();
 
 ?>
@@ -15,7 +15,7 @@ $attachments = $block->getAttachments();
             </thead>
             <tbody>
                 <?php foreach ($block->getAttachments() as $attachment) : ?>
-                    <?php /* @var $attachment \Dealer4Dealer\SubstituteOrders\src\Model\Attachment */ ?>
+                    <?php /* @var $attachment \Dealer4Dealer\SubstituteOrders\Model\Attachment */ ?>
                     <tr>
                         <td class="col">
                             <a href=" <?php echo $attachment->getUrl(); ?>"><?php echo $attachment->getFileName(); ?></a>

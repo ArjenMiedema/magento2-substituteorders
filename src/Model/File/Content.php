@@ -1,11 +1,13 @@
 <?php
+
 /**
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-namespace Dealer4Dealer\SubstituteOrders\src\Model\File;
 
-use Dealer4Dealer\SubstituteOrders\src\Api\Data\File\ContentInterface;
+namespace Dealer4Dealer\SubstituteOrders\Model\File;
+
+use Dealer4Dealer\SubstituteOrders\Api\Data\File\ContentInterface;
 
 /**
  * @codeCoverageIgnore

@@ -1,5 +1,6 @@
 <?xml version="1.0" ?>
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
 	<acl>
 		<resources>
 			<resource id="Magento_Backend::admin">
@@ -9,12 +10,14 @@
                     <resource id="Dealer4Dealer_SubstituteOrders::Order_update" sortOrder="30" title="Update Order"/>
                     <resource id="Dealer4Dealer_SubstituteOrders::Order_view" sortOrder="40" title="View Order"/>
                 </resource>
+
 				<resource id="Dealer4Dealer_SubstituteOrders::OrderItem" sortOrder="10" title="OrderItem">
 					<resource id="Dealer4Dealer_SubstituteOrders::OrderItem_save" sortOrder="10" title="Save OrderItem"/>
 					<resource id="Dealer4Dealer_SubstituteOrders::OrderItem_delete" sortOrder="20" title="Delete OrderItem"/>
 					<resource id="Dealer4Dealer_SubstituteOrders::OrderItem_update" sortOrder="30" title="Update OrderItem"/>
 					<resource id="Dealer4Dealer_SubstituteOrders::OrderItem_view" sortOrder="40" title="View OrderItem"/>
 				</resource>
+
 				<resource id="Dealer4Dealer_SubstituteOrders::OrderAddress" sortOrder="10" title="OrderAddress">
                     <resource id="Dealer4Dealer_SubstituteOrders::OrderAddress_save" sortOrder="10" title="Save OrderAddress"/>
                     <resource id="Dealer4Dealer_SubstituteOrders::OrderAddress_delete" sortOrder="20" title="Delete OrderAddress"/>
