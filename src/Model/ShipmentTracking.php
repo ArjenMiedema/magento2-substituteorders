@@ -36,7 +36,11 @@ class ShipmentTracking implements ShipmentTrackingInterface
 
     public static function createByArray(array $data): ShipmentTrackingInterface
     {
-        return new ShipmentTracking(@$data['name'], @$data['code'], @$data['url']);
+        return new ShipmentTracking(
+            $data['name'] ?? '',
+            $data['code'] ?? '',
+            $data['url'] ?? ''
+        );
     }
 
     public function getArray(): array

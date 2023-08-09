@@ -5,6 +5,7 @@ namespace Dealer4Dealer\SubstituteOrders\Api;
 use Dealer4Dealer\SubstituteOrders\Api\Data\ShipmentInterface;
 use Dealer4Dealer\SubstituteOrders\Api\Data\ShipmentSearchResultsInterface;
 use Magento\Framework\Api\SearchCriteriaInterface;
+use Magento\Framework\Api\SearchResults;
 
 interface ShipmentManagementInterface
 {
@@ -41,7 +42,7 @@ interface ShipmentManagementInterface
      *
      * @return int
      */
-    public function putShipment(ShipmentInterface $shipment): int;
+    public function putShipment(ShipmentInterface $shipment): ?int;
 
     /**
      * @param int $id
@@ -53,7 +54,7 @@ interface ShipmentManagementInterface
     /**
      * @param SearchCriteriaInterface $searchCriteria
      *
-     * @return ShipmentSearchResultsInterface
+     * @return SearchResults
      */
-    public function getList(SearchCriteriaInterface $searchCriteria): ShipmentSearchResultsInterface;
+    public function getList(SearchCriteriaInterface $searchCriteria): SearchResults;
 }

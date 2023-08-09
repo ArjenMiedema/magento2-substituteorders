@@ -7,6 +7,7 @@ namespace Dealer4Dealer\SubstituteOrders\Api;
 use Dealer4Dealer\SubstituteOrders\Api\Data\OrderInterface;
 use Dealer4Dealer\SubstituteOrders\Api\Data\OrderSearchResultsInterface;
 use Magento\Framework\Api\SearchCriteriaInterface;
+use Magento\Framework\Api\SearchResults;
 
 interface OrderManagementInterface
 {
@@ -62,7 +63,7 @@ interface OrderManagementInterface
     /**
      * @param SearchCriteriaInterface $searchCriteria
      *
-     * @return OrderSearchResultsInterface
+     * @return SearchResults
      */
-    public function getList(SearchCriteriaInterface $searchCriteria): OrderSearchResultsInterface;
+    public function getList(SearchCriteriaInterface $searchCriteria): SearchResults;
 }

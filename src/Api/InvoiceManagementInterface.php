@@ -7,6 +7,7 @@ namespace Dealer4Dealer\SubstituteOrders\Api;
 use Magento\Framework\Api\SearchCriteriaInterface;
 use Dealer4Dealer\SubstituteOrders\Api\Data\InvoiceInterface;
 use Dealer4Dealer\SubstituteOrders\Api\Data\InvoiceSearchResultsInterface;
+use Magento\Framework\Api\SearchResults;
 
 interface InvoiceManagementInterface
 {
@@ -48,28 +49,28 @@ interface InvoiceManagementInterface
     /**
      * @param InvoiceInterface $invoice
      *
-     * @return int
+     * @return int|null
      */
-    public function putInvoice(InvoiceInterface $invoice): int;
-
-    /**
-     * @param InvoiceInterface $invoice
-     *
-     * @return bool
-     */
-    public function deleteInvoice(InvoiceInterface $invoice): bool;
-
-    /**
-     * @param SearchCriteriaInterface $searchCriteria
-     *
-     * @return InvoiceSearchResultsInterface
-     */
-    public function getList(SearchCriteriaInterface $searchCriteria): InvoiceSearchResultsInterface;
+    public function putInvoice(InvoiceInterface $invoice): ?int;
 
     /**
      * @param int $id
      *
-     * @return InvoiceSearchResultsInterface
+     * @return bool
      */
-    public function getInvoicesByOrderIncrementId(int $id): InvoiceSearchResultsInterface;
+    public function deleteInvoice(int $id): bool;
+
+    /**
+     * @param SearchCriteriaInterface $searchCriteria
+     *
+     * @return SearchResults
+     */
+    public function getList(SearchCriteriaInterface $searchCriteria): SearchResults;
+
+    /**
+     * @param int $id
+     *
+     * @return SearchResults
+     */
+    public function getInvoicesByOrderIncrementId(int $id): SearchResults;
 }

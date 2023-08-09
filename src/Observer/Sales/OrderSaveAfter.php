@@ -47,9 +47,8 @@ class OrderSaveAfter implements ObserverInterface
     ) {
     }
 
-    public function execute(
-        Observer $observer
-    ): void {
+    public function execute(Observer $observer): void
+    {
         /** @var Order $order */
         $order = $observer->getData('order');
         try {

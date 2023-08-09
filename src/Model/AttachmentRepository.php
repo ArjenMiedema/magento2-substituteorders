@@ -11,6 +11,7 @@ use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\Attachment\Collection;
 use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\Attachment\CollectionFactory;
 use Exception;
 use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface;
+use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Api\SearchCriteriaInterface;
 use Magento\Framework\Api\SearchResults;
 use Magento\Framework\Exception\CouldNotSaveException;
@@ -32,7 +33,8 @@ class AttachmentRepository implements AttachmentRepositoryInterface
         private readonly ContentValidator $contentValidator,
         private readonly CollectionFactory $collectionFactory,
         private readonly AttachmentSearchResultsInterfaceFactory $searchResultFactory,
-        private readonly CollectionProcessorInterface $collectionProcessor
+        private readonly CollectionProcessorInterface $collectionProcessor,
+        private readonly SearchCriteriaBuilder $searchCriteriaBuilder
     ) {
     }
 
@@ -93,7 +95,6 @@ class AttachmentRepository implements AttachmentRepositoryInterface
         $searchResults->setItems($collection->getItems());
 
         return $searchResults;
-
     }
 
     /**
@@ -169,7 +170,7 @@ class AttachmentRepository implements AttachmentRepositoryInterface
         int $entityTypeIdentifier,
         int $magentoCustomerIdentifier,
         string $entityType = 'order'
-    ) {
+    ): array {
         return $this->getList(
             $this->searchCriteriaBuilder
                 ->addFilter(AttachmentInterface::ENTITY_TYPE_IDENTIFIER, $entityTypeIdentifier)

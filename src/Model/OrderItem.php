@@ -73,12 +73,12 @@ class OrderItem extends AbstractModel implements OrderItemInterface
         return $this->getData(self::ORDERITEM_ID);
     }
 
-    public function setOrderitemId(int $orderItemId):self
+    public function setOrderitemId(int $orderItemId): self
     {
         return $this->setData(self::ORDERITEM_ID, $orderItemId);
     }
 
-    public function setOrderId(int $orderId):self
+    public function setOrderId(int $orderId): self
     {
         return $this->setData(self::ORDER_ID, $orderId);
     }
@@ -88,7 +88,7 @@ class OrderItem extends AbstractModel implements OrderItemInterface
         return $this->getData(self::ORDER_ID);
     }
 
-    public function setInvoiceId(int $invoiceId):self
+    public function setInvoiceId(int $invoiceId): self
     {
         return $this->setData(self::INVOICE_ID, $invoiceId);
     }
@@ -97,12 +97,12 @@ class OrderItem extends AbstractModel implements OrderItemInterface
     {
         return $this->getData(self::INVOICE_ID);
     }
-    
+
     public function getName(): string
     {
         return $this->getData(self::NAME);
     }
-    
+
     public function setName(string $name): self
     {
         return $this->setData(self::NAME, $name);

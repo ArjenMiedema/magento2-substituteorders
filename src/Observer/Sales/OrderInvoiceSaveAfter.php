@@ -18,7 +18,6 @@ use Psr\Log\LoggerInterface;
 
 class OrderInvoiceSaveAfter implements ObserverInterface
 {
-
     public function __construct(
         private readonly InvoiceFactory $invoiceFactory,
         private readonly OrderAddressFactory $addressFactory,

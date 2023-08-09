@@ -532,7 +532,6 @@ class Order extends AbstractModel implements OrderInterface
             try {
                 $this->_shippingAddress = $this->addressRepository->getById($this->getData(self::SHIPPING_ADDRESS_ID));
             } catch (\Exception) {
-
             }
         }
 

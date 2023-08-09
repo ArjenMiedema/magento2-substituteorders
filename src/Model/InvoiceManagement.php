@@ -142,14 +142,14 @@ class InvoiceManagement implements InvoiceManagementInterface
 
     public function getList(
         SearchCriteriaInterface $searchCriteria
-    ): InvoiceSearchResultsInterface {
+    ): SearchResults {
         return $this->invoiceRepository->getList($searchCriteria);
     }
 
     /**
      * @throws NoSuchEntityException
      */
-    public function getInvoicesByOrderIncrementId(int $id): InvoiceSearchResultsInterface
+    public function getInvoicesByOrderIncrementId(int $id): SearchResults
     {
         // 1. get order by increment id.
         $order = $this->orderFactory->create();

@@ -44,15 +44,8 @@ class OrderShipmentSaveAfter implements ObserverInterface
     ) {
     }
 
-    /**
-     * Execute observer
-     *
-     * @param Observer $observer
-     * @return void
-     */
-    public function execute(
-        Observer $observer
-    ) {
+    public function execute(Observer $observer): void
+    {
         /* @var $shipment \Magento\Sales\Api\Data\ShipmentInterface */
         $shipment = $observer->getData('shipment');
 

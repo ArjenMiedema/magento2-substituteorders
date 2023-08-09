@@ -26,6 +26,7 @@ use Dealer4Dealer\SubstituteOrders\Api\Data\OrderInterface;
 use Dealer4Dealer\SubstituteOrders\Api\Data\OrderSearchResultsInterface;
 use Dealer4Dealer\SubstituteOrders\Api\OrderManagementInterface;
 use Magento\Framework\Api\SearchCriteriaInterface;
+use Magento\Framework\Api\SearchResults;
 use Magento\Framework\Exception\NoSuchEntityException;
 
 use function Dealer4Dealer\SubstituteOrders\Model\__;
@@ -171,7 +172,7 @@ class OrderManagement implements OrderManagementInterface
 
     public function getList(
         SearchCriteriaInterface $searchCriteria
-    ): OrderSearchResultsInterface {
+    ): SearchResults {
         return $this->orderRepository->getList($searchCriteria);
     }
 }

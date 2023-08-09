@@ -13,7 +13,7 @@ interface ContentUploaderInterface
      */
     public function upload(
         ContentInterface $fileContent,
-        string $customerIdentifier,
+        int $customerIdentifier,
         string $entityType
     );
 }

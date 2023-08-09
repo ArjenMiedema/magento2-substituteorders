@@ -13,12 +13,12 @@ use Magento\Framework\Api\SearchCriteriaInterface;
 use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\OrderItem as ResourceOrderItem;
 use Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemSearchResultsInterfaceFactory;
 use Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterfaceFactory;
+use Magento\Framework\Api\SearchResults;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\OrderItem\CollectionFactory;
 use Dealer4Dealer\SubstituteOrders\Api\OrderItemRepositoryInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Exception\CouldNotDeleteException;
-
 
 class OrderItemRepository implements OrderItemRepositoryInterface
 {
@@ -68,7 +68,7 @@ class OrderItemRepository implements OrderItemRepositoryInterface
 
     public function getList(
         SearchCriteriaInterface $searchCriteria
-    ): OrderItemSearchResultsInterface {
+    ): SearchResults {
         $collection = $this->collectionFactory->create();
         $this->collectionProcessor->process($searchCriteria, $collection);
 
@@ -77,7 +77,6 @@ class OrderItemRepository implements OrderItemRepositoryInterface
         $searchResults->setItems($collection->getItems());
 
         return $searchResults;
-
     }
 
     public function getOrderItems(int $orderId): array

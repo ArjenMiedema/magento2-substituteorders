@@ -28,6 +28,7 @@ use Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressSearchResultsInterface;
 use Magento\Framework\Api\DataObjectHelper;
 use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface;
 use Magento\Framework\Api\SearchCriteriaInterface;
+use Magento\Framework\Api\SearchResults;
 use Magento\Framework\Reflection\DataObjectProcessor;
 use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\OrderAddress as ResourceOrderAddress;
 use Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressSearchResultsInterfaceFactory;
@@ -106,7 +107,7 @@ class OrderAddressRepository implements OrderAddressRepositoryInterface
 
     public function getList(
         SearchCriteriaInterface $searchCriteria
-    ): OrderAddressSearchResultsInterface {
+    ): SearchResults {
         $collection = $this->collectionFactory->create();
         $this->collectionProcessor->process($searchCriteria, $collection);
 
@@ -115,7 +116,6 @@ class OrderAddressRepository implements OrderAddressRepositoryInterface
         $searchResults->setItems($collection->getItems());
 
         return $searchResults;
-
     }
 
     /**

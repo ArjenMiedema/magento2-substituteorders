@@ -23,21 +23,9 @@ class ContentUploader extends Uploader implements ContentUploaderInterface
     private readonly Filesystem\Directory\WriteInterface $mediaDirectory;
 
     public function __construct(
-        string $fileId,
-        Database $coreFileStorageDb,
-        Storage $coreFileStorage,
-        NotProtectedExtension $validator,
         private readonly AttachmentConfig $attachmentConfig,
-        Filesystem $filesystem = null
+        Filesystem $filesystem
     ) {
-        parent::__construct(
-            $fileId,
-            $coreFileStorageDb,
-            $coreFileStorage,
-            $validator,
-            $filesystem
-        );
-
         $this->tmpDirectory   = $filesystem->getDirectoryWrite(DirectoryList::SYS_TMP);
         $this->mediaDirectory = $filesystem->getDirectoryWrite(DirectoryList::MEDIA);
     }

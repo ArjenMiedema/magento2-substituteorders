@@ -32,6 +32,7 @@ class InvoiceItem extends AbstractModel implements InvoiceItemInterface
     {
         $this->_init(ResourceModel::class);
     }
+
     public function save(): self
     {
         if ($this->additionalData !== null) {
@@ -40,8 +41,10 @@ class InvoiceItem extends AbstractModel implements InvoiceItemInterface
             foreach ($this->additionalData as $value) {
                 $data[$value->getKey()] = $value->getValue();
             }
+
             $this->setData(self::ADDITIONAL_DATA, json_encode($data));
         }
+
         return parent::save();
     }
 
@@ -177,6 +180,7 @@ class InvoiceItem extends AbstractModel implements InvoiceItemInterface
                 }
             }
         }
+
         return $this->additionalData;
     }
 

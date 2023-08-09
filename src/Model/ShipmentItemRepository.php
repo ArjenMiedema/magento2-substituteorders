@@ -12,6 +12,7 @@ use Exception;
 use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface;
 use Magento\Framework\Api\SearchCriteriaInterface;
 use Dealer4Dealer\SubstituteOrders\Api\ShipmentItemRepositoryInterface;
+use Magento\Framework\Api\SearchResults;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\ShipmentItem\CollectionFactory;
@@ -67,7 +68,7 @@ class ShipmentItemRepository implements ShipmentItemRepositoryInterface
 
     public function getList(
         SearchCriteriaInterface $searchCriteria
-    ): ShipmentItemSearchResultsInterface {
+    ): SearchResults {
         $collection = $this->collectionFactory->create();
         $this->collectionProcessor->process($searchCriteria, $collection);
 
@@ -76,7 +77,6 @@ class ShipmentItemRepository implements ShipmentItemRepositoryInterface
         $searchResults->setItems($collection->getItems());
 
         return $searchResults;
-
     }
 
     /**

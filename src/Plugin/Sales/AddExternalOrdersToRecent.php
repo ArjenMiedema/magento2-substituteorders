@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+// phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+// phpcs:disable Generic.NamingConventions.CamelCapsFunctionName.ScopeNotCamelCaps
+
 namespace Dealer4Dealer\SubstituteOrders\Plugin\Sales;
 
 use Dealer4Dealer\SubstituteOrders\Api\Data\OrderInterface;
@@ -31,7 +34,6 @@ class AddExternalOrdersToRecent
             return $result;
         }
 
-        // Manipulatie ten top!!!
         $collection = $this->orderRepository->getList(
             $this->searchCriteriaBuilder
                 ->addFilter(

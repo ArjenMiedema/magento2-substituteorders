@@ -19,15 +19,8 @@ class OrderShipmentTrackSaveAfter implements ObserverInterface
     ) {
     }
 
-    /**
-     * Execute observer
-     *
-     * @param Observer $observer
-     * @return void
-     */
-    public function execute(
-        Observer $observer
-    ) {
+    public function execute(Observer $observer): void
+    {
         /** @var Track $track */
         $track = $observer->getData('track');
 
@@ -38,7 +31,7 @@ class OrderShipmentTrackSaveAfter implements ObserverInterface
         }
 
         try {
-            $subShipment = $this->shipmentRepository->getByIncrementId($shipment->getIncrementId());
+            $subShipment = $this->shipmentRepository->getByIncrementId((int) $shipment->getIncrementId());
         } catch (LocalizedException) {
             return;
         }

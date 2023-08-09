@@ -2,6 +2,10 @@
 
 declare(strict_types=1);
 
+// phpcs:disable GlobalCommon.NamingConventions.ValidVariableName.IllegalVariableNameUnderscore
+// phpcs:disable PSR2.Classes.PropertyDeclaration.Underscore
+// phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
+
 namespace Dealer4Dealer\SubstituteOrders\Model;
 
 use Dealer4Dealer\SubstituteOrders\Api\AttachmentRepositoryInterface;
@@ -39,17 +43,17 @@ class Shipment extends AbstractModel implements ShipmentInterface
      */
     protected $_eventObject = 'shipment';
 
-    protected $_items = null;
+    protected ?array $items = null;
 
-    protected $_billingAddress = null;
+    protected ?OrderAddressInterface $billingAddress = null;
 
-    protected $_shippingAddress = null;
+    protected ?OrderAddressInterface $shippingAddress = null;
 
-    protected $_tracking = null;
+    protected ?array $tracking = null;
 
-    protected $_additionalData = null;
+    protected ?array $additionalData = null;
 
-    protected $_attachments = null;
+    protected ?array $attachments = null;
 
     public function __construct(
         Context $context,
@@ -57,7 +61,7 @@ class Shipment extends AbstractModel implements ShipmentInterface
         private readonly ScopeConfigInterface $scopeConfig,
         private readonly StoreManagerInterface $storeManager,
         private readonly ShipmentItemRepositoryInterface $itemRepository,
-        private readonly  \Dealer4Dealer\SubstituteOrders\Api\OrderAddressRepositoryInterface $addressRepository,
+        private readonly \Dealer4Dealer\SubstituteOrders\Api\OrderAddressRepositoryInterface $addressRepository,
         private readonly AttachmentRepositoryInterface $attachmentRepository,
         AbstractResource $resource = null,
         AbstractDb $resourceCollection = null,
@@ -73,18 +77,18 @@ class Shipment extends AbstractModel implements ShipmentInterface
 
     public function save(): self
     {
-        if ($this->_tracking) {
+        if ($this->tracking) {
             $trackingData = [];
-            foreach ($this->_tracking as $tracker) {
+            foreach ($this->tracking as $tracker) {
                 $trackingData[] = $tracker->getArray();
             }
 
             $this->setData(self::TRACKING, json_encode($trackingData));
         }
 
-        if ($this->_additionalData) {
+        if ($this->additionalData) {
             $data = [];
-            foreach ($this->_additionalData as $value) {
+            foreach ($this->additionalData as $value) {
                 $data[$value->getKey()] = $value->getValue();
             }
 
@@ -92,45 +96,45 @@ class Shipment extends AbstractModel implements ShipmentInterface
         }
 
 
-        if ($this->_shippingAddress) {
-            if (!$this->getData(self::SHIPPING_ADDRESS_ID) && $this->_shippingAddress->getId() != $this->getData(self::SHIPPING_ADDRESS_ID)) {
+        if ($this->shippingAddress) {
+            if (!$this->getData(self::SHIPPING_ADDRESS_ID) && $this->shippingAddress->getId() != $this->getData(self::SHIPPING_ADDRESS_ID)) {
                 try {
                     $oldAddress = $this->addressRepository->getById($this->getData(self::SHIPPING_ADDRESS_ID));
-                    $this->_shippingAddress->setData(
-                        array_merge($oldAddress->getData(), $this->_shippingAddress->getData())
+                    $this->shippingAddress->setData(
+                        array_merge($oldAddress->getData(), $this->shippingAddress->getData())
                     );
                 } catch (Exception $e) { // @codingStandardsIgnoreLine
 
                 }
 
-                $this->_shippingAddress->setId($this->getData(self::SHIPPING_ADDRESS_ID));
+                $this->shippingAddress->setId($this->getData(self::SHIPPING_ADDRESS_ID));
             }
 
-            $this->_shippingAddress->save();
-            $this->setData(self::SHIPPING_ADDRESS_ID, $this->_shippingAddress->getId());
+            $this->shippingAddress->save();
+            $this->setData(self::SHIPPING_ADDRESS_ID, $this->shippingAddress->getId());
         }
 
-        if ($this->_billingAddress) {
-            if (!$this->getData(self::BILLING_ADDRESS_ID) && $this->_billingAddress->getId() != $this->getData(self::BILLING_ADDRESS_ID)) {
+        if ($this->billingAddress) {
+            if (!$this->getData(self::BILLING_ADDRESS_ID) && $this->billingAddress->getId() != $this->getData(self::BILLING_ADDRESS_ID)) {
                 try {
                     $oldAddress = $this->addressRepository->getById($this->getData(self::BILLING_ADDRESS_ID));
-                    $this->_billingAddress->setData(
-                        array_merge($oldAddress->getData(), $this->_billingAddress->getData())
+                    $this->billingAddress->setData(
+                        array_merge($oldAddress->getData(), $this->billingAddress->getData())
                     );
                 } catch (Exception $e) { // @codingStandardsIgnoreLine
 
                 }
 
-                $this->_billingAddress->setId($this->getData(self::BILLING_ADDRESS_ID));
+                $this->billingAddress->setId($this->getData(self::BILLING_ADDRESS_ID));
             }
 
-            $this->_billingAddress->save();
-            $this->setData(self::BILLING_ADDRESS_ID, $this->_billingAddress->getId());
+            $this->billingAddress->save();
+            $this->setData(self::BILLING_ADDRESS_ID, $this->billingAddress->getId());
         }
 
         parent::save();
 
-        if ($this->_items) {
+        if ($this->items) {
             $oldItems = $this->itemRepository->getShipmentItems($this->getId());
             $oldSkus = [];
             $newSkus = [];
@@ -138,7 +142,7 @@ class Shipment extends AbstractModel implements ShipmentInterface
                 $oldSkus[$item->getSku()] = $item;
             }
 
-            foreach ($this->_items as $item) {
+            foreach ($this->items as $item) {
                 $oldItem = isset($oldSkus[$item->getSku()]) ? $oldSkus[$item->getSku()] : null;
 
                 if ($oldItem && $oldItem->getShipmentId() == $this->getId()) {
@@ -202,72 +206,71 @@ class Shipment extends AbstractModel implements ShipmentInterface
 
     public function getShippingAddress(): OrderAddressInterface
     {
-        if (!$this->_shippingAddress) {
+        if (!$this->shippingAddress) {
             try {
-                $this->_shippingAddress = $this->addressRepository->getById($this->getData(self::SHIPPING_ADDRESS_ID));
+                $this->shippingAddress = $this->addressRepository->getById($this->getData(self::SHIPPING_ADDRESS_ID));
             } catch (Exception) {
-
             }
         }
 
-        return $this->_shippingAddress;
+        return $this->shippingAddress;
     }
 
     public function setShippingAddress(OrderAddressInterface $shippingAddress): self
     {
-        $this->_shippingAddress = $shippingAddress;
+        $this->shippingAddress = $shippingAddress;
         return $this;
     }
 
     public function getBillingAddress(): OrderAddressInterface
     {
-        if (!$this->_billingAddress) {
+        if (!$this->billingAddress) {
             try {
-                $this->_billingAddress = $this->addressRepository->getById($this->getData(self::BILLING_ADDRESS_ID));
+                $this->billingAddress = $this->addressRepository->getById($this->getData(self::BILLING_ADDRESS_ID));
             } catch (Exception $e) { // @codingStandardsIgnoreLine
 
             }
         }
 
-        return $this->_billingAddress;
+        return $this->billingAddress;
     }
 
     public function setBillingAddress(OrderAddressInterface $billingAddress): self
     {
-        $this->_billingAddress = $billingAddress;
+        $this->billingAddress = $billingAddress;
         return $this;
     }
 
     public function setItems(array $items): self
     {
-        $this->_items = $items;
-        
+        $this->items = $items;
+
         return $this;
     }
 
     public function getItems(): array
     {
-        if (!$this->_items) {
-            $this->_items = $this->itemRepository->getShipmentItems($this->getId());
+        if (!$this->items) {
+            $this->items = $this->itemRepository->getShipmentItems($this->getId());
         }
 
-        return $this->_items;
+        return $this->items;
     }
 
     public function getTracking(): array
     {
-        if ($this->_tracking == null) {
-            $this->_tracking = [];
+        if ($this->tracking == null) {
+            $this->tracking = [];
 
             if ($this->getData(self::TRACKING)) {
                 $tracking = json_decode($this->getData(self::TRACKING), true);
                 foreach ($tracking as $track) {
-                    $this->_tracking[] = ShipmentTracking::createByArray($track);
+                    $this->tracking[] = ShipmentTracking::createByArray($track);
                 }
             }
         }
 
-        return $this->_tracking;
+        return $this->tracking;
     }
 
     public function setTracking(string|array $tracking): self
@@ -276,31 +279,31 @@ class Shipment extends AbstractModel implements ShipmentInterface
             $tracking = json_decode($tracking);
         }
 
-        $this->_tracking = $tracking;
+        $this->tracking = $tracking;
 
         return $this;
     }
 
     public function getAdditionalData(): array
     {
-        if ($this->_additionalData == null) {
-            $this->_additionalData = [];
+        if ($this->additionalData == null) {
+            $this->additionalData = [];
 
             if ($this->getData(self::ADDITIONAL_DATA)) {
                 $data = json_decode($this->getData(self::ADDITIONAL_DATA), true);
                 foreach ($data as $key => $value) {
-                    $this->_additionalData[] = new AdditionalData($key, $value);
+                    $this->additionalData[] = new AdditionalData($key, $value);
                 }
             }
         }
 
-        return $this->_additionalData;
+        return $this->additionalData;
     }
 
     public function setAdditionalData(array $additionalData): self
     {
-        $this->_additionalData = $additionalData;
-        
+        $this->additionalData = $additionalData;
+
         return $this;
     }
 
@@ -411,7 +414,7 @@ class Shipment extends AbstractModel implements ShipmentInterface
 
     public function getAttachments(): array
     {
-        if ($this->_attachments == null) {
+        if ($this->attachments == null) {
             $attachments = $this->attachmentRepository
                 ->getAttachmentsByEntityTypeIdentifier(
                     $this->getShipmentId(),
@@ -428,10 +431,10 @@ class Shipment extends AbstractModel implements ShipmentInterface
                 ];
             }
 
-            $this->_attachments = $files;
+            $this->attachments = $files;
         }
 
-        return $this->_attachments;
+        return $this->attachments;
     }
 
     public function getShippingMethod(): string

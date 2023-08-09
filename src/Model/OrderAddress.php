@@ -213,7 +213,7 @@ class OrderAddress extends AbstractModel implements OrderAddressInterface
     public function setAdditionalData(array $additionalData): self
     {
         $this->additionalData = $additionalData;
-        
+
         return $this;
     }
 }

@@ -8,8 +8,10 @@ use Dealer4Dealer\SubstituteOrders\Api\Data\InvoiceInterface;
 use Dealer4Dealer\SubstituteOrders\Api\Data\InvoiceSearchResultsInterface;
 use Dealer4Dealer\SubstituteOrders\Api\Data\OrderInterface;
 use Exception;
+use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Api\SearchCriteriaInterface;
+use Magento\Framework\Api\SearchResults;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Dealer4Dealer\SubstituteOrders\Api\Data\InvoiceSearchResultsInterfaceFactory;
 use Magento\Framework\Exception\CouldNotSaveException;
@@ -66,7 +68,7 @@ class InvoiceRepository implements InvoiceRepositoryInterface
 
     public function getList(
         SearchCriteriaInterface $searchCriteria
-    ): InvoiceSearchResultsInterface {
+    ): SearchResults {
         $collection = $this->collectionFactory->create();
         $this->collectionProcessor->process($searchCriteria, $collection);
 
@@ -75,7 +77,6 @@ class InvoiceRepository implements InvoiceRepositoryInterface
         $searchResults->setItems($collection->getItems());
 
         return $searchResults;
-
     }
 
     /**
@@ -117,7 +118,7 @@ class InvoiceRepository implements InvoiceRepositoryInterface
         return $invoice;
     }
 
-    public function getInvoicesByOrder(OrderInterface $order): InvoiceSearchResultsInterface
+    public function getInvoicesByOrder(OrderInterface $order): SearchResults
     {
         return $this->getList(
             $this->searchCriteriaBuilder

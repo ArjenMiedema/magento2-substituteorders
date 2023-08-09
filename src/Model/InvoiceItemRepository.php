@@ -13,6 +13,7 @@ use Exception;
 use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Api\SearchCriteriaInterface;
+use Magento\Framework\Api\SearchResults;
 use Magento\Framework\Api\SortOrder;
 use Magento\Framework\Api\SortOrderBuilder;
 use Magento\Framework\Exception\CouldNotDeleteException;
@@ -69,7 +70,7 @@ class InvoiceItemRepository implements InvoiceitemRepositoryInterface
         return $invoiceItem;
     }
 
-    public function getList(SearchCriteriaInterface $searchCriteria): InvoiceItemSearchResultsInterface
+    public function getList(SearchCriteriaInterface $searchCriteria): SearchResults
     {
         $collection = $this->collectionFactory->create();
         $this->collectionProcessor->process($searchCriteria, $collection);

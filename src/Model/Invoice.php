@@ -85,7 +85,6 @@ class Invoice extends AbstractModel implements InvoiceInterface
             $resourceCollection,
             $data
         );
-
     }
 
     protected function _construct(): void
@@ -307,7 +306,6 @@ class Invoice extends AbstractModel implements InvoiceInterface
         return (int) $this->getData(self::INVOICE_ID);
     }
 
-
     public function setInvoiceId(int $invoiceId): self
     {
         return $this->setData(self::INVOICE_ID, $invoiceId);
@@ -361,174 +359,145 @@ class Invoice extends AbstractModel implements InvoiceInterface
         return $this->getData(self::MAGENTO_CUSTOMER_ID);
     }
 
-
     public function setMagentoCustomerId(int $magentoCustomerId): self
     {
         return $this->setData(self::MAGENTO_CUSTOMER_ID, $magentoCustomerId);
     }
-
 
     public function getBaseTaxAmount(): float
     {
         return $this->getData(self::BASE_TAX_AMOUNT);
     }
 
-
     public function setBaseTaxAmount(float $baseTaxAmount): self
     {
         return $this->setData(self::BASE_TAX_AMOUNT, $baseTaxAmount);
     }
-
 
     public function getBaseDiscountAmount(): float
     {
         return $this->getData(self::BASE_DISCOUNT_AMOUNT);
     }
 
-
     public function setBaseDiscountAmount(float $baseDiscountAmount): self
     {
         return $this->setData(self::BASE_DISCOUNT_AMOUNT, $baseDiscountAmount);
     }
-
 
     public function getBaseShippingAmount(): float
     {
         return $this->getData(self::BASE_SHIPPING_AMOUNT);
     }
 
-
     public function setBaseShippingAmount(float $baseShippingAmount): self
     {
         return $this->setData(self::BASE_SHIPPING_AMOUNT, $baseShippingAmount);
     }
-
 
     public function getBaseSubtotal(): float
     {
         return $this->getData(self::BASE_SUBTOTAL);
     }
 
-
     public function setBaseSubtotal(float $baseSubtotal): self
     {
         return $this->setData(self::BASE_SUBTOTAL, $baseSubtotal);
     }
-
 
     public function getBaseGrandTotal(): float
     {
         return $this->getData(self::BASE_GRANDTOTAL);
     }
 
-
     public function setBaseGrandTotal(float $baseGrandTotal): self
     {
         return $this->setData(self::BASE_GRANDTOTAL, $baseGrandTotal);
     }
-
 
     public function getTaxAmount(): float
     {
         return $this->getData(self::TAX_AMOUNT);
     }
 
-
     public function setTaxAmount(float $taxAmount): self
     {
         return $this->setData(self::TAX_AMOUNT, $taxAmount);
     }
-
 
     public function getDiscountAmount(): float
     {
         return $this->getData(self::DISCOUNT_AMOUNT);
     }
 
-
     public function setDiscountAmount(float $discountAmount): self
     {
         return $this->setData(self::DISCOUNT_AMOUNT, $discountAmount);
     }
-
 
     public function getShippingAmount(): float
     {
         return $this->getData(self::SHIPPING_AMOUNT);
     }
 
-
     public function setShippingAmount(float $shippingAmount): self
     {
         return $this->setData(self::SHIPPING_AMOUNT, $shippingAmount);
     }
-
 
     public function getSubtotal(): float
     {
         return $this->getData(self::SUBTOTAL);
     }
 
-
     public function setSubtotal(float $subtotal): self
     {
         return $this->setData(self::SUBTOTAL, $subtotal);
     }
-
 
     public function getGrandtotal(): float
     {
         return $this->getData(self::GRANDTOTAL);
     }
 
-
     public function setGrandtotal(float $grandTotal): self
     {
         return $this->setData(self::GRANDTOTAL, $grandTotal);
     }
-
 
     public function getInvoiceDate(): string
     {
         return $this->getData(self::INVOICE_DATE);
     }
 
-
     public function setInvoiceDate(string $invoiceDate): self
     {
         return $this->setData(self::INVOICE_DATE, $invoiceDate);
     }
-
 
     public function getState(): string
     {
         return $this->getData(self::STATE);
     }
 
-
     public function setState(string $state): self
     {
         return $this->setData(self::STATE, $state);
     }
-
 
     public function getMagentoIncrementId(): string
     {
         return $this->getData(self::MAGENTO_INCREMENT_ID);
     }
 
-
     public function setMagentoIncrementId(string $magentoIncrementId): self
     {
         return $this->setData(self::MAGENTO_INCREMENT_ID, $magentoIncrementId);
     }
 
-
     public function getUpdatedAt(): string
     {
         return $this->getData(self::UPDATED_AT);
     }
-
 
     public function setUpdatedAt(string $updated): self
     {
@@ -552,7 +521,6 @@ class Invoice extends AbstractModel implements InvoiceInterface
         return $this->additionalData;
     }
 
-
     public function setAdditionalData(array $additionalData): self
     {
         $this->additionalData = $additionalData;
@@ -560,12 +528,10 @@ class Invoice extends AbstractModel implements InvoiceInterface
         return $this;
     }
 
-
     public function setAttachments(array $attachments): self
     {
         return $this->setData(self::FILE_CONTENT, $attachments);
     }
-
 
     public function getAttachments(): array
     {

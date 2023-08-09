@@ -26,6 +26,7 @@ use Dealer4Dealer\SubstituteOrders\Api\Data\ShipmentInterface;
 use Dealer4Dealer\SubstituteOrders\Api\Data\ShipmentSearchResultsInterface;
 use Dealer4Dealer\SubstituteOrders\Api\ShipmentManagementInterface;
 use Magento\Framework\Api\SearchCriteriaInterface;
+use Magento\Framework\Api\SearchResults;
 use Magento\Framework\Exception\NoSuchEntityException;
 
 class ShipmentManagement implements ShipmentManagementInterface
@@ -157,7 +158,7 @@ class ShipmentManagement implements ShipmentManagementInterface
      */
     public function getList(
         SearchCriteriaInterface $searchCriteria
-    ): ShipmentSearchResultsInterface {
+    ): SearchResults {
         return $this->shipmentRepository->getList($searchCriteria);
     }
 }
