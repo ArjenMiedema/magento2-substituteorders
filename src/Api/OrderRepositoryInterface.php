@@ -6,6 +6,7 @@ namespace Dealer4Dealer\SubstituteOrders\Api;
 
 use Dealer4Dealer\SubstituteOrders\Api\Data\OrderInterface;
 use Dealer4Dealer\SubstituteOrders\Api\Data\OrderSearchResultsInterface;
+use Magento\Framework\Api\SearchCriteriaInterface;
 
 interface OrderRepositoryInterface
 {
@@ -17,7 +18,7 @@ interface OrderRepositoryInterface
 
     public function getByExtOrderId(int $id): OrderInterface;
 
-    public function getList(SearchCriteriaInterface $searchCriteria): OrderSearchResultsInterface;
+    public function getList(SearchCriteriaInterface $searchCriteria): \Magento\Framework\Api\SearchResults;
 
     public function delete(OrderInterface $order): bool;
 

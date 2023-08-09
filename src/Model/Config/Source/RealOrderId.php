@@ -1,38 +1,27 @@
 <?php
 
-/**
- * A Magento 2 module named Dealer4Dealer\SubstituteOrders
- * Copyright (C) 2017 Maikel Martens
- *
- * This file is part of Dealer4Dealer\SubstituteOrders.
- *
- * Dealer4Dealer\SubstituteOrders is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
+declare(strict_types=1);
 
 namespace Dealer4Dealer\SubstituteOrders\Model\Config\Source;
 
-use function Dealer4Dealer\SubstituteOrders\Model\Config\Source\__;
+use Magento\Framework\Data\OptionSourceInterface;
 
-class RealOrderId implements \Magento\Framework\Option\ArrayInterface
+class RealOrderId implements OptionSourceInterface
 {
-    public function toOptionArray()
+    public function toOptionArray(): array
     {
-        return [['value' => 'magento', 'label' => __('Magento')], ['value' => 'external', 'label' => __('External')]];
+        return [
+            ['value' => 'magento', 'label' => __('Magento')],
+            ['value' => 'external', 'label' => __('External')]
+        ];
     }
 
-    public function toArray()
+    public function toArray(): array
     {
-        return ['magento' => __('Magento'), 'external' => __('External')];
+        return array_column(
+            $this->toOptionArray(),
+            'label',
+            'value'
+        );
     }
 }

@@ -1,17 +1,12 @@
 <?php
 
-/**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
- */
+declare(strict_types=1);
 
 namespace Dealer4Dealer\SubstituteOrders\Model\Order;
 
 use Magento\Framework\Api\AttributeValueFactory;
 use Magento\Sales\Model\AbstractModel;
 use Magento\Sales\Api\Data\OrderItemInterface;
-
-use function Dealer4Dealer\SubstituteOrders\Model\Order\__;
 
 /**
  * Order Item Model

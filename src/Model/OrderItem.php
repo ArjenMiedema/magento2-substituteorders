@@ -67,7 +67,7 @@ class OrderItem extends \Magento\Framework\Model\AbstractModel implements OrderI
      */
     protected function _construct()
     {
-        $this->_init('Dealer4Dealer\SubstituteOrders\Model\ResourceModel\OrderItem');
+        $this->_init(\Dealer4Dealer\SubstituteOrders\Model\ResourceModel\OrderItem::class);
     }
 
     public function save()

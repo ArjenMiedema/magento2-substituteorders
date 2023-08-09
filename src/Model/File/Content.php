@@ -1,60 +1,33 @@
 <?php
 
-/**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
- */
+declare(strict_types=1);
 
 namespace Dealer4Dealer\SubstituteOrders\Model\File;
 
 use Dealer4Dealer\SubstituteOrders\Api\Data\File\ContentInterface;
+use Magento\Framework\Model\AbstractExtensibleModel;
 
-/**
- * @codeCoverageIgnore
- */
-class Content extends \Magento\Framework\Model\AbstractExtensibleModel implements ContentInterface
+class Content extends AbstractExtensibleModel implements ContentInterface
 {
     const DATA = 'file_data';
     const NAME = 'name';
 
-    /**
-     * {@inheritdoc}
-     * @codeCoverageIgnore
-     */
-    public function getFileData()
+    public function getFileData(): string
     {
         return $this->getData(self::DATA);
     }
 
-    /**
-     * {@inheritdoc}
-     * @codeCoverageIgnore
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->getData(self::NAME);
     }
 
-    /**
-     * Set data (base64 encoded content)
-     *
-     * @param string $fileData
-     * @return $this
-     * @codeCoverageIgnore
-     */
-    public function setFileData($fileData)
+    public function setFileData(string $fileData): self
     {
         return $this->setData(self::DATA, $fileData);
     }
 
-    /**
-     * Set file name
-     *
-     * @param string $name
-     * @return $this
-     * @codeCoverageIgnore
-     */
-    public function setName($name)
+    public function setName(string $name): self
     {
         return $this->setData(self::NAME, $name);
     }

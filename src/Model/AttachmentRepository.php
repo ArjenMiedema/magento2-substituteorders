@@ -1,12 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Dealer4Dealer\SubstituteOrders\Model;
 
+use Dealer4Dealer\SubstituteOrders\Api\Data\AttachmentInterface;
 use Dealer4Dealer\SubstituteOrders\Api\Data\AttachmentSearchResultsInterfaceFactory;
-use Dealer4Dealer\SubstituteOrders\Model\AttachmentFactory;
+use Dealer4Dealer\SubstituteOrders\Model\File\ContentValidator;
+use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\Attachment\Collection;
+use Exception;
+use Magento\Framework\Api\SearchCriteriaInterface;
 use Magento\Framework\Api\SortOrder;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Dealer4Dealer\SubstituteOrders\Api\AttachmentRepositoryInterface;
+use Magento\Framework\Exception\InputException;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\Attachment as ResourceAttachment;
@@ -16,8 +23,6 @@ use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\Attachment\CollectionFact
 use Magento\Framework\Api\DataObjectHelper;
 use Dealer4Dealer\SubstituteOrders\Api\Data\AttachmentInterfaceFactory;
 use Dealer4Dealer\SubstituteOrders\Api\Data\File\ContentUploaderInterface;
-
-use function Dealer4Dealer\SubstituteOrders\Model\__;
 
 class AttachmentRepository implements attachmentRepositoryInterface
 {
@@ -51,7 +56,7 @@ class AttachmentRepository implements attachmentRepositoryInterface
      * @param DataObjectProcessor $dataObjectProcessor
      * @param StoreManagerInterface $storeManager
      * @param ContentUploaderInterface $fileContentUploader
-     * @param \Dealer4Dealer\SubstituteOrders\Model\File\ContentValidator $contentValidator
+     * @param ContentValidator $contentValidator
      */
     public function __construct(
         ResourceAttachment $resource,
@@ -63,7 +68,7 @@ class AttachmentRepository implements attachmentRepositoryInterface
         DataObjectProcessor $dataObjectProcessor,
         StoreManagerInterface $storeManager,
         ContentUploaderInterface $fileContentUploader,
-        \Dealer4Dealer\SubstituteOrders\Model\File\ContentValidator $contentValidator
+        ContentValidator $contentValidator
     ) {
         $this->resource = $resource;
         $this->attachmentFactory = $attachmentFactory;
@@ -78,16 +83,11 @@ class AttachmentRepository implements attachmentRepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @throws CouldNotSaveException
+     * @throws InputException
      */
-    public function save(
-        \Dealer4Dealer\SubstituteOrders\Api\Data\AttachmentInterface $attachment
-    ) {
-        /* if (empty($attachment->getStoreId())) {
-            $storeId = $this->storeManager->getStore()->getId();
-            $attachment->setStoreId($storeId);
-        } */
-
+    public function save(AttachmentInterface $attachment): AttachmentInterface
+    {
         $this->contentValidator->isValid($attachment->getFileContent());
 
         $result = $this->fileContentUploader->upload($attachment->getFileContent(), $attachment->getMagentoCustomerIdentifier(), $attachment->getEntityType());
@@ -95,7 +95,7 @@ class AttachmentRepository implements attachmentRepositoryInterface
 
         try {
             $attachment->getResource()->save($attachment);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             throw new CouldNotSaveException(
                 __(
                     'Could not save the attachment: %1',
@@ -125,7 +125,7 @@ class AttachmentRepository implements attachmentRepositoryInterface
      * {@inheritdoc}
      */
     public function getList(
-        \Magento\Framework\Api\SearchCriteriaInterface $criteria
+        SearchCriteriaInterface $criteria
     ) {
         $collection = $this->attachmentCollectionFactory->create();
         foreach ($criteria->getFilterGroups() as $filterGroup) {
@@ -165,7 +165,7 @@ class AttachmentRepository implements attachmentRepositoryInterface
      * {@inheritdoc}
      */
     public function delete(
-        \Dealer4Dealer\SubstituteOrders\Api\Data\AttachmentInterface $attachment
+        AttachmentInterface $attachment
     ) {
 
         $attachmentFilePath = $this->fileContentUploader->getDestinationDirectory(
@@ -179,7 +179,7 @@ class AttachmentRepository implements attachmentRepositoryInterface
 
         try {
             $attachment->getResource()->delete($attachment);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             throw new CouldNotDeleteException(
                 __(
                     'Could not delete the Attachment: %1',
@@ -231,7 +231,7 @@ class AttachmentRepository implements attachmentRepositoryInterface
 
     public function getAttachmentsByEntityTypeIdentifier($entityTypeIdentifier, $magentoCustomerIdentifier, $entityType = 'order')
     {
-        /* @var $collection \Dealer4Dealer\SubstituteOrders\Model\ResourceModel\Attachment\Collection */
+        /* @var $collection Collection */
         $collection = $this->attachmentCollectionFactory->create();
 
         $collection->addFieldToFilter('entity_type_identifier', $entityTypeIdentifier);

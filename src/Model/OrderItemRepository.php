@@ -22,6 +22,7 @@
 
 namespace Dealer4Dealer\SubstituteOrders\Model;
 
+use Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface;
 use Dealer4Dealer\SubstituteOrders\Model\OrderItemFactory;
 use Magento\Framework\Reflection\DataObjectProcessor;
 use Magento\Framework\Api\DataObjectHelper;
@@ -122,11 +123,7 @@ class OrderItemRepository implements OrderItemRepositoryInterface
      */
     public function save(
         \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface $orderItem
-    ) {
-        /* if (empty($orderItem->getStoreId())) {
-            $storeId = $this->storeManager->getStore()->getId();
-            $orderItem->setStoreId($storeId);
-        } */
+    ): OrderItemInterface {
         try {
             $this->resource->save($orderItem);
         } catch (\Exception $exception) {
@@ -144,7 +141,7 @@ class OrderItemRepository implements OrderItemRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getById($orderItemId)
+    public function getById(int $orderItemId): OrderItemInterface
     {
         $orderItem = $this->orderItemFactory->create();
         $orderItem->load($orderItemId);

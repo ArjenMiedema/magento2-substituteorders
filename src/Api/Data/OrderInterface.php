@@ -35,45 +35,45 @@ interface OrderInterface
         FILE_CONTENT = 'file_content',
         EXTERNAL_CUSTOMER_ID = 'external_customer_id';
 
-    public function getOrderId(): string;
+    public function getOrderId(): int;
 
-    public function setOrderId(string $orderId): self;
+    public function setOrderId(int $orderId): self;
 
     public function getInvoiceIds(): ?array;
 
     public function setInvoiceIds(array $invoiceIds): self;
 
-    public function getMagentoOrderId(): ?string;
+    public function getMagentoOrderId(): ?int;
 
-    public function setMagentoOrderId(string $magentoOrderId): self;
+    public function setMagentoOrderId(int $magentoOrderId): self;
 
-    public function getMagentoCustomerId(): ?string;
+    public function getMagentoCustomerId(): ?int;
 
-    public function setMagentoCustomerId(string $magentoCustomerId): self;
+    public function setMagentoCustomerId(int $magentoCustomerId): self;
 
-    public function getExternalCustomerId(): ?string;
+    public function getExternalCustomerId(): ?int;
 
-    public function setExternalCustomerId(string $externalCustomerId): self;
+    public function setExternalCustomerId(int $externalCustomerId): self;
 
     public function getExtOrderId(): ?string;
 
     public function setExtOrderId(string $extOrderId): self;
 
-    public function getBaseGrandtotal(): ?string;
+    public function getBaseGrandtotal(): ?float;
 
-    public function setBaseGrandtotal(string $baseGrandtotal): self;
+    public function setBaseGrandtotal(float $baseGrandtotal): self;
 
-    public function getBaseSubtotal(): ?string;
+    public function getBaseSubtotal(): ?float;
 
-    public function setBaseSubtotal(string $baseSubtotal): self;
+    public function setBaseSubtotal(float $baseSubtotal): self;
 
-    public function getGrandtotal(): ?string;
+    public function getGrandtotal(): ?float;
 
-    public function setGrandtotal(string $grandtotal): self;
+    public function setGrandtotal(float $grandtotal): self;
 
-    public function getSubtotal(): ?string;
+    public function getSubtotal(): ?float;
 
-    public function setSubtotal(string $subtotal): self;
+    public function setSubtotal(float $subtotal): self;
 
     public function getPoNumber(): ?string;
 
@@ -99,41 +99,41 @@ interface OrderInterface
 
     public function setPaymentMethod(string $paymentMethod): self;
 
-    public function getBaseDiscountAmount(): ?string;
+    public function getBaseDiscountAmount(): ?float;
 
-    public function setBaseDiscountAmount(string $baseDiscountAmount): self;
+    public function setBaseDiscountAmount(float $baseDiscountAmount): self;
 
-    public function getDiscountAmount(): ?string;
+    public function getDiscountAmount(): ?float;
 
-    public function setDiscountAmount(string $discountAmount): self;
+    public function setDiscountAmount(float $discountAmount): self;
 
     public function getOrderDate(): ?string;
 
     public function setOrderDate(string $orderDate): self;
 
-    public function getBaseTaxAmount(): ?string;
+    public function getBaseTaxAmount(): ?float;
 
-    public function setBaseTaxAmount(string $baseTaxAmount): self;
+    public function setBaseTaxAmount(float $baseTaxAmount): self;
 
-    public function getTaxAmount(): ?string;
+    public function getTaxAmount(): ?float;
 
-    public function setTaxAmount(string $taxAmount): self;
+    public function setTaxAmount(float $taxAmount): self;
 
-    public function getBaseShippingAmount(): ?string;
+    public function getBaseShippingAmount(): ?float;
 
-    public function setBaseShippingAmount(string $baseShippingAmount): self;
+    public function setBaseShippingAmount(float $baseShippingAmount): self;
 
-    public function getShippingAmount(): ?string;
+    public function getShippingAmount(): ?float;
 
-    public function setShippingAmount(string $shippingAmount): self;
+    public function setShippingAmount(float $shippingAmount): self;
 
     public function setItems(array $items): self;
 
     public function getItems(): array;
 
-    public function getMagentoIncrementId(): ?string;
+    public function getMagentoIncrementId(): ?int;
 
-    public function setMagentoIncrementId(string $incrementId): self;
+    public function setMagentoIncrementId(int $incrementId): self;
 
     public function getUpdatedAt(): ?string;
 

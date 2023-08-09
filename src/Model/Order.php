@@ -22,6 +22,7 @@
 
 namespace Dealer4Dealer\SubstituteOrders\Model;
 
+use Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface;
 use Dealer4Dealer\SubstituteOrders\Api\Data\OrderInterface;
 use Dealer4Dealer\SubstituteOrders\Api\ShipmentRepositoryInterface;
 use Dealer4Dealer\SubstituteOrders\Model\AdditionalData;
@@ -305,15 +306,15 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     /**
      * @inheritDoc
      */
-    public function getOrderId()
+    public function getOrderId(): int
     {
-        return $this->getData(self::ORDER_ID);
+        return (int)  $this->getData(self::ORDER_ID);
     }
 
     /**
      * @inheritDoc
      */
-    public function setOrderId($orderId)
+    public function setOrderId(int $orderId): self
     {
         return $this->setData(self::ORDER_ID, $orderId);
     }
@@ -321,7 +322,7 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     /**
      * @inheritDoc
      */
-    public function getInvoiceIds()
+    public function getInvoiceIds(): ?array
     {
         if ($this->getData(self::INVOICE_IDS)) {
             return $this->getData(self::INVOICE_IDS);
@@ -338,7 +339,7 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     /**
      * @inheritDoc
      */
-    public function setInvoiceIds($invoiceIds)
+    public function setInvoiceIds(array $invoiceIds): self
     {
         return $this->setData(self::INVOICE_IDS, array_unique($invoiceIds));
     }
@@ -346,15 +347,15 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     /**
      * @inheritDoc
      */
-    public function getMagentoOrderId()
+    public function getMagentoOrderId(): ?int
     {
-        return $this->getData(self::MAGENTO_ORDER_ID);
+        return (int) $this->getData(self::MAGENTO_ORDER_ID);
     }
 
     /**
      * @inheritDoc
      */
-    public function setMagentoOrderId($magento_order_id)
+    public function setMagentoOrderId(int $magentoOrderid): self
     {
         return $this->setData(self::MAGENTO_ORDER_ID, $magento_order_id);
     }
@@ -362,15 +363,15 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     /**
      * @inheritDoc
      */
-    public function getMagentoCustomerId()
+    public function getMagentoCustomerId(): ?int
     {
-        return $this->getData(self::MAGENTO_CUSTOMER_ID);
+        return (int) $this->getData(self::MAGENTO_CUSTOMER_ID);
     }
 
     /**
      * @inheritDoc
      */
-    public function setMagentoCustomerId($magento_customer_id)
+    public function setMagentoCustomerId(int $magentoCustomerId): self
     {
         return $this->setData(self::MAGENTO_CUSTOMER_ID, $magento_customer_id);
     }
@@ -379,16 +380,16 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
      * {@inheritDoc}
      * @see \Dealer4Dealer\SubstituteOrders\Api\Data\OrderInterface::getExternalCustomerId()
      */
-    public function getExternalCustomerId()
+    public function getExternalCustomerId(): int
     {
-        return $this->getData(self::EXTERNAL_CUSTOMER_ID);
+        return (int) $this->getData(self::EXTERNAL_CUSTOMER_ID);
     }
 
     /**
      * {@inheritDoc}
      * @see \Dealer4Dealer\SubstituteOrders\Api\Data\OrderInterface::setExternalCustomerId()
      */
-    public function setExternalCustomerId($external_customer_id)
+    public function setExternalCustomerId($externalCustomerId): self
     {
         return $this->setData(self::EXTERNAL_CUSTOMER_ID, $external_customer_id);
     }
@@ -396,7 +397,7 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     /**
      * @inheritDoc
      */
-    public function getExtOrderId()
+    public function getExtOrderId(): ?string
     {
         return $this->getData(self::EXT_ORDER_ID);
     }
@@ -404,55 +405,55 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     /**
      * @inheritDoc
      */
-    public function setExtOrderId($ext_order_id)
+    public function setExtOrderId($extOrderId): self
     {
-        return $this->setData(self::EXT_ORDER_ID, $ext_order_id);
+        return $this->setData(self::EXT_ORDER_ID, $extOrderId);
     }
 
     /**
      * @inheritDoc
      */
-    public function getBaseGrandtotal()
+    public function getBaseGrandtotal(): ?float
     {
-        return $this->getData(self::BASE_GRANDTOTAL);
+        return (float) $this->getData(self::BASE_GRANDTOTAL);
     }
 
     /**
      * @inheritDoc
      */
-    public function setBaseGrandtotal($base_grandtotal)
+    public function setBaseGrandtotal(float $baseGrandtotal): self
     {
-        return $this->setData(self::BASE_GRANDTOTAL, $base_grandtotal);
+        return $this->setData(self::BASE_GRANDTOTAL, $baseGrandtotal);
     }
 
     /**
      * @inheritDoc
      */
-    public function getBaseSubtotal()
+    public function getBaseSubtotal(): ?float
     {
-        return $this->getData(self::BASE_SUBTOTAL);
+        return (float)$this->getData(self::BASE_SUBTOTAL);
     }
 
     /**
      * @inheritDoc
      */
-    public function setBaseSubtotal($base_subtotal)
+    public function setBaseSubtotal(float $baseSubtotal): self
     {
-        return $this->setData(self::BASE_SUBTOTAL, $base_subtotal);
+        return $this->setData(self::BASE_SUBTOTAL, $baseSubtotal);
     }
 
     /**
      * @inheritDoc
      */
-    public function getGrandtotal()
+    public function getGrandtotal(): float
     {
-        return $this->getData(self::GRANDTOTAL);
+        return (float)$this->getData(self::GRANDTOTAL);
     }
 
     /**
      * @inheritDoc
      */
-    public function setGrandtotal($grandtotal)
+    public function setGrandtotal(float $grandtotal): self
     {
         return $this->setData(self::GRANDTOTAL, $grandtotal);
     }
@@ -460,15 +461,15 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     /**
      * @inheritDoc
      */
-    public function getSubtotal()
+    public function getSubtotal(): float
     {
-        return $this->getData(self::SUBTOTAL);
+        return (float)$this->getData(self::SUBTOTAL);
     }
 
     /**
      * @inheritDoc
      */
-    public function setSubtotal($subtotal)
+    public function setSubtotal(float $subtotal): self
     {
         return $this->setData(self::SUBTOTAL, $subtotal);
     }
@@ -476,7 +477,7 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     /**
      * @inheritDoc
      */
-    public function getPoNumber()
+    public function getPoNumber(): string
     {
         return $this->getData(self::PO_NUMBER);
     }
@@ -484,15 +485,15 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     /**
      * @inheritDoc
      */
-    public function setPoNumber($po_number)
+    public function setPoNumber($poNumber): self
     {
-        return $this->setData(self::PO_NUMBER, $po_number);
+        return $this->setData(self::PO_NUMBER, $poNumber);
     }
 
     /**
      * @inheritDoc
      */
-    public function getState()
+    public function getState(): string
     {
         return $this->getData(self::STATE);
     }
@@ -500,7 +501,7 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     /**
      * @inheritDoc
      */
-    public function setState($state)
+    public function setState(string $state): self
     {
         return $this->setData(self::STATE, $state);
     }
@@ -508,7 +509,7 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     /**
      * @inheritDoc
      */
-    public function getShippingMethod()
+    public function getShippingMethod(): string
     {
         return $this->getData(self::SHIPPING_METHOD);
     }
@@ -516,20 +517,20 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     /**
      * @inheritDoc
      */
-    public function setShippingMethod($shipping_method)
+    public function setShippingMethod($shippingMethod): self
     {
-        return $this->setData(self::SHIPPING_METHOD, $shipping_method);
+        return $this->setData(self::SHIPPING_METHOD, $shippingMethod);
     }
 
     /**
      * @inheritDoc
      */
-    public function getShippingAddress()
+    public function getShippingAddress(): ?OrderAddressInterface
     {
         if (!$this->_shippingAddress) {
             try {
                 $this->_shippingAddress = $this->addressRepository->getById($this->getData(self::SHIPPING_ADDRESS_ID));
-            } catch (\Exception $e) { // @codingStandardsIgnoreLine
+            } catch (\Exception) {
 
             }
         }
@@ -540,16 +541,16 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     /**
      * @inheritDoc
      */
-    public function setShippingAddress(\Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface $shipping_address)
+    public function setShippingAddress(\Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface $shippingAddress): self
     {
-        $this->_shippingAddress = $shipping_address;
+        $this->_shippingAddress = $shippingAddress;
         return $this;
     }
 
     /**
      * @inheritDoc
      */
-    public function getBillingAddress()
+    public function getBillingAddress(): OrderAddressInterface
     {
         if (!$this->_billingAddress) {
             try {
@@ -565,7 +566,7 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     /**
      * @inheritDoc
      */
-    public function setBillingAddress(\Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface $billing_address)
+    public function setBillingAddress(\Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface $billing_address): self
     {
         $this->_billingAddress = $billing_address;
         return $this;
@@ -586,7 +587,7 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     /**
      * @inheritDoc
      */
-    public function getPaymentMethod()
+    public function getPaymentMethod(): string
     {
         return $this->getData(self::PAYMENT_METHOD);
     }
@@ -594,7 +595,7 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     /**
      * @inheritDoc
      */
-    public function setPaymentMethod($payment_method)
+    public function setPaymentMethod(string $payment_method): self
     {
         return $this->setData(self::PAYMENT_METHOD, $payment_method);
     }
@@ -602,7 +603,7 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     /**
      * @inheritDoc
      */
-    public function getBaseDiscountAmount()
+    public function getBaseDiscountAmount(): float
     {
         return $this->getData(self::BASE_DISCOUNT_AMOUNT);
     }
@@ -610,7 +611,7 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     /**
      * @inheritDoc
      */
-    public function setBaseDiscountAmount($base_discount_amount)
+    public function setBaseDiscountAmount($base_discount_amount): self
     {
         return $this->setData(self::BASE_DISCOUNT_AMOUNT, $base_discount_amount);
     }
@@ -618,7 +619,7 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     /**
      * @inheritDoc
      */
-    public function getDiscountAmount()
+    public function getDiscountAmount(): float
     {
         return $this->getData(self::DISCOUNT_AMOUNT);
     }
@@ -626,7 +627,7 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     /**
      * @inheritDoc
      */
-    public function setDiscountAmount($discount_amount)
+    public function setDiscountAmount($discount_amount): self
     {
         return $this->setData(self::DISCOUNT_AMOUNT, $discount_amount);
     }
@@ -634,7 +635,7 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     /**
      * @inheritDoc
      */
-    public function getOrderDate()
+    public function getOrderDate(): string
     {
         return $this->getData(self::ORDER_DATE);
     }
@@ -642,7 +643,7 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     /**
      * @inheritDoc
      */
-    public function setOrderDate($order_date)
+    public function setOrderDate($order_date): self
     {
         return $this->setData(self::ORDER_DATE, $order_date);
     }
@@ -650,7 +651,7 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     /**
      * @inheritDoc
      */
-    public function getBaseTaxAmount()
+    public function getBaseTaxAmount(): float
     {
         return $this->getData(self::BASE_TAX_AMOUNT);
     }
@@ -658,7 +659,7 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     /**
      * @inheritDoc
      */
-    public function setBaseTaxAmount($base_tax_amount)
+    public function setBaseTaxAmount($base_tax_amount): self
     {
         return $this->setData(self::BASE_TAX_AMOUNT, $base_tax_amount);
     }
@@ -666,7 +667,7 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     /**
      * @inheritDoc
      */
-    public function getTaxAmount()
+    public function getTaxAmount(): float
     {
         return $this->getData(self::TAX_AMOUNT);
     }
@@ -674,7 +675,7 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     /**
      * @inheritDoc
      */
-    public function setTaxAmount($tax_amount)
+    public function setTaxAmount($tax_amount): self
     {
         return $this->setData(self::TAX_AMOUNT, $tax_amount);
     }
@@ -682,7 +683,7 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     /**
      * @inheritDoc
      */
-    public function getBaseShippingAmount()
+    public function getBaseShippingAmount(): float
     {
         return $this->getData(self::BASE_SHIPPING_AMOUNT);
     }
@@ -690,7 +691,7 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     /**
      * @inheritDoc
      */
-    public function setBaseShippingAmount($base_shipping_amount)
+    public function setBaseShippingAmount($base_shipping_amount): self
     {
         return $this->setData(self::BASE_SHIPPING_AMOUNT, $base_shipping_amount);
     }
@@ -698,7 +699,7 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     /**
      * @inheritDoc
      */
-    public function getShippingAmount()
+    public function getShippingAmount(): float
     {
         return $this->getData(self::SHIPPING_AMOUNT);
     }
@@ -706,7 +707,7 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     /**
      * @inheritDoc
      */
-    public function setShippingAmount($shipping_amount)
+    public function setShippingAmount($shipping_amount): self
     {
         return $this->setData(self::SHIPPING_AMOUNT, $shipping_amount);
     }
@@ -714,7 +715,7 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     /**
      * @inheritDoc
      */
-    public function setItems(array $items)
+    public function setItems(array $items): self
     {
         $this->_items = $items;
     }
@@ -722,7 +723,7 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     /**
      * @inheritDoc
      */
-    public function getItems()
+    public function getItems(): array
     {
         if (!$this->_items) {
             $this->_items = $this->itemRepository->getOrderItems($this->getId());
@@ -763,7 +764,7 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     /**
      * @inheritDoc
      */
-    public function getMagentoIncrementId()
+    public function getMagentoIncrementId(): int
     {
         return $this->getData(self::MAGENTO_INCREMENT_ID);
     }
@@ -771,7 +772,7 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     /**
      * @inheritDoc
      */
-    public function setMagentoIncrementId($incrementId)
+    public function setMagentoIncrementId($incrementId): self
     {
         return $this->setData(self::MAGENTO_INCREMENT_ID, $incrementId);
     }
@@ -779,7 +780,7 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     /**
      * @inheritDoc
      */
-    public function getUpdatedAt()
+    public function getUpdatedAt(): string
     {
         return $this->getData(self::UPDATED_AT);
     }
@@ -787,7 +788,7 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     /**
      * @inheritDoc
      */
-    public function setUpdatedAt($updated)
+    public function setUpdatedAt($updated): self
     {
         return $this->setData(self::UPDATED_AT, $updated);
     }
@@ -795,7 +796,7 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     /**
      * @inheritDoc
      */
-    public function getAdditionalData()
+    public function getAdditionalData(): array
     {
         if ($this->_additionalData == null) {
             $this->_additionalData = [];
@@ -814,7 +815,7 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     /**
      * @inheritDoc
      */
-    public function setAdditionalData($additional_data)
+    public function setAdditionalData($additional_data): self
     {
         $this->_additionalData = $additional_data;
         return $this;
@@ -845,7 +846,7 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     /**
      * @inheritDoc
      */
-    public function setAttachments(array $fileContent)
+    public function setAttachments(array $fileContent): self
     {
         return $this->setData(self::FILE_CONTENT, $fileContent);
     }
@@ -853,7 +854,7 @@ class Order extends \Magento\Framework\Model\AbstractModel implements OrderInter
     /**
      * @inheritDoc
      */
-    public function getAttachments()
+    public function getAttachments(): array
     {
         if ($this->_attachments == null) {
             $attachments = $this->attachmentRepository->getAttachmentsByEntityTypeIdentifier(

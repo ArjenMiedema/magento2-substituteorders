@@ -1,18 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Dealer4Dealer\SubstituteOrders\Model\Config\Source;
 
-use function Dealer4Dealer\SubstituteOrders\Model\Config\Source\__;
+use Magento\Framework\Data\OptionSourceInterface;
 
-class SelectOrdersBy implements \Magento\Framework\Option\ArrayInterface
+class SelectOrdersBy implements OptionSourceInterface
 {
-    public function toOptionArray()
+    public function toOptionArray(): array
     {
-        return [['value' => 'magento_customer_id', 'label' => __('Magento Customer ID')], ['value' => 'external_customer_id', 'label' => __('External Customer ID')]];
+        return [
+            ['value' => 'magento_customer_id', 'label' => __('Magento Customer ID')],
+            ['value' => 'external_customer_id', 'label' => __('External Customer ID')]
+        ];
     }
 
-    public function toArray()
+    public function toArray(): array
     {
-        return ['magento_customer_id' => __('Magento Customer ID'), 'external_customer_id' => __('External Customer ID')];
+        return array_column(
+            $this->toOptionArray(),
+            'label',
+            'value'
+        );
     }
 }

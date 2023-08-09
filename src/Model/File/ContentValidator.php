@@ -1,30 +1,22 @@
 <?php
 
-/**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
- */
+declare(strict_types=1);
 
 namespace Dealer4Dealer\SubstituteOrders\Model\File;
 
 use Dealer4Dealer\SubstituteOrders\Api\Data\File\ContentInterface;
 use Magento\Framework\Exception\InputException;
 
-use function Dealer4Dealer\SubstituteOrders\Model\File\__;
-
 class ContentValidator
 {
     /**
-     * Check if gallery entry content is valid
-     *
-     * @param ContentInterface $fileContent
      * @throws InputException
-     * @return bool
      */
-    public function isValid(ContentInterface $fileContent)
+    public function isValid(ContentInterface $fileContent): bool
     {
-        $decodedContent = @base64_decode($fileContent->getFileData(), true);
-        if (empty($decodedContent)) {
+        $decodedContent = base64_decode($fileContent->getFileData(), true);
+
+        if ($decodedContent === false) {
             throw new InputException(__('Provided content must be valid base64 encoded data.'));
         }
 
@@ -35,19 +27,8 @@ class ContentValidator
         return true;
     }
 
-    /**
-     * Check if given filename is valid
-     *
-     * @param string $fileName
-     * @return bool
-     */
-    protected function isFileNameValid($fileName)
+    protected function isFileNameValid(string $fileName): bool
     {
-        // Cannot contain \ / : * ? " < > |
-        if (!preg_match('/^[^\\/?*:";<>()|{}\\\\]+$/', $fileName)) {
-            return false;
-        }
-
-        return true;
+        return preg_match('/^[^\\/?*:";<>()|{}\\\\]+$/', $fileName);
     }
 }

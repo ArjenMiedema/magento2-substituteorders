@@ -56,6 +56,8 @@ class Router implements \Magento\Framework\App\RouterInterface
      */
     public function match(\Magento\Framework\App\RequestInterface $request)
     {
+        return false;
+
         $identifier = trim($request->getPathInfo(), '/');
         $split_identifier = explode('/', $identifier);
         if (strpos($identifier, 'sales/order/view') === 0 && isset($split_identifier[4])) {
