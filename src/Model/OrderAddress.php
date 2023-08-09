@@ -1,36 +1,17 @@
 <?php
 
-/**
- * A Magento 2 module named Dealer4Dealer\SubstituteOrders
- * Copyright (C) 2017 Maikel Martens
- *
- * This file is part of Dealer4Dealer\SubstituteOrders.
- *
- * Dealer4Dealer\SubstituteOrders is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
+declare(strict_types=1);
 
 namespace Dealer4Dealer\SubstituteOrders\Model;
 
 use Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface;
 use Dealer4Dealer\SubstituteOrders\Model\AdditionalData;
+use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\OrderAddress as ResourceModel;
+use Magento\Framework\Model\AbstractModel;
 
-class OrderAddress extends \Magento\Framework\Model\AbstractModel implements OrderAddressInterface
+class OrderAddress extends AbstractModel implements OrderAddressInterface
 {
-    /**
-     * @var string
-     */
-    const ENTITY = 'order_address';
+    public const ENTITY = 'order_address';
 
     /**
      * @var string
@@ -42,21 +23,18 @@ class OrderAddress extends \Magento\Framework\Model\AbstractModel implements Ord
      */
     protected $_eventObject = 'address';
 
-    protected $_additionalData = null;
+    protected ?array $additionalData = null;
 
-    /**
-     * @return void
-     */
-    protected function _construct()
+    protected function _construct(): void
     {
-        $this->_init('Dealer4Dealer\SubstituteOrders\Model\ResourceModel\OrderAddress');
+        $this->_init(ResourceModel::class);
     }
 
-    public function save()
+    public function save(): self
     {
-        if ($this->_additionalData) {
+        if ($this->additionalData) {
             $data = [];
-            foreach ($this->_additionalData as $value) {
+            foreach ($this->additionalData as $value) {
                 $data[$value->getKey()] = $value->getValue();
             }
 
@@ -66,12 +44,7 @@ class OrderAddress extends \Magento\Framework\Model\AbstractModel implements Ord
         return parent::save();
     }
 
-    /**
-     * Get full customer name
-     *
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         $name = '';
         if ($this->getPrefix()) {
@@ -91,286 +64,156 @@ class OrderAddress extends \Magento\Framework\Model\AbstractModel implements Ord
         return $name;
     }
 
-    /**
-     * Get orderaddress_id
-     * @return string
-     */
-    public function getOrderAddressId()
+    public function getOrderAddressId(): int
     {
         return $this->getData(self::ORDERADDRESS_ID);
     }
 
-    /**
-     * Set orderaddress_id
-     *
-     * @param string $orderAddressId
-     *
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface
-     */
-    public function setOrderAddressId($orderAddressId)
+    public function setOrderAddressId(int $orderAddressId): self
     {
         return $this->setData(self::ORDERADDRESS_ID, $orderAddressId);
     }
 
-    /**
-     * Get name
-     * @return string
-     */
-    public function getFirstname()
+    public function getFirstname(): string
     {
         return $this->getData(self::FIRSTNAME);
     }
 
-    /**
-     * Set name
-     * @param string $name
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface
-     */
-    public function setFirstname($name)
+    public function setFirstname(string $firstname): self
     {
-        return $this->setData(self::FIRSTNAME, $name);
+        return $this->setData(self::FIRSTNAME, $firstname);
     }
 
-    /**
-     * Get name
-     * @return string
-     */
-    public function getMiddlename()
+    public function getMiddlename(): string
     {
         return $this->getData(self::MIDDLENAME);
     }
 
-    /**
-     * Set name
-     * @param string $name
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface
-     */
-    public function setMiddlename($name)
+    public function setMiddlename(string $middlename): self
     {
-        return $this->setData(self::MIDDLENAME, $name);
+        return $this->setData(self::MIDDLENAME, $middlename);
     }
 
-    /**
-     * Get name
-     * @return string
-     */
-    public function getLastname()
+    public function getLastname(): string
     {
         return $this->getData(self::LASTNAME);
     }
 
-    /**
-     * Set name
-     * @param string $name
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface
-     */
-    public function setLastname($name)
+    public function setLastname(string $lastname): self
     {
-        return $this->setData(self::LASTNAME, $name);
+        return $this->setData(self::LASTNAME, $lastname);
     }
 
-    /**
-     * Get name
-     * @return string
-     */
-    public function getSuffix()
+    public function getSuffix(): string
     {
         return $this->getData(self::SUFFIX);
     }
 
-    /**
-     * Set name
-     * @param string $name
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface
-     */
-    public function setSuffix($name)
+    public function setSuffix(string $suffix): self
     {
-        return $this->setData(self::SUFFIX, $name);
+        return $this->setData(self::SUFFIX, $suffix);
     }
 
-    /**
-     * Get name
-     * @return string
-     */
-    public function getPrefix()
+    public function getPrefix(): string
     {
         return $this->getData(self::PREFIX);
     }
 
-    /**
-     * Set name
-     * @param string $name
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface
-     */
-    public function setPrefix($name)
+    public function setPrefix(string $prefix): self
     {
-        return $this->setData(self::PREFIX, $name);
+        return $this->setData(self::PREFIX, $prefix);
     }
 
-    /**
-     * Get company
-     * @return string
-     */
-    public function getCompany()
+    public function getCompany(): string
     {
         return $this->getData(self::COMPANY);
     }
 
-    /**
-     * Set company
-     * @param string $company
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface
-     */
-    public function setCompany($company)
+    public function setCompany(string $company): self
     {
         return $this->setData(self::COMPANY, $company);
     }
 
-    /**
-     * Get street
-     * @return string
-     */
-    public function getStreet()
+    public function getStreet(): string
     {
         return $this->getData(self::STREET);
     }
 
-    /**
-     * Set street
-     * @param string $street
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface
-     */
-    public function setStreet($street)
+    public function setStreet(string $street): self
     {
         return $this->setData(self::STREET, $street);
     }
 
-    /**
-     * Get postcode
-     * @return string
-     */
-    public function getPostcode()
+    public function getPostcode(): string
     {
         return $this->getData(self::POSTCODE);
     }
 
-    /**
-     * Set postcode
-     * @param string $postcode
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface
-     */
-    public function setPostcode($postcode)
+    public function setPostcode(string $postcode): self
     {
         return $this->setData(self::POSTCODE, $postcode);
     }
 
-    /**
-     * Get city
-     * @return string
-     */
-    public function getCity()
+    public function getCity(): string
     {
         return $this->getData(self::CITY);
     }
 
-    /**
-     * Set city
-     * @param string $city
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface
-     */
-    public function setCity($city)
+    public function setCity(string $city): self
     {
         return $this->setData(self::CITY, $city);
     }
 
-    /**
-     * Get country
-     * @return string
-     */
-    public function getCountry()
+    public function getCountry(): string
     {
         return $this->getData(self::COUNTRY);
     }
 
-    /**
-     * Set country
-     * @param string $country
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface
-     */
-    public function setCountry($country)
+    public function setCountry(string $country): self
     {
         return $this->setData(self::COUNTRY, $country);
     }
 
-    /**
-     * Get phone
-     * @return string
-     */
-    public function getTelephone()
+    public function getTelephone(): string
     {
         return $this->getData(self::PHONE);
     }
 
-    /**
-     * Set phone
-     * @param string $phone
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface
-     */
-    public function setTelephone($phone)
+    public function setTelephone(string $phone): self
     {
         return $this->setData(self::PHONE, $phone);
     }
 
-    /**
-     * Get fax
-     * @return string
-     */
-    public function getFax()
+    public function getFax(): string
     {
         return $this->getData(self::FAX);
     }
 
-    /**
-     * Set fax
-     * @param string $fax
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface
-     */
-    public function setFax($fax)
+    public function setFax(string $fax): self
     {
         return $this->setData(self::FAX, $fax);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getAdditionalData()
+    public function getAdditionalData(): array
     {
-        if ($this->_additionalData == null) {
-            $this->_additionalData = [];
+        if ($this->additionalData == null) {
+            $this->additionalData = [];
 
             if ($this->getData(self::ADDITIONAL_DATA)) {
                 $data = json_decode($this->getData(self::ADDITIONAL_DATA), true);
                 foreach ($data as $key => $value) {
-                    $this->_additionalData[] = new AdditionalData($key, $value);
+                    $this->additionalData[] = new AdditionalData($key, $value);
                 }
             }
         }
 
-        return $this->_additionalData;
+        return $this->additionalData;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setAdditionalData($additional_data)
+    public function setAdditionalData(array $additionalData): self
     {
-        $this->_additionalData = $additional_data;
-        return $this;
-    }
-
-    public function setData($key, $value = null)
-    {
-        parent::setData($key, $value);
+        $this->additionalData = $additionalData;
+        
         return $this;
     }
 }

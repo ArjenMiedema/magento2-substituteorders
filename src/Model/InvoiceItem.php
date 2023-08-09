@@ -1,36 +1,17 @@
 <?php
 
-/**
- * A Magento 2 module named Dealer4Dealer\SubstituteOrders
- * Copyright (C) 2017 Maikel Martens
- *
- * This file is part of Dealer4Dealer\SubstituteOrders.
- *
- * Dealer4Dealer\SubstituteOrders is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
+declare(strict_types=1);
 
 namespace Dealer4Dealer\SubstituteOrders\Model;
 
 use Dealer4Dealer\SubstituteOrders\Api\Data\InvoiceItemInterface;
 use Dealer4Dealer\SubstituteOrders\Model\AdditionalData;
+use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\InvoiceItem as ResourceModel;
+use Magento\Framework\Model\AbstractModel;
 
-class InvoiceItem extends \Magento\Framework\Model\AbstractModel implements InvoiceItemInterface
+class InvoiceItem extends AbstractModel implements InvoiceItemInterface
 {
-    /**
-     * @var string
-     */
-    const ENTITY = 'invoice_item';
+    public const ENTITY = 'invoice_item';
 
     /**
      * @var string
@@ -42,279 +23,187 @@ class InvoiceItem extends \Magento\Framework\Model\AbstractModel implements Invo
      */
     protected $_eventObject = 'item';
 
-    protected $_additionalData = null;
+    protected ?array $additionalData;
 
     /**
      * @return void
      */
     protected function _construct()
     {
-        $this->_init('Dealer4Dealer\SubstituteOrders\Model\ResourceModel\InvoiceItem');
+        $this->_init(ResourceModel::class);
     }
-
-    public function save()
+    public function save(): self
     {
-        if ($this->_additionalData) {
+        if ($this->additionalData !== null) {
             $data = [];
-            foreach ($this->_additionalData as $value) {
+
+            foreach ($this->additionalData as $value) {
                 $data[$value->getKey()] = $value->getValue();
             }
-
             $this->setData(self::ADDITIONAL_DATA, json_encode($data));
         }
-
         return parent::save();
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getInvoiceitemId()
+    public function getInvoiceitemId(): int
     {
         return $this->getData(self::INVOICEITEM_ID);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setInvoiceitemId($invoiceItemId)
+    public function setInvoiceitemId(int $invoiceItemId): self
     {
         return $this->setData(self::INVOICEITEM_ID, $invoiceItemId);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setInvoiceId($invoiceId)
+    public function setInvoiceId(int $invoiceId): self
     {
         return $this->setData(self::INVOICE_ID, $invoiceId);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getInvoiceId()
+    public function getInvoiceId(): int
     {
         return $this->getData(self::INVOICE_ID);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setOrderId($orderId)
+    public function setOrderId(int $orderId): self
     {
         return $this->setData(self::ORDER_ID, $orderId);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getOrderId()
+    public function getOrderId(): int
     {
         return $this->getData(self::ORDER_ID);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->getData(self::NAME);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setName($name)
+    public function setName(string $name): self
     {
         return $this->setData(self::NAME, $name);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getSku()
+    public function getSku(): string
     {
         return $this->getData(self::SKU);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setSku($sku)
+    public function setSku(string $sku): self
     {
         return $this->setData(self::SKU, $sku);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getBasePrice()
+    public function getBasePrice(): float
     {
         return $this->getData(self::BASE_PRICE);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setBasePrice($base_price)
+    public function setBasePrice(float $basePrice): self
     {
-        return $this->setData(self::BASE_PRICE, $base_price);
+        return $this->setData(self::BASE_PRICE, $basePrice);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getPrice()
+    public function getPrice(): float
     {
         return $this->getData(self::PRICE);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setPrice($price)
+    public function setPrice(float $price): self
     {
         return $this->setData(self::PRICE, $price);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getBaseRowTotal()
+    public function getBaseRowTotal(): float
     {
         return $this->getData(self::BASE_ROW_TOTAL);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setBaseRowTotal($base_row_total)
+    public function setBaseRowTotal(float $baseRowTotal): self
     {
-        return $this->setData(self::BASE_ROW_TOTAL, $base_row_total);
+        return $this->setData(self::BASE_ROW_TOTAL, $baseRowTotal);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getRowTotal()
+    public function getRowTotal(): float
     {
         return $this->getData(self::ROW_TOTAL);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setRowTotal($row_total)
+    public function setRowTotal(float $rowTotal): self
     {
-        return $this->setData(self::ROW_TOTAL, $row_total);
+        return $this->setData(self::ROW_TOTAL, $rowTotal);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getBaseTaxAmount()
+    public function getBaseTaxAmount(): float
     {
         return $this->getData(self::BASE_TAX_AMOUNT);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setBaseTaxAmount($base_tax_amount)
+    public function setBaseTaxAmount(float $baseTaxAmount): self
     {
-        return $this->setData(self::BASE_TAX_AMOUNT, $base_tax_amount);
+        return $this->setData(self::BASE_TAX_AMOUNT, $baseTaxAmount);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getTaxAmount()
+    public function getTaxAmount(): float
     {
         return $this->getData(self::TAX_AMOUNT);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setTaxAmount($tax_amount)
+    public function setTaxAmount(float $taxAmount): self
     {
-        return $this->setData(self::TAX_AMOUNT, $tax_amount);
+        return $this->setData(self::TAX_AMOUNT, $taxAmount);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getQty()
+    public function getQty(): float
     {
         return $this->getData(self::QTY);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setQty($qty)
+    public function setQty(float $qty): self
     {
         return $this->setData(self::QTY, $qty);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getAdditionalData()
+    public function getAdditionalData(): array
     {
-        if ($this->_additionalData == null) {
-            $this->_additionalData = [];
+        if ($this->additionalData === null) {
+            $this->additionalData = [];
 
             if ($this->getData(self::ADDITIONAL_DATA)) {
                 $data = json_decode($this->getData(self::ADDITIONAL_DATA), true);
                 foreach ($data as $key => $value) {
-                    $this->_additionalData[] = new AdditionalData($key, $value);
+                    $this->additionalData[] = new AdditionalData($key, $value);
                 }
             }
         }
-
-        return $this->_additionalData;
+        return $this->additionalData;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setAdditionalData($additional_data)
+    public function setAdditionalData(array $additionalData): self
     {
-        $this->_additionalData = $additional_data;
+        $this->additionalData = $additionalData;
+
         return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getBaseDiscountAmount()
+    public function getBaseDiscountAmount(): float
     {
         return $this->getData(self::BASE_DISCOUNT_AMOUNT);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setBaseDiscountAmount($base_discount_amount)
+    public function setBaseDiscountAmount(float $baseDiscountAmount): self
     {
-        return $this->setData(self::BASE_DISCOUNT_AMOUNT, $base_discount_amount);
+        return $this->setData(self::BASE_DISCOUNT_AMOUNT, $baseDiscountAmount);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getDiscountAmount()
+    public function getDiscountAmount(): float
     {
         return $this->getData(self::DISCOUNT_AMOUNT);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setDiscountAmount($discount_amount)
+    public function setDiscountAmount(float $discountAmount): self
     {
-        return $this->setData(self::DISCOUNT_AMOUNT, $discount_amount);
+        return $this->setData(self::DISCOUNT_AMOUNT, $discountAmount);
     }
 }

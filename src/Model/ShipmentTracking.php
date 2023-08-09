@@ -27,29 +27,19 @@ use Dealer4Dealer\SubstituteOrders\Api\Data\ShipmentTrackingInterface;
 
 class ShipmentTracking implements ShipmentTrackingInterface
 {
-    protected $carrierName = '';
-    protected $code = '';
-    protected $url = '';
-
-    /**
-     * ShipmentTracking constructor.
-     * @param $carrierName
-     * @param $code
-     * @param string $url
-     */
-    public function __construct($carrierName = '', $code = '', $url = '')
-    {
-        $this->carrierName = $carrierName;
-        $this->code = $code;
-        $this->url = $url;
+    public function __construct(
+        private string $carrierName = '',
+        private string $code = '',
+        private string $url = ''
+    ) {
     }
 
-    public static function createByArray($data)
+    public static function createByArray(array $data): ShipmentTrackingInterface
     {
         return new ShipmentTracking(@$data['name'], @$data['code'], @$data['url']);
     }
 
-    public function getArray()
+    public function getArray(): array
     {
         return [
             'name' => $this->carrierName,
@@ -58,54 +48,39 @@ class ShipmentTracking implements ShipmentTrackingInterface
         ];
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getCarrierName()
+    public function getCarrierName(): string
     {
         return $this->carrierName;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setCarrierName($carrier_name)
+    public function setCarrierName(string $carrierName): self
     {
-        $this->carrierName = $carrier_name;
+        $this->carrierName = $carrierName;
+
         return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getCode()
+    public function getTrackingCode(): string
     {
         return $this->code;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setCode($code)
+    public function setTrackingCode(string $code): self
     {
         $this->code = $code;
+
         return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getUrl()
+    public function getTrackingUrl(): string
     {
         return $this->url;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setUrl($url)
+    public function setTrackingUrl(string $url): self
     {
         $this->url = $url;
+
         return $this;
     }
 }

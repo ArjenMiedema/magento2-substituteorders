@@ -1,132 +1,46 @@
 <?php
 
-/**
- * A Magento 2 module named Dealer4Dealer\SubstituteOrders
- * Copyright (C) 2017 Maikel Martens
- *
- * This file is part of Dealer4Dealer\SubstituteOrders.
- *
- * Dealer4Dealer\SubstituteOrders is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
+declare(strict_types=1);
 
 namespace Dealer4Dealer\SubstituteOrders\Model;
 
 use Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface;
-use Dealer4Dealer\SubstituteOrders\Model\OrderItemFactory;
-use Magento\Framework\Reflection\DataObjectProcessor;
-use Magento\Framework\Api\DataObjectHelper;
+use Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemSearchResultsInterface;
+use Exception;
+use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface;
+use Magento\Framework\Api\SearchCriteriaBuilder;
+use Magento\Framework\Api\SearchCriteriaInterface;
 use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\OrderItem as ResourceOrderItem;
-use Magento\Store\Model\StoreManagerInterface;
 use Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemSearchResultsInterfaceFactory;
-use Magento\Framework\Api\SortOrder;
 use Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterfaceFactory;
 use Magento\Framework\Exception\CouldNotSaveException;
-use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\OrderItem\CollectionFactory as OrderItemCollectionFactory;
+use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\OrderItem\CollectionFactory;
 use Dealer4Dealer\SubstituteOrders\Api\OrderItemRepositoryInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Exception\CouldNotDeleteException;
 
-use function Dealer4Dealer\SubstituteOrders\Model\__;
 
 class OrderItemRepository implements OrderItemRepositoryInterface
 {
-    /*
-     * @var OrderItemFactory
-     */
-    protected $orderItemFactory;
-
-    /*
-     * @var StoreManagerInterface
-     */
-    protected $storeManager;
-
-    /*
-     * @var DataObjectProcessor
-     */
-    protected $dataObjectProcessor;
-
-    /*
-     * @var OrderItemCollectionFactory
-     */
-    protected $orderItemCollectionFactory;
-
-    /*
-     * @var ResourceOrderItem
-     */
-    protected $resource;
-
-    /*
-     * @var DataObjectHelper
-     */
-    protected $dataObjectHelper;
-
-    /*
-     * @var OrderItemSearchResultsInterfaceFactory
-     */
-    protected $searchResultsFactory;
-
-    /*
-     * @var OrderItemInterfaceFactory
-     */
-    protected $dataOrderItemFactory;
-
-    /*
-     * @var \Magento\Framework\Api\SearchCriteriaBuilder
-     */
-    protected $searchCriteriaBuilder;
-
-    /**
-     * @param ResourceOrderItem $resource
-     * @param OrderItemFactory $orderItemFactory
-     * @param OrderItemInterfaceFactory $dataOrderItemFactory
-     * @param OrderItemCollectionFactory $orderItemCollectionFactory
-     * @param OrderItemSearchResultsInterfaceFactory $searchResultsFactory
-     * @param DataObjectHelper $dataObjectHelper
-     * @param DataObjectProcessor $dataObjectProcessor
-     * @param StoreManagerInterface $storeManager
-     */
     public function __construct(
-        ResourceOrderItem $resource,
-        OrderItemFactory $orderItemFactory,
-        OrderItemInterfaceFactory $dataOrderItemFactory,
-        OrderItemCollectionFactory $orderItemCollectionFactory,
-        OrderItemSearchResultsInterfaceFactory $searchResultsFactory,
-        DataObjectHelper $dataObjectHelper,
-        DataObjectProcessor $dataObjectProcessor,
-        StoreManagerInterface $storeManager,
-        \Magento\Framework\Api\SearchCriteriaBuilder $searchCriteriaBuilder
+        private readonly ResourceOrderItem $resource,
+        private readonly OrderItemFactory $orderItemFactory,
+        private readonly CollectionFactory $collectionFactory,
+        private readonly OrderItemSearchResultsInterfaceFactory $searchResultFactory,
+        private readonly CollectionProcessorInterface $collectionProcessor,
+        private readonly SearchCriteriaBuilder $searchCriteriaBuilder
     ) {
-        $this->resource = $resource;
-        $this->orderItemFactory = $orderItemFactory;
-        $this->orderItemCollectionFactory = $orderItemCollectionFactory;
-        $this->searchResultsFactory = $searchResultsFactory;
-        $this->dataObjectHelper = $dataObjectHelper;
-        $this->dataOrderItemFactory = $dataOrderItemFactory;
-        $this->dataObjectProcessor = $dataObjectProcessor;
-        $this->storeManager = $storeManager;
-        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
     }
 
     /**
-     * {@inheritdoc}
+     * @throws CouldNotSaveException
      */
     public function save(
-        \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface $orderItem
+        OrderItemInterface $orderItem
     ): OrderItemInterface {
         try {
             $this->resource->save($orderItem);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             throw new CouldNotSaveException(
                 __(
                     'Could not save the orderItem: %1',
@@ -139,7 +53,7 @@ class OrderItemRepository implements OrderItemRepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @throws NoSuchEntityException
      */
     public function getById(int $orderItemId): OrderItemInterface
     {
@@ -152,60 +66,21 @@ class OrderItemRepository implements OrderItemRepositoryInterface
         return $orderItem;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getList(
-        \Magento\Framework\Api\SearchCriteriaInterface $criteria
-    ) {
-        $searchResults = $this->searchResultsFactory->create();
-        $searchResults->setSearchCriteria($criteria);
+        SearchCriteriaInterface $searchCriteria
+    ): OrderItemSearchResultsInterface {
+        $collection = $this->collectionFactory->create();
+        $this->collectionProcessor->process($searchCriteria, $collection);
 
-        $collection = $this->orderItemCollectionFactory->create();
-        foreach ($criteria->getFilterGroups() as $filterGroup) {
-            foreach ($filterGroup->getFilters() as $filter) {
-                if ($filter->getField() === 'store_id') {
-                    $collection->addStoreFilter($filter->getValue(), false);
-                    continue;
-                }
+        $searchResults = $this->searchResultFactory->create();
+        $searchResults->setSearchCriteria($searchCriteria);
+        $searchResults->setItems($collection->getItems());
 
-                $condition = $filter->getConditionType() ?: 'eq';
-                $collection->addFieldToFilter($filter->getField(), [$condition => $filter->getValue()]);
-            }
-        }
-
-        $searchResults->setTotalCount($collection->getSize());
-        $sortOrders = $criteria->getSortOrders();
-        if ($sortOrders) {
-            /** @var SortOrder $sortOrder */
-            foreach ($sortOrders as $sortOrder) {
-                $collection->addOrder(
-                    $sortOrder->getField(),
-                    ($sortOrder->getDirection() == SortOrder::SORT_ASC) ? 'ASC' : 'DESC'
-                );
-            }
-        }
-
-        $collection->setCurPage($criteria->getCurrentPage());
-        $collection->setPageSize($criteria->getPageSize());
-        $items = [];
-
-        foreach ($collection as $orderItemModel) {
-            $orderItemData = $this->dataOrderItemFactory->create();
-            $this->dataObjectHelper->populateWithArray(
-                $orderItemData,
-                $orderItemModel->getData(),
-                'Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface'
-            );
-
-            $items[] = $orderItemData;
-        }
-
-        $searchResults->setItems($items);
         return $searchResults;
+
     }
 
-    public function getOrderItems($orderId)
+    public function getOrderItems(int $orderId): array
     {
         $searchCriteria = $this->searchCriteriaBuilder->addFilter('order_id', $orderId, 'eq')->create();
         $results = $this->getList($searchCriteria);
@@ -214,14 +89,14 @@ class OrderItemRepository implements OrderItemRepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @throws CouldNotDeleteException
      */
     public function delete(
-        \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface $orderItem
-    ) {
+        OrderItemInterface $orderItem
+    ): bool {
         try {
             $this->resource->delete($orderItem);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             throw new CouldNotDeleteException(
                 __(
                     'Could not delete the OrderItem: %1',
@@ -233,10 +108,7 @@ class OrderItemRepository implements OrderItemRepositoryInterface
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function deleteById($orderItemId)
+    public function deleteById(int $orderItemId): bool
     {
         return $this->delete($this->getById($orderItemId));
     }

@@ -25,21 +25,21 @@ interface ShipmentItemInterface
 
     public function setShipmentId(int $shipmentId): self;
 
-    public function getRowTotal(): ?string;
+    public function getRowTotal(): ?float;
 
-    public function setRowTotal(string $rowTotal): self;
+    public function setRowTotal(float $rowTotal): self;
 
-    public function getPrice(): ?string;
+    public function getPrice(): ?float;
 
-    public function setPrice(string $price): self;
+    public function setPrice(float $price): self;
 
-    public function getWeight(): ?string;
+    public function getWeight(): ?float;
 
-    public function setWeight(string $weight): self;
+    public function setWeight(float $weight): self;
 
-    public function getQty(): ?string;
+    public function getQty(): ?float;
 
-    public function setQty(string $qty): self;
+    public function setQty(float $qty): self;
 
     public function getSku(): ?string;
 

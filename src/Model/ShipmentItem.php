@@ -1,37 +1,20 @@
 <?php
 
-/**
- * A Magento 2 module named Dealer4Dealer\SubstituteOrders
- * Copyright (C) 2017 Maikel Martens
- *
- * This file is part of Dealer4Dealer\SubstituteOrders.
- *
- * Dealer4Dealer\SubstituteOrders is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
+declare(strict_types=1);
 
 namespace Dealer4Dealer\SubstituteOrders\Model;
 
 use Dealer4Dealer\SubstituteOrders\Api\Data\ShipmentItemInterface;
 use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\ShipmentItem as ResourceShipmentItem;
 use Dealer4Dealer\SubstituteOrders\Model\AdditionalData;
+use Magento\Framework\Model\AbstractModel;
 
-class ShipmentItem extends \Magento\Framework\Model\AbstractModel implements ShipmentItemInterface
+class ShipmentItem extends AbstractModel implements ShipmentItemInterface
 {
     /**
      * @var string
      */
-    const ENTITY = 'shipment_item';
+    public const ENTITY = 'shipment_item';
 
     /**
      * @var string
@@ -43,21 +26,18 @@ class ShipmentItem extends \Magento\Framework\Model\AbstractModel implements Shi
      */
     protected $_eventObject = 'item';
 
-    protected $_additionalData;
+    protected ?array $additionalData;
 
-    /**
-     * @return void
-     */
-    protected function _construct()
+    protected function _construct(): void
     {
         $this->_init(ResourceShipmentItem::class);
     }
 
-    public function save()
+    public function save(): self
     {
-        if ($this->_additionalData) {
+        if ($this->additionalData) {
             $data = [];
-            foreach ($this->_additionalData as $value) {
+            foreach ($this->additionalData as $value) {
                 $data[$value->getKey()] = $value->getValue();
             }
 
@@ -67,175 +47,117 @@ class ShipmentItem extends \Magento\Framework\Model\AbstractModel implements Shi
         return parent::save();
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getShipmentItemId()
+    public function getShipmentItemId(): int
     {
         return $this->getData(self::SHIPMENTITEM_ID);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setShipmentItemId($shipmentItemId)
+    public function setShipmentItemId(int $shipmentItemId): self
     {
         return $this->setData(self::SHIPMENTITEM_ID, $shipmentItemId);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getShipmentId()
+    public function getShipmentId(): int
     {
         return $this->getData(self::SHIPMENT_ID);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setShipmentId($shipment_id)
+    public function setShipmentId(int $shipmentId): self
     {
-        return $this->setData(self::SHIPMENT_ID, $shipment_id);
+        return $this->setData(self::SHIPMENT_ID, $shipmentId);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getRowTotal()
+    public function getRowTotal(): float
     {
         return $this->getData(self::ROW_TOTAL);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setRowTotal($row_total)
+    public function setRowTotal(float $rowTotal): self
     {
-        return $this->setData(self::ROW_TOTAL, $row_total);
+        return $this->setData(self::ROW_TOTAL, $rowTotal);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getPrice()
+    public function getPrice(): float
     {
         return $this->getData(self::PRICE);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setPrice($price)
+    public function setPrice(float $price): self
     {
         return $this->setData(self::PRICE, $price);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getWeight()
+    public function getWeight(): float
     {
         return $this->getData(self::WEIGHT);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setWeight($weight)
+    public function setWeight(float $weight): self
     {
         return $this->setData(self::WEIGHT, $weight);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getQty()
+    public function getQty(): float
     {
         return $this->getData(self::QTY);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setQty($qty)
+    public function setQty(float $qty): self
     {
         return $this->setData(self::QTY, $qty);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getSku()
+    public function getSku(): string
     {
         return $this->getData(self::SKU);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setSku($sku)
+    public function setSku(string $sku): self
     {
         return $this->setData(self::SKU, $sku);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->getData(self::NAME);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setName($name)
+    public function setName(string $name): self
     {
         return $this->setData(self::NAME, $name);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->getData(self::DESCRIPTION);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setDescription($description)
+    public function setDescription(string $description): self
     {
         return $this->setData(self::DESCRIPTION, $description);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getAdditionalData()
+    public function getAdditionalData(): array
     {
-        if ($this->_additionalData == null) {
-            $this->_additionalData = [];
+        if ($this->additionalData === null) {
+            $this->additionalData = [];
 
             if ($this->getData(self::ADDITIONAL_DATA)) {
                 $data = json_decode($this->getData(self::ADDITIONAL_DATA), true);
+
                 foreach ($data as $key => $value) {
-                    $this->_additionalData[] = new AdditionalData($key, $value);
+                    $this->additionalData[] = new AdditionalData($key, $value);
                 }
             }
         }
 
-        return $this->_additionalData;
+        return $this->additionalData;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setAdditionalData($additional_data)
+    public function setAdditionalData(array $additionalData): self
     {
-        $this->_additionalData = $additional_data;
+        $this->additionalData = $additionalData;
+
         return $this;
     }
 }

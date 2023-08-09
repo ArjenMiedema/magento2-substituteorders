@@ -3,13 +3,14 @@
 namespace Dealer4Dealer\SubstituteOrders\Model;
 
 use Dealer4Dealer\SubstituteOrders\Api\Data\AttachmentInterface;
+use Dealer4Dealer\SubstituteOrders\Api\Data\File\ContentInterface;
+use Dealer4Dealer\SubstituteOrders\Model\File\Content;
+use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\Attachment as ResourceModel;
+use Magento\Framework\Model\AbstractModel;
 
-class Attachment extends \Magento\Framework\Model\AbstractModel implements AttachmentInterface
+class Attachment extends AbstractModel implements AttachmentInterface
 {
-    /**
-     * @var string
-     */
-    const ENTITY = 'attachment';
+    public const ENTITY = 'attachment';
 
     /**
      * @var string
@@ -21,143 +22,77 @@ class Attachment extends \Magento\Framework\Model\AbstractModel implements Attac
      */
     protected $_eventObject = 'attachment';
 
-    /**
-     * @return void
-     */
-    protected function _construct()
+    protected function _construct(): void
     {
-        $this->_init('Dealer4Dealer\SubstituteOrders\Model\ResourceModel\Attachment');
+        $this->_init(ResourceModel::class);
     }
 
-    /**
-     * Get attachment_id
-     * @return string
-     */
-    public function getAttachmentId()
+    public function getAttachmentId(): int
     {
-        return $this->getData(self::ATTACHMENT_ID);
+        return (int) $this->getData(self::ATTACHMENT_ID);
     }
 
-    /**
-     * Set attachment_id
-     * @param string $attachmentId
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\AttachmentInterface
-     */
-    public function setAttachmentId($attachmentId)
+    public function setAttachmentId(int $attachmentId): self
     {
         return $this->setData(self::ATTACHMENT_ID, $attachmentId);
     }
 
-    /**
-     * Get magento_customer_identifier
-     * @return string
-     */
-    public function getMagentoCustomerIdentifier()
+    public function getMagentoCustomerIdentifier(): int
     {
-        return $this->getData(self::MAGENTO_CUSTOMER_IDENTIFIER);
+        return (int) $this->getData(self::MAGENTO_CUSTOMER_IDENTIFIER);
     }
 
-    /**
-     * Set magento_customer_identifier
-     *
-     * @param string $customerId
-     *
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\AttachmentInterface
-     */
-    public function setMagentoCustomerIdentifier($customerId)
+    public function setMagentoCustomerIdentifier(int $customerId): self
     {
         return $this->setData(self::MAGENTO_CUSTOMER_IDENTIFIER, $customerId);
     }
 
-    /**
-     * Get file
-     * @return string
-     */
-    public function getFile()
+    public function getFile(): string
     {
         return $this->getData(self::FILE);
     }
 
-    /**
-     * Set file
-     * @param string $file
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\AttachmentInterface
-     */
-    public function setFile($file)
+    public function setFile(string $file): self
     {
         return $this->setData(self::FILE, $file);
     }
 
-    /**
-     * Get type
-     * @return string
-     */
-    public function getEntityType()
+    public function getEntityType(): string
     {
         return $this->getData(self::ENTITY_TYPE);
     }
 
-    /**
-     * Set entity_type
-     *
-     * @param string $entityType
-     *
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\AttachmentInterface
-     */
-    public function setEntityType($entityType)
+    public function setEntityType(string $entityType): self
     {
         return $this->setData(self::ENTITY_TYPE, $entityType);
     }
 
-    /**
-     * Get type
-     * @return string
-     */
-    public function getEntityTypeIdentifier()
+    public function getEntityTypeIdentifier(): int
     {
-        return $this->getData(self::ENTITY_TYPE_IDENTIFIER);
+        return (int) $this->getData(self::ENTITY_TYPE_IDENTIFIER);
     }
 
-    /**
-     * Set entity_type_identifier
-     *
-     * @param string $identifier
-     *
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\AttachmentInterface
-     */
-    public function setEntityTypeIdentifier($identifier)
+    public function setEntityTypeIdentifier(int $identifier): self
     {
         return $this->setData(self::ENTITY_TYPE_IDENTIFIER, $identifier);
     }
 
-    /**
-     * Set file content
-     *
-     * @param \Dealer4Dealer\SubstituteOrders\Api\Data\File\ContentInterface $fileContent
-     * @return $this
-     */
-    public function setFileContent(\Dealer4Dealer\SubstituteOrders\Api\Data\File\ContentInterface $fileContent = null)
+    public function setFileContent(ContentInterface $fileContent = null): self
     {
         return $this->setData(self::FILE_CONTENT, $fileContent);
     }
 
-    /**
-     * Return file content
-     *
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\File\ContentInterface|null
-     */
-    public function getFileContent()
+    public function getFileContent(): ?ContentInterface
     {
         return $this->getData(self::FILE_CONTENT);
     }
 
-    /**
-     * Retrieve Base files path
-     *
-     * @return string
-     */
-    public function getBasePath($entityType, $customerIdentifier = '0')
+    public function getBasePath(string $entityType, int $customerIdentifier = 0): string
     {
-        return 'customer/substitute_order/files/' . $customerIdentifier . '/' . $entityType;
+        return sprintf(
+            'customer/substitute_order/files/%d/%s',
+            $customerIdentifier,
+            $entityType
+        );
     }
 }

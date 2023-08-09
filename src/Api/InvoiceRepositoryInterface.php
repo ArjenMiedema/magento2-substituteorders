@@ -13,7 +13,7 @@ interface InvoiceRepositoryInterface
 {
     public function save(InvoiceInterface $invoice): InvoiceInterface;
 
-    public function getById(string $invoiceId): InvoiceInterface;
+    public function getById(int $invoiceId): InvoiceInterface;
 
     public function getList(SearchCriteriaInterface $searchCriteria): InvoiceSearchResultsInterface;
 

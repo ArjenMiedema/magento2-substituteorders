@@ -1,104 +1,37 @@
 <?php
 
-/**
- * A Magento 2 module named Dealer4Dealer/SubstituteOrders
- * Copyright (C) 2017 Maikel Martens
- *
- * This file is part of Dealer4Dealer/SubstituteOrders.
- *
- * Dealer4Dealer/SubstituteOrders is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
+declare(strict_types=1);
 
 namespace Dealer4Dealer\SubstituteOrders\Model;
 
 use Dealer4Dealer\SubstituteOrders\Api\Data\OrderInvoiceRelationInterface;
+use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\OrderInvoiceRelation as ResourceModel;
+use Magento\Framework\Model\AbstractModel;
 
-class OrderInvoiceRelation extends \Magento\Framework\Model\AbstractModel implements OrderInvoiceRelationInterface
+class OrderInvoiceRelation extends AbstractModel implements OrderInvoiceRelationInterface
 {
-    /**
-     * @return void
-     */
-    protected function _construct()
+    protected function _construct(): void
     {
-        $this->_init('Dealer4Dealer\SubstituteOrders\Model\ResourceModel\OrderInvoiceRelation');
+        $this->_init(ResourceModel::class);
     }
 
-    /**
-     * Get orderinvoicerelation_id
-     * @return string
-     */
-    public function getOrderInvoiceRelationId()
-    {
-        return $this->getData(self::ORDERINVOICERELATION_ID);
-    }
-
-    /**
-     * Set orderinvoicerelation_id
-     *
-     * @param string $orderInvoiceRelationId
-     *
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderInvoiceRelationInterface
-     */
-    public function setOrderInvoiceRelationId($orderInvoiceRelationId)
-    {
-        return $this->setData(
-            self::ORDERINVOICERELATION_ID,
-            $orderInvoiceRelationId
-        );
-    }
-
-    /**
-     * Get order_id
-     * @return string
-     */
-    public function getOrderId()
+    public function getOrderId(): int
     {
         return $this->getData(self::ORDER_ID);
     }
 
-    /**
-     * Set order_id
-     * @param string $order_id
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderInvoiceRelationInterface
-     */
-    public function setOrderId($order_id)
+    public function setOrderId(int $orderId): self
     {
-        return $this->setData(self::ORDER_ID, $order_id);
+        return $this->setData(self::ORDER_ID, $orderId);
     }
 
-    /**
-     * Get invoice_id
-     * @return string
-     */
-    public function getInvoiceId()
+    public function getInvoiceId(): int
     {
         return $this->getData(self::INVOICE_ID);
     }
 
-    /**
-     * Set invoice_id
-     * @param string $invoice_id
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderInvoiceRelationInterface
-     */
-    public function setInvoiceId($invoice_id)
+    public function setInvoiceId(int $invoiceId): self
     {
-        return $this->setData(self::INVOICE_ID, $invoice_id);
-    }
-
-    public function setData($key, $value = null)
-    {
-        parent::setData($key, $value);
-        return $this;
+        return $this->setData(self::INVOICE_ID, $invoiceId);
     }
 }

@@ -1,136 +1,45 @@
 <?php
 
-/**
- * A Magento 2 module named Dealer4Dealer\SubstituteOrders
- * Copyright (C) 2017 Maikel Martens
- *
- * This file is part of Dealer4Dealer\SubstituteOrders.
- *
- * Dealer4Dealer\SubstituteOrders is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
+declare(strict_types=1);
 
 namespace Dealer4Dealer\SubstituteOrders\Model;
 
+use Dealer4Dealer\SubstituteOrders\Api\Data\ShipmentItemInterface;
 use Dealer4Dealer\SubstituteOrders\Api\Data\ShipmentItemInterfaceFactory;
-use Dealer4Dealer\SubstituteOrders\Model\ShipmentItemFactory;
+use Dealer4Dealer\SubstituteOrders\Api\Data\ShipmentItemSearchResultsInterface;
 use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\ShipmentItem as ResourceShipmentItem;
-use Magento\Framework\Reflection\DataObjectProcessor;
+use Exception;
+use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface;
+use Magento\Framework\Api\SearchCriteriaInterface;
 use Dealer4Dealer\SubstituteOrders\Api\ShipmentItemRepositoryInterface;
-use Magento\Framework\Api\SortOrder;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Exception\CouldNotSaveException;
-use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\ShipmentItem\CollectionFactory as ShipmentItemCollectionFactory;
-use Magento\Framework\Api\DataObjectHelper;
+use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\ShipmentItem\CollectionFactory;
 use Dealer4Dealer\SubstituteOrders\Api\Data\ShipmentItemSearchResultsInterfaceFactory;
 use Magento\Framework\Exception\CouldNotDeleteException;
-use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\Api\SearchCriteriaBuilder;
-
-use function Dealer4Dealer\SubstituteOrders\Model\__;
 
 class ShipmentItemRepository implements ShipmentItemRepositoryInterface
 {
-    /*
-     * @var ShipmentItemInterfaceFactory
-     */
-    protected $dataShipmentItemFactory;
-
-    /*
-     * @var DataObjectHelper
-     */
-    protected $dataObjectHelper;
-
-    /*
-     * @var ShipmentItemSearchResultsInterfaceFactory
-     */
-    protected $searchResultsFactory;
-
-    /*
-     * @var StoreManagerInterface
-     */
-    protected $storeManager;
-
-    /*
-     * @var ResourceShipmentItem
-     */
-    protected $resource;
-
-    /*
-     * @var ShipmentItemCollectionFactory
-     */
-    protected $shipmentItemCollectionFactory;
-
-    /*
-     * @var
-     */
-    protected $dataObjectProcessor;
-
-    /*
-     * @var ShipmentItemFactory
-     */
-    protected $shipmentItemFactory;
-
-    /*
-     * @var SearchCriteriaBuilder
-     */
-    protected $searchCriteriaBuilder;
-
-    /**
-     * @param ResourceShipmentItem $resource
-     * @param ShipmentItemFactory $shipmentItemFactory
-     * @param ShipmentItemInterfaceFactory $dataShipmentItemFactory
-     * @param ShipmentItemCollectionFactory $shipmentItemCollectionFactory
-     * @param ShipmentItemSearchResultsInterfaceFactory $searchResultsFactory
-     * @param DataObjectHelper $dataObjectHelper
-     * @param DataObjectProcessor $dataObjectProcessor
-     * @param StoreManagerInterface $storeManager
-     */
     public function __construct(
-        ResourceShipmentItem $resource,
-        ShipmentItemFactory $shipmentItemFactory,
-        ShipmentItemInterfaceFactory $dataShipmentItemFactory,
-        ShipmentItemCollectionFactory $shipmentItemCollectionFactory,
-        ShipmentItemSearchResultsInterfaceFactory $searchResultsFactory,
-        DataObjectHelper $dataObjectHelper,
-        DataObjectProcessor $dataObjectProcessor,
-        StoreManagerInterface $storeManager,
-        SearchCriteriaBuilder $searchCriteriaBuilder
+        private readonly ResourceShipmentItem $resource,
+        private readonly ShipmentItemFactory $shipmentItemFactory,
+        private readonly CollectionFactory $collectionFactory,
+        private readonly ShipmentItemSearchResultsInterfaceFactory $searchResultFactory,
+        private readonly CollectionProcessorInterface $collectionProcessor,
+        private readonly SearchCriteriaBuilder $searchCriteriaBuilder
     ) {
-        $this->resource = $resource;
-        $this->shipmentItemFactory = $shipmentItemFactory;
-        $this->shipmentItemCollectionFactory = $shipmentItemCollectionFactory;
-        $this->searchResultsFactory = $searchResultsFactory;
-        $this->dataObjectHelper = $dataObjectHelper;
-        $this->dataShipmentItemFactory = $dataShipmentItemFactory;
-        $this->dataObjectProcessor = $dataObjectProcessor;
-        $this->storeManager = $storeManager;
-        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
     }
 
     /**
-     * {@inheritdoc}
+     * @throws CouldNotSaveException
      */
     public function save(
-        \Dealer4Dealer\SubstituteOrders\Api\Data\ShipmentItemInterface $shipmentItem
-    ) {
-        /* if (empty($shipmentItem->getStoreId())) {
-            $storeId = $this->storeManager->getStore()->getId();
-            $shipmentItem->setStoreId($storeId);
-        } */
+        ShipmentItemInterface $shipmentItem
+    ): ShipmentItemInterface {
         try {
             $this->resource->save($shipmentItem);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             throw new CouldNotSaveException(
                 __(
                     'Could not save the shipmentItem: %1',
@@ -143,9 +52,9 @@ class ShipmentItemRepository implements ShipmentItemRepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @throws NoSuchEntityException
      */
-    public function getById($shipmentItemId)
+    public function getById(int $shipmentItemId): ShipmentItemInterface
     {
         $shipmentItem = $this->shipmentItemFactory->create();
         $shipmentItem->load($shipmentItemId);
@@ -156,67 +65,29 @@ class ShipmentItemRepository implements ShipmentItemRepositoryInterface
         return $shipmentItem;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getList(
-        \Magento\Framework\Api\SearchCriteriaInterface $criteria
-    ) {
-        $searchResults = $this->searchResultsFactory->create();
-        $searchResults->setSearchCriteria($criteria);
+        SearchCriteriaInterface $searchCriteria
+    ): ShipmentItemSearchResultsInterface {
+        $collection = $this->collectionFactory->create();
+        $this->collectionProcessor->process($searchCriteria, $collection);
 
-        $collection = $this->shipmentItemCollectionFactory->create();
-        foreach ($criteria->getFilterGroups() as $filterGroup) {
-            foreach ($filterGroup->getFilters() as $filter) {
-                if ($filter->getField() === 'store_id') {
-                    $collection->addStoreFilter($filter->getValue(), false);
-                    continue;
-                }
+        $searchResults = $this->searchResultFactory->create();
+        $searchResults->setSearchCriteria($searchCriteria);
+        $searchResults->setItems($collection->getItems());
 
-                $condition = $filter->getConditionType() ?: 'eq';
-                $collection->addFieldToFilter($filter->getField(), [$condition => $filter->getValue()]);
-            }
-        }
-
-        $searchResults->setTotalCount($collection->getSize());
-        $sortOrders = $criteria->getSortOrders();
-        if ($sortOrders) {
-            /** @var SortOrder $sortOrder */
-            foreach ($sortOrders as $sortOrder) {
-                $collection->addOrder(
-                    $sortOrder->getField(),
-                    ($sortOrder->getDirection() == SortOrder::SORT_ASC) ? 'ASC' : 'DESC'
-                );
-            }
-        }
-
-        $collection->setCurPage($criteria->getCurrentPage());
-        $collection->setPageSize($criteria->getPageSize());
-        $items = [];
-
-        foreach ($collection as $shipmentItemModel) {
-            $shipmentItemData = $this->dataShipmentItemFactory->create();
-            $this->dataObjectHelper->populateWithArray(
-                $shipmentItemData,
-                $shipmentItemModel->getData(),
-                'Dealer4Dealer\SubstituteOrders\Api\Data\ShipmentItemInterface'
-            );
-            $items[] = $shipmentItemData;
-        }
-
-        $searchResults->setItems($items);
         return $searchResults;
+
     }
 
     /**
-     * {@inheritdoc}
+     * @throws CouldNotDeleteException
      */
     public function delete(
-        \Dealer4Dealer\SubstituteOrders\Api\Data\ShipmentItemInterface $shipmentItem
-    ) {
+        ShipmentItemInterface $shipmentItem
+    ): bool {
         try {
             $this->resource->delete($shipmentItem);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             throw new CouldNotDeleteException(
                 __(
                     'Could not delete the ShipmentItem: %1',
@@ -228,19 +99,20 @@ class ShipmentItemRepository implements ShipmentItemRepositoryInterface
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function deleteById($shipmentItemId)
+    public function deleteById(int $shipmentItemId): bool
     {
         return $this->delete($this->getById($shipmentItemId));
     }
 
-    public function getShipmentItems($id)
+    public function getShipmentItems(int $id): array
     {
-        $searchCriteria = $this->searchCriteriaBuilder->addFilter('shipment_id', $id, 'eq')->create();
-        $results = $this->getList($searchCriteria);
-
-        return $results->getItems();
+        return $this->getList(
+            $this->searchCriteriaBuilder
+                ->addFilter(
+                    'shipment_id',
+                    $id
+                )
+                ->create()
+        )->getItems();
     }
 }

@@ -22,65 +22,43 @@
 
 namespace Dealer4Dealer\SubstituteOrders\Observer\Sales;
 
+use Dealer4Dealer\SubstituteOrders\Api\Data\ShipmentInterface;
+use Dealer4Dealer\SubstituteOrders\Api\ShipmentRepositoryInterface;
+use Dealer4Dealer\SubstituteOrders\Model\OrderAddressFactory;
+use Dealer4Dealer\SubstituteOrders\Model\OrderFactory;
+use Dealer4Dealer\SubstituteOrders\Model\ShipmentFactory;
+use Dealer4Dealer\SubstituteOrders\Model\ShipmentItemFactory;
+use Dealer4Dealer\SubstituteOrders\Model\ShipmentTracking;
+use Magento\Framework\Event\Observer;
+use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Exception\LocalizedException;
 
-class OrderShipmentSaveAfter implements \Magento\Framework\Event\ObserverInterface
+class OrderShipmentSaveAfter implements ObserverInterface
 {
-    /**
-     * @var \Dealer4Dealer\SubstituteOrders\Model\ShipmentFactory
-     */
-    protected $shipmentFactory;
-
-    /**
-     * @var \Dealer4Dealer\SubstituteOrders\Model\OrderAddressFactory
-     */
-    protected $addressFactory;
-
-    /**
-     * @var \Dealer4Dealer\SubstituteOrders\Model\ShipmentItemFactory
-     */
-    protected $shipmentItemFactory;
-
-    /**
-     * @var \Dealer4Dealer\SubstituteOrders\Api\ShipmentRepositoryInterface
-     */
-    protected $shipmentRepo;
-
-    /**
-     * @var \Dealer4Dealer\SubstituteOrders\Model\OrderFactory
-     */
-    protected $orderFactory;
-
     public function __construct(
-        \Dealer4Dealer\SubstituteOrders\Model\ShipmentFactory $shipmentFactory,
-        \Dealer4Dealer\SubstituteOrders\Model\OrderAddressFactory $addressFactory,
-        \Dealer4Dealer\SubstituteOrders\Model\ShipmentItemFactory $shipmentItemFactory,
-        \Dealer4Dealer\SubstituteOrders\Api\ShipmentRepositoryInterface $shipmentRepo,
-        \Dealer4Dealer\SubstituteOrders\Model\OrderFactory $orderFactory
+        private readonly ShipmentFactory $shipmentFactory,
+        private readonly OrderAddressFactory $addressFactory,
+        private readonly ShipmentItemFactory $shipmentItemFactory,
+        private readonly ShipmentRepositoryInterface $shipmentRepository,
+        private readonly OrderFactory $orderFactory
     ) {
-        $this->shipmentFactory = $shipmentFactory;
-        $this->addressFactory = $addressFactory;
-        $this->shipmentItemFactory = $shipmentItemFactory;
-
-        $this->shipmentRepo = $shipmentRepo;
-        $this->orderFactory = $orderFactory;
     }
 
     /**
      * Execute observer
      *
-     * @param \Magento\Framework\Event\Observer $observer
+     * @param Observer $observer
      * @return void
      */
     public function execute(
-        \Magento\Framework\Event\Observer $observer
+        Observer $observer
     ) {
         /* @var $shipment \Magento\Sales\Api\Data\ShipmentInterface */
-        $shipment = $observer->getShipment();
+        $shipment = $observer->getData('shipment');
 
         try {
-            /* @var $substitute \Dealer4Dealer\SubstituteOrders\Api\Data\ShipmentInterface */
-            $substitute = $this->shipmentRepo->getByIncrementId($shipment->getIncrementId());
+            /* @var $substitute ShipmentInterface */
+            $substitute = $this->shipmentRepository->getByIncrementId($shipment->getIncrementId());
         } catch (LocalizedException $e) {
             $substitute = $this->shipmentFactory->create();
         }
@@ -97,7 +75,7 @@ class OrderShipmentSaveAfter implements \Magento\Framework\Event\ObserverInterfa
         # Add trackers
         $trackers = [];
         foreach ($shipment->getTracks() as $track) {
-            $trackers[] = new \Dealer4Dealer\SubstituteOrders\Model\ShipmentTracking(
+            $trackers[] = new ShipmentTracking(
                 $track->getTitle(),
                 $track->getTrackNumber()
             );

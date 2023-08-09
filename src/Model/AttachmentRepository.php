@@ -8,78 +8,32 @@ use Dealer4Dealer\SubstituteOrders\Api\Data\AttachmentInterface;
 use Dealer4Dealer\SubstituteOrders\Api\Data\AttachmentSearchResultsInterfaceFactory;
 use Dealer4Dealer\SubstituteOrders\Model\File\ContentValidator;
 use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\Attachment\Collection;
+use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\Attachment\CollectionFactory;
 use Exception;
+use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface;
 use Magento\Framework\Api\SearchCriteriaInterface;
-use Magento\Framework\Api\SortOrder;
+use Magento\Framework\Api\SearchResults;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Dealer4Dealer\SubstituteOrders\Api\AttachmentRepositoryInterface;
 use Magento\Framework\Exception\InputException;
-use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\Attachment as ResourceAttachment;
-use Magento\Framework\Reflection\DataObjectProcessor;
 use Magento\Framework\Exception\CouldNotDeleteException;
 use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\Attachment\CollectionFactory as AttachmentCollectionFactory;
-use Magento\Framework\Api\DataObjectHelper;
 use Dealer4Dealer\SubstituteOrders\Api\Data\AttachmentInterfaceFactory;
 use Dealer4Dealer\SubstituteOrders\Api\Data\File\ContentUploaderInterface;
 
-class AttachmentRepository implements attachmentRepositoryInterface
+class AttachmentRepository implements AttachmentRepositoryInterface
 {
-    protected $attachmentCollectionFactory;
-
-    private $storeManager;
-
-    protected $dataObjectProcessor;
-
-    protected $dataObjectHelper;
-
-    protected $dataAttachmentFactory;
-
-    protected $searchResultsFactory;
-
-    protected $resource;
-
-    protected $attachmentFactory;
-
-    protected $fileContentUploader;
-
-    protected $contentValidator;
-
-    /**
-     * @param ResourceAttachment $resource
-     * @param AttachmentFactory $attachmentFactory
-     * @param AttachmentInterfaceFactory $dataAttachmentFactory
-     * @param AttachmentCollectionFactory $attachmentCollectionFactory
-     * @param AttachmentSearchResultsInterfaceFactory $searchResultsFactory
-     * @param DataObjectHelper $dataObjectHelper
-     * @param DataObjectProcessor $dataObjectProcessor
-     * @param StoreManagerInterface $storeManager
-     * @param ContentUploaderInterface $fileContentUploader
-     * @param ContentValidator $contentValidator
-     */
     public function __construct(
-        ResourceAttachment $resource,
-        AttachmentFactory $attachmentFactory,
-        AttachmentInterfaceFactory $dataAttachmentFactory,
-        AttachmentCollectionFactory $attachmentCollectionFactory,
-        AttachmentSearchResultsInterfaceFactory $searchResultsFactory,
-        DataObjectHelper $dataObjectHelper,
-        DataObjectProcessor $dataObjectProcessor,
-        StoreManagerInterface $storeManager,
-        ContentUploaderInterface $fileContentUploader,
-        ContentValidator $contentValidator
+        private readonly ResourceAttachment $resource,
+        private readonly AttachmentFactory $attachmentFactory,
+        private readonly ContentUploaderInterface $fileContentUploader,
+        private readonly ContentValidator $contentValidator,
+        private readonly CollectionFactory $collectionFactory,
+        private readonly AttachmentSearchResultsInterfaceFactory $searchResultFactory,
+        private readonly CollectionProcessorInterface $collectionProcessor
     ) {
-        $this->resource = $resource;
-        $this->attachmentFactory = $attachmentFactory;
-        $this->attachmentCollectionFactory = $attachmentCollectionFactory;
-        $this->searchResultsFactory = $searchResultsFactory;
-        $this->dataObjectHelper = $dataObjectHelper;
-        $this->dataAttachmentFactory = $dataAttachmentFactory;
-        $this->dataObjectProcessor = $dataObjectProcessor;
-        $this->storeManager = $storeManager;
-        $this->fileContentUploader = $fileContentUploader;
-        $this->contentValidator = $contentValidator;
     }
 
     /**
@@ -90,17 +44,19 @@ class AttachmentRepository implements attachmentRepositoryInterface
     {
         $this->contentValidator->isValid($attachment->getFileContent());
 
-        $result = $this->fileContentUploader->upload($attachment->getFileContent(), $attachment->getMagentoCustomerIdentifier(), $attachment->getEntityType());
+        $result = $this->fileContentUploader->upload(
+            $attachment->getFileContent(),
+            $attachment->getMagentoCustomerIdentifier(),
+            $attachment->getEntityType()
+        );
+
         $attachment->setFile($result['file']);
 
         try {
-            $attachment->getResource()->save($attachment);
+            $this->resource->save($attachment);
         } catch (Exception $exception) {
             throw new CouldNotSaveException(
-                __(
-                    'Could not save the attachment: %1',
-                    $exception->getMessage()
-                )
+                __('Could not save the attachment: %1', $exception->getMessage())
             );
         }
 
@@ -108,12 +64,13 @@ class AttachmentRepository implements attachmentRepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @throws NoSuchEntityException
      */
-    public function getById($attachmentId)
+    public function getById(int $attachmentId): AttachmentInterface
     {
         $attachment = $this->attachmentFactory->create();
-        $attachment->getResource()->load($attachment, $attachmentId);
+        $this->resource->load($attachment, $attachmentId);
+
         if (!$attachment->getId()) {
             throw new NoSuchEntityException(__('Attachment with id "%1" does not exist.', $attachmentId));
         }
@@ -125,49 +82,25 @@ class AttachmentRepository implements attachmentRepositoryInterface
      * {@inheritdoc}
      */
     public function getList(
-        SearchCriteriaInterface $criteria
-    ) {
-        $collection = $this->attachmentCollectionFactory->create();
-        foreach ($criteria->getFilterGroups() as $filterGroup) {
-            foreach ($filterGroup->getFilters() as $filter) {
-                if ($filter->getField() === 'store_id') {
-                    $collection->addStoreFilter($filter->getValue(), false);
-                    continue;
-                }
+        SearchCriteriaInterface $searchCriteria
+    ): SearchResults {
+        /** @var Collection $collection */
+        $collection = $this->collectionFactory->create();
+        $this->collectionProcessor->process($searchCriteria, $collection);
 
-                $condition = $filter->getConditionType() ?: 'eq';
-                $collection->addFieldToFilter($filter->getField(), [$condition => $filter->getValue()]);
-            }
-        }
-
-        $sortOrders = $criteria->getSortOrders();
-        if ($sortOrders) {
-            /** @var SortOrder $sortOrder */
-            foreach ($sortOrders as $sortOrder) {
-                $collection->addOrder(
-                    $sortOrder->getField(),
-                    ($sortOrder->getDirection() == SortOrder::SORT_ASC) ? 'ASC' : 'DESC'
-                );
-            }
-        }
-
-        $collection->setCurPage($criteria->getCurrentPage());
-        $collection->setPageSize($criteria->getPageSize());
-
-        $searchResults = $this->searchResultsFactory->create();
-        $searchResults->setSearchCriteria($criteria);
-        $searchResults->setTotalCount($collection->getSize());
+        $searchResults = $this->searchResultFactory->create();
+        $searchResults->setSearchCriteria($searchCriteria);
         $searchResults->setItems($collection->getItems());
+
         return $searchResults;
+
     }
 
     /**
-     * {@inheritdoc}
+     * @throws CouldNotDeleteException
      */
-    public function delete(
-        AttachmentInterface $attachment
-    ) {
-
+    public function delete(AttachmentInterface $attachment): bool
+    {
         $attachmentFilePath = $this->fileContentUploader->getDestinationDirectory(
             $attachment->getMagentoCustomerIdentifier(),
             $attachment->getEntityType()
@@ -178,35 +111,30 @@ class AttachmentRepository implements attachmentRepositoryInterface
         }
 
         try {
-            $attachment->getResource()->delete($attachment);
-        } catch (Exception $exception) {
-            throw new CouldNotDeleteException(
-                __(
-                    'Could not delete the Attachment: %1',
-                    $exception->getMessage()
-                )
-            );
+            $this->resource->delete($attachment);
+        } catch (Exception $e) {
+            throw new CouldNotDeleteException(__('Could not delete the Attachment: %1', $e->getMessage()));
         }
 
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function deleteById($attachmentId)
+    public function deleteById(int $attachmentId): bool
     {
         return $this->delete($this->getById($attachmentId));
     }
 
     public function saveAttachmentByEntityType(
-        $entityType,
-        $entityTypeIdentifier,
-        $magentoCustomerIdentifier,
+        string $entityType,
+        int $entityTypeIdentifier,
+        int $magentoCustomerIdentifier,
         array $fileContent
-    ) {
-
-        $this->deleteAttachmentsByEntityTypeIdentifier($entityTypeIdentifier, $magentoCustomerIdentifier, $entityType);
+    ): void {
+        $this->deleteAttachmentsByEntityTypeIdentifier(
+            $entityTypeIdentifier,
+            $magentoCustomerIdentifier,
+            $entityType
+        );
 
         foreach ($fileContent as $file) {
             /* @var $attachment \Dealer4Dealer\SubstituteOrders\Model\Attachment */
@@ -215,29 +143,39 @@ class AttachmentRepository implements attachmentRepositoryInterface
             $attachment->setMagentoCustomerIdentifier($magentoCustomerIdentifier);
             $attachment->setEntityType($entityType);
             $attachment->setEntityTypeIdentifier($entityTypeIdentifier);
+
             $this->save($attachment);
         }
     }
 
-    public function deleteAttachmentsByEntityTypeIdentifier($entityTypeIdentifier, $magentoCustomerIdentifier, $entityType = 'order')
-    {
-        $attachments = $this->getAttachmentsByEntityTypeIdentifier($entityTypeIdentifier, $magentoCustomerIdentifier, $entityType);
+    public function deleteAttachmentsByEntityTypeIdentifier(
+        int $entityTypeIdentifier,
+        int $magentoCustomerIdentifier,
+        string $entityType = 'order'
+    ): void {
+        $attachments = $this->getAttachmentsByEntityTypeIdentifier(
+            $entityTypeIdentifier,
+            $magentoCustomerIdentifier,
+            $entityType
+        );
 
+        /* @var Attachment $attachment */
         foreach ($attachments as $attachment) {
-            /* @var $attachment \Dealer4Dealer\SubstituteOrders\Model\Attachment */
             $this->delete($attachment);
         }
     }
 
-    public function getAttachmentsByEntityTypeIdentifier($entityTypeIdentifier, $magentoCustomerIdentifier, $entityType = 'order')
-    {
-        /* @var $collection Collection */
-        $collection = $this->attachmentCollectionFactory->create();
-
-        $collection->addFieldToFilter('entity_type_identifier', $entityTypeIdentifier);
-        $collection->addFieldToFilter('entity_type', $entityType);
-        $collection->addFieldToFilter('magento_customer_identifier', $magentoCustomerIdentifier);
-
-        return $collection->getItems();
+    public function getAttachmentsByEntityTypeIdentifier(
+        int $entityTypeIdentifier,
+        int $magentoCustomerIdentifier,
+        string $entityType = 'order'
+    ) {
+        return $this->getList(
+            $this->searchCriteriaBuilder
+                ->addFilter(AttachmentInterface::ENTITY_TYPE_IDENTIFIER, $entityTypeIdentifier)
+                ->addFilter(AttachmentInterface::ENTITY_TYPE, $entityType)
+                ->addFilter(AttachmentInterface::MAGENTO_CUSTOMER_IDENTIFIER, $magentoCustomerIdentifier)
+                ->create()
+        )->getItems();
     }
 }

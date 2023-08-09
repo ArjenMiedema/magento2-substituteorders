@@ -4,8 +4,13 @@ declare(strict_types=1);
 
 namespace Dealer4Dealer\SubstituteOrders\Model;
 
+use Dealer4Dealer\SubstituteOrders\Api\Data\InvoiceInterface;
 use Dealer4Dealer\SubstituteOrders\Api\Data\OrderSearchResultsInterface;
 use Dealer4Dealer\SubstituteOrders\Model\OrderFactory;
+use Exception;
+use Magento\Framework\Api\SearchCriteriaBuilder;
+use Magento\Framework\Api\SearchCriteriaInterface;
+use Magento\Framework\Api\SearchResults;
 use Magento\Framework\Reflection\DataObjectProcessor;
 use Magento\Framework\Api\DataObjectHelper;
 use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\Order\CollectionFactory as OrderCollectionFactory;
@@ -26,91 +31,27 @@ use function Dealer4Dealer\SubstituteOrders\Model\__;
 
 class OrderRepository implements OrderRepositoryInterface
 {
-    /*
-     * @var StoreManagerInterface
-     */
-    protected $storeManager;
-
-    /*
-     * @var OrderCollectionFactory
-     */
-    protected $orderCollectionFactory;
-
-    /*
-     * @var OrderInterfaceFactory
-     */
-    protected $dataOrderFactory;
-
-    /*
-     * @var DataObjectProcessor
-     */
-    protected $dataObjectProcessor;
-
-    /*
-     * @var OrderFactory
-     */
-    protected $orderFactory;
-
-    /*
-     * @var ResourceOrder
-     */
-    protected $resource;
-
-    /*
-     * @var DataObjectHelper
-     */
-    protected $dataObjectHelper;
-
-    /*
-     * @var OrderSearchResultsInterfaceFactory
-     */
-    protected $searchResultsFactory;
-
-    /*
-     * @var \Magento\Framework\Api\SearchCriteriaBuilder
-     */
-    protected $searchCriteriaBuilder;
-
-    /**
-     * @param ResourceOrder $resource
-     * @param OrderFactory $orderFactory
-     * @param OrderInterfaceFactory $dataOrderFactory
-     * @param OrderCollectionFactory $orderCollectionFactory
-     * @param OrderSearchResultsInterfaceFactory $searchResultsFactory
-     * @param DataObjectHelper $dataObjectHelper
-     * @param DataObjectProcessor $dataObjectProcessor
-     * @param StoreManagerInterface $storeManager
-     */
     public function __construct(
-        ResourceOrder $resource,
-        OrderFactory $orderFactory,
-        OrderInterfaceFactory $dataOrderFactory,
-        OrderCollectionFactory $orderCollectionFactory,
-        OrderSearchResultsInterfaceFactory $searchResultsFactory,
-        DataObjectHelper $dataObjectHelper,
-        DataObjectProcessor $dataObjectProcessor,
-        StoreManagerInterface $storeManager,
-        \Magento\Framework\Api\SearchCriteriaBuilder $searchCriteriaBuilder,
+        private readonly ResourceOrder $resource,
+        private readonly OrderFactory $orderFactory,
+        private readonly OrderInterfaceFactory $dataOrderFactory,
+        private readonly OrderCollectionFactory $orderCollectionFactory,
+        private readonly OrderSearchResultsInterfaceFactory $searchResultsFactory,
+        private readonly DataObjectHelper $dataObjectHelper,
+        private readonly DataObjectProcessor $dataObjectProcessor,
+        private readonly StoreManagerInterface $storeManager,
+        private readonly SearchCriteriaBuilder $searchCriteriaBuilder,
         private readonly CollectionProcessorInterface $collectionProcessor
     ) {
-        $this->resource = $resource;
-        $this->orderFactory = $orderFactory;
-        $this->orderCollectionFactory = $orderCollectionFactory;
-        $this->searchResultsFactory = $searchResultsFactory;
-        $this->dataObjectHelper = $dataObjectHelper;
-        $this->dataOrderFactory = $dataOrderFactory;
-        $this->dataObjectProcessor = $dataObjectProcessor;
-        $this->storeManager = $storeManager;
-        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
     }
 
     /**
-     * {@inheritdoc}
+     * @throws CouldNotSaveException
      */
     public function save(OrderInterface $order): OrderInterface {
         try {
             $this->resource->save($order);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             throw new CouldNotSaveException(
                 __(
                     'Could not save the order: %1',
@@ -123,7 +64,7 @@ class OrderRepository implements OrderRepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @throws NoSuchEntityException
      */
     public function getById(int $orderId): OrderInterface
     {
@@ -137,7 +78,7 @@ class OrderRepository implements OrderRepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @throws NoSuchEntityException
      */
     public function getByMagentoOrderId(int $id): OrderInterface
     {
@@ -151,7 +92,7 @@ class OrderRepository implements OrderRepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @throws NoSuchEntityException
      */
     public function getByExtOrderId(int $id): OrderInterface
     {
@@ -164,12 +105,9 @@ class OrderRepository implements OrderRepositoryInterface
         return $order;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getList(
-        \Magento\Framework\Api\SearchCriteriaInterface $searchCriteria
-    ): \Magento\Framework\Api\SearchResults {
+        SearchCriteriaInterface $searchCriteria
+    ): OrderSearchResultsInterface {
         $collection = $this->orderCollectionFactory->create();
         $this->collectionProcessor->process($searchCriteria, $collection);
 
@@ -181,14 +119,14 @@ class OrderRepository implements OrderRepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @throws CouldNotDeleteException
      */
     public function delete(
-        \Dealer4Dealer\SubstituteOrders\Api\Data\OrderInterface $order
+        OrderInterface $order
     ): bool {
         try {
             $this->resource->delete($order);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             throw new CouldNotDeleteException(
                 __(
                     'Could not delete the Order: %1',
@@ -200,27 +138,29 @@ class OrderRepository implements OrderRepositoryInterface
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function deleteById(int $orderId): bool
     {
         return $this->delete($this->getById($orderId));
     }
 
-    public function getOrdersByInvoice($invoice)
+    public function getOrdersByInvoice(InvoiceInterface $invoice): array
     {
-        $searchCriteria = $this->searchCriteriaBuilder->addFilter('invoice_id', $invoice->getId(), 'eq')->create();
-        $results = $this->getList($searchCriteria);
-
-        return $results->getItems();
+        return $this->getList(
+            $this->searchCriteriaBuilder->addFilter(
+                'invoice_id',
+                $invoice->getId()
+            )->create()
+        )->getItems();
     }
 
-    public function getOrders($ids)
+    public function getOrders(array $ids): array
     {
-        $searchCriteria = $this->searchCriteriaBuilder->addFilter('order_id', $ids, 'in')->create();
-        $results = $this->getList($searchCriteria);
-
-        return $results->getItems();
+        return $this->getList(
+            $this->searchCriteriaBuilder->addFilter(
+                'order_id',
+                $ids,
+                'in'
+            )->create()
+        )->getItems();
     }
 }

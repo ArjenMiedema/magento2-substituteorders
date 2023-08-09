@@ -22,15 +22,18 @@
 
 namespace Dealer4Dealer\SubstituteOrders\Model;
 
+use Dealer4Dealer\SubstituteOrders\Api\Data\OrderInterface;
 use Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface;
-use Dealer4Dealer\SubstituteOrders\Model\AdditionalData;
+use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\OrderItem as ResourceModel;
+use Magento\Framework\Data\Collection\AbstractDb;
+use Magento\Framework\Model\AbstractModel;
+use Magento\Framework\Model\Context;
+use Magento\Framework\Model\ResourceModel\AbstractResource;
+use Magento\Framework\Registry;
 
-class OrderItem extends \Magento\Framework\Model\AbstractModel implements OrderItemInterface
+class OrderItem extends AbstractModel implements OrderItemInterface
 {
-    /**
-     * @var string
-     */
-    const ENTITY = 'order_item';
+    public const ENTITY = 'order_item';
 
     /**
      * @var string
@@ -42,39 +45,20 @@ class OrderItem extends \Magento\Framework\Model\AbstractModel implements OrderI
      */
     protected $_eventObject = 'item';
 
-    /*
-     * @var \Dealer4Dealer\SubstituteOrders\Model\OrderFactory
-     */
-    protected $orderFactory;
+    protected ?OrderInterface $order = null;
 
-    protected $_order = null;
-    protected $_additionalData = null;
+    protected ?array $additionalData = null;
 
-    public function __construct(
-        \Magento\Framework\Model\Context $context,
-        \Magento\Framework\Registry $registry,
-        \Dealer4Dealer\SubstituteOrders\Model\OrderFactory $orderFactory,
-        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
-        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
-        array $data = []
-    ) {
-        $this->orderFactory = $orderFactory;
-        parent::__construct($context, $registry, $resource, $resourceCollection, $data);
+    protected function _construct(): void
+    {
+        $this->_init(ResourceModel::class);
     }
 
-    /**
-     * @return void
-     */
-    protected function _construct()
+    public function save(): self
     {
-        $this->_init(\Dealer4Dealer\SubstituteOrders\Model\ResourceModel\OrderItem::class);
-    }
-
-    public function save()
-    {
-        if ($this->_additionalData) {
+        if ($this->additionalData) {
             $data = [];
-            foreach ($this->_additionalData as $value) {
+            foreach ($this->additionalData as $value) {
                 $data[$value->getKey()] = $value->getValue();
             }
 
@@ -84,327 +68,165 @@ class OrderItem extends \Magento\Framework\Model\AbstractModel implements OrderI
         return parent::save();
     }
 
-    /**
-     * Get orderitem_id
-     * @return string
-     */
-    public function getOrderitemId()
+    public function getOrderitemId(): int
     {
         return $this->getData(self::ORDERITEM_ID);
     }
 
-    /**
-     * Set orderitem_id
-     * @param string $orderitemId
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
-     */
-    public function setOrderitemId($orderitemId)
+    public function setOrderitemId(int $orderItemId):self
     {
-        return $this->setData(self::ORDERITEM_ID, $orderitemId);
+        return $this->setData(self::ORDERITEM_ID, $orderItemId);
     }
 
-    /**
-     * Get order
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderInterface
-     */
-    public function getOrder()
-    {
-        if ($this->_order === null && ($orderId = $this->getOrderId())) {
-            $order = $this->orderFactory->create();
-            # TODO: Order save crashes on this line
-            //            $this->_order = $order->load($orderId);
-        }
-
-        return $this->_order;
-    }
-
-    /**
-     * Set order
-     * @param \Dealer4Dealer\SubstituteOrders\Api\Data\OrderInterface $order
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
-     */
-    public function setOrder($order)
-    {
-        $this->_order = $order;
-        $this->setOrderId($order->getId());
-        return $this;
-    }
-
-    /**
-     * Set order_id
-     * @param string $order_id
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
-     */
-    public function setOrderId($orderId)
+    public function setOrderId(int $orderId):self
     {
         return $this->setData(self::ORDER_ID, $orderId);
     }
 
-    /**
-     * Get order_id
-     * @return string
-     */
-    public function getOrderId()
+    public function getOrderId(): int
     {
         return $this->getData(self::ORDER_ID);
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function setInvoiceId($invoiceId)
+    public function setInvoiceId(int $invoiceId):self
     {
         return $this->setData(self::INVOICE_ID, $invoiceId);
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getInvoiceId()
+    public function getInvoiceId(): int
     {
         return $this->getData(self::INVOICE_ID);
     }
-
-    /**
-     * Get name
-     * @return string
-     */
-    public function getName()
+    
+    public function getName(): string
     {
         return $this->getData(self::NAME);
     }
-
-    /**
-     * Set name
-     * @param string $name
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
-     */
-    public function setName($name)
+    
+    public function setName(string $name): self
     {
         return $this->setData(self::NAME, $name);
     }
 
-    /**
-     * Get sku
-     * @return string
-     */
-    public function getSku()
+    public function getSku(): string
     {
         return $this->getData(self::SKU);
     }
 
-    /**
-     * Set sku
-     * @param string $sku
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
-     */
-    public function setSku($sku)
+    public function setSku(string $sku): self
     {
         return $this->setData(self::SKU, $sku);
     }
 
-    /**
-     * Get base_price
-     * @return string
-     */
-    public function getBasePrice()
+    public function getBasePrice(): float
     {
         return $this->getData(self::BASE_PRICE);
     }
 
-    /**
-     * Set base_price
-     * @param string $base_price
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
-     */
-    public function setBasePrice($base_price)
+    public function setBasePrice(float $basePrice): self
     {
-        return $this->setData(self::BASE_PRICE, $base_price);
+        return $this->setData(self::BASE_PRICE, $basePrice);
     }
 
-    /**
-     * Get price
-     * @return string
-     */
-    public function getPrice()
+    public function getPrice(): float
     {
         return $this->getData(self::PRICE);
     }
 
-    /**
-     * Set price
-     * @param string $price
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
-     */
-    public function setPrice($price)
+    public function setPrice(float $price): self
     {
         return $this->setData(self::PRICE, $price);
     }
 
-    /**
-     * Get base_row_total
-     * @return string
-     */
-    public function getBaseRowTotal()
+    public function getBaseRowTotal(): float
     {
         return $this->getData(self::BASE_ROW_TOTAL);
     }
 
-    /**
-     * Set base_row_total
-     * @param string $base_row_total
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
-     */
-    public function setBaseRowTotal($base_row_total)
+    public function setBaseRowTotal($baseRowTotal): self
     {
-        return $this->setData(self::BASE_ROW_TOTAL, $base_row_total);
+        return $this->setData(self::BASE_ROW_TOTAL, $baseRowTotal);
     }
 
-    /**
-     * Get row_total
-     * @return string
-     */
-    public function getRowTotal()
+    public function getRowTotal(): float
     {
         return $this->getData(self::ROW_TOTAL);
     }
 
-    /**
-     * Set row_total
-     * @param string $row_total
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
-     */
-    public function setRowTotal($row_total)
+    public function setRowTotal(float $rowTotal): self
     {
-        return $this->setData(self::ROW_TOTAL, $row_total);
+        return $this->setData(self::ROW_TOTAL, $rowTotal);
     }
 
-    /**
-     * Get base_tax_amount
-     * @return string
-     */
-    public function getBaseTaxAmount()
+    public function getBaseTaxAmount(): float
     {
         return $this->getData(self::BASE_TAX_AMOUNT);
     }
 
-    /**
-     * Set base_tax_amount
-     * @param string $base_tax_amount
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
-     */
-    public function setBaseTaxAmount($base_tax_amount)
+    public function setBaseTaxAmount(float $baseTaxAmount): self
     {
-        return $this->setData(self::BASE_TAX_AMOUNT, $base_tax_amount);
+        return $this->setData(self::BASE_TAX_AMOUNT, $baseTaxAmount);
     }
 
-    /**
-     * Get tax_amount
-     * @return string
-     */
-    public function getTaxAmount()
+    public function getTaxAmount(): float
     {
         return $this->getData(self::TAX_AMOUNT);
     }
 
-    /**
-     * Set tax_amount
-     * @param string $tax_amount
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
-     */
-    public function setTaxAmount($tax_amount)
+    public function setTaxAmount(float $taxAmount): self
     {
-        return $this->setData(self::TAX_AMOUNT, $tax_amount);
+        return $this->setData(self::TAX_AMOUNT, $taxAmount);
     }
 
-    /**
-     * Get qty
-     * @return string
-     */
-    public function getQty()
+    public function getQty(): float
     {
         return $this->getData(self::QTY);
     }
 
-    /**
-     * Set qty
-     * @param string $qty
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
-     */
-    public function setQty($qty)
+    public function setQty(float $qty): self
     {
         return $this->setData(self::QTY, $qty);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getAdditionalData()
+    public function getAdditionalData(): array
     {
-        if ($this->_additionalData == null) {
-            $this->_additionalData = [];
+        if ($this->additionalData == null) {
+            $this->additionalData = [];
 
             if ($this->getData(self::ADDITIONAL_DATA)) {
                 $data = json_decode($this->getData(self::ADDITIONAL_DATA), true);
                 foreach ($data as $key => $value) {
-                    $this->_additionalData[] = new AdditionalData($key, $value);
+                    $this->additionalData[] = new AdditionalData($key, $value);
                 }
             }
         }
 
-        return $this->_additionalData;
+        return $this->additionalData;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setAdditionalData($additional_data)
+    public function setAdditionalData(array $additionalData): self
     {
-        $this->_additionalData = $additional_data;
+        $this->additionalData = $additionalData;
         return $this;
     }
 
-    /**
-     * Get base_discount_amount
-     * @return string
-     */
-    public function getBaseDiscountAmount()
+    public function getBaseDiscountAmount(): float
     {
         return $this->getData(self::BASE_DISCOUNT_AMOUNT);
     }
 
-    /**
-     * Set base_discount_amount
-     * @param string $base_discount_amount
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
-     */
-    public function setBaseDiscountAmount($base_discount_amount)
+    public function setBaseDiscountAmount(float $baseDiscountAmount): self
     {
-        return $this->setData(self::BASE_DISCOUNT_AMOUNT, $base_discount_amount);
+        return $this->setData(self::BASE_DISCOUNT_AMOUNT, $baseDiscountAmount);
     }
 
-    /**
-     * Get discount_amount
-     * @return string
-     */
-    public function getDiscountAmount()
+    public function getDiscountAmount(): float
     {
         return $this->getData(self::DISCOUNT_AMOUNT);
     }
 
-    /**
-     * Set discount_amount
-     * @param string $discount_amount
-     * @return \Dealer4Dealer\SubstituteOrders\Api\Data\OrderItemInterface
-     */
-    public function setDiscountAmount($discount_amount)
+    public function setDiscountAmount(float $discountAmount): self
     {
-        return $this->setData(self::DISCOUNT_AMOUNT, $discount_amount);
-    }
-
-    public function setData($key, $value = null)
-    {
-        parent::setData($key, $value);
-        return $this;
+        return $this->setData(self::DISCOUNT_AMOUNT, $discountAmount);
     }
 }

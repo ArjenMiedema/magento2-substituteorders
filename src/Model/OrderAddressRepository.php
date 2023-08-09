@@ -22,104 +22,39 @@
 
 namespace Dealer4Dealer\SubstituteOrders\Model;
 
+use Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface;
 use Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterfaceFactory;
-use Dealer4Dealer\SubstituteOrders\Model\OrderAddressFactory;
+use Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressSearchResultsInterface;
 use Magento\Framework\Api\DataObjectHelper;
+use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface;
+use Magento\Framework\Api\SearchCriteriaInterface;
 use Magento\Framework\Reflection\DataObjectProcessor;
 use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\OrderAddress as ResourceOrderAddress;
-use Magento\Framework\Api\SortOrder;
 use Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressSearchResultsInterfaceFactory;
-use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\Exception\CouldNotSaveException;
-use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\OrderAddress\CollectionFactory as OrderAddressCollectionFactory;
+use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\OrderAddress\CollectionFactory;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Exception\CouldNotDeleteException;
 use Dealer4Dealer\SubstituteOrders\Api\OrderAddressRepositoryInterface;
-
-use function Dealer4Dealer\SubstituteOrders\Model\__;
+use Magento\Sales\Api\Data\OrderAddressInterface as MagentoOrderAddressInterface;
 
 class OrderAddressRepository implements OrderAddressRepositoryInterface
 {
-    /*
-     * @var StoreManagerInterface
-     */
-    protected $storeManager;
-
-    /*
-     * @var DataObjectProcessor
-     */
-    protected $dataObjectProcessor;
-
-    /*
-     * @var OrderAddressCollectionFactory
-     */
-    protected $orderAddressCollectionFactory;
-
-    /*
-     * @var OrderAddressFactory
-     */
-    protected $orderAddressFactory;
-
-    /*
-     * @var ResourceOrderAddress
-     */
-    protected $resource;
-
-    /*
-     * @var DataObjectHelper
-     */
-    protected $dataObjectHelper;
-
-    /*
-     * @var OrderAddressInterfaceFactory
-     */
-    protected $dataOrderAddressFactory;
-
-    /*
-     * @var OrderAddressSearchResultsInterfaceFactory
-     */
-    protected $searchResultsFactory;
-
-    /**
-     * @param ResourceOrderAddress $resource
-     * @param OrderAddressFactory $orderAddressFactory
-     * @param OrderAddressInterfaceFactory $dataOrderAddressFactory
-     * @param OrderAddressCollectionFactory $orderAddressCollectionFactory
-     * @param OrderAddressSearchResultsInterfaceFactory $searchResultsFactory
-     * @param DataObjectHelper $dataObjectHelper
-     * @param DataObjectProcessor $dataObjectProcessor
-     * @param StoreManagerInterface $storeManager
-     */
     public function __construct(
-        ResourceOrderAddress $resource,
-        OrderAddressFactory $orderAddressFactory,
-        OrderAddressInterfaceFactory $dataOrderAddressFactory,
-        OrderAddressCollectionFactory $orderAddressCollectionFactory,
-        OrderAddressSearchResultsInterfaceFactory $searchResultsFactory,
-        DataObjectHelper $dataObjectHelper,
-        DataObjectProcessor $dataObjectProcessor,
-        StoreManagerInterface $storeManager
+        private readonly ResourceOrderAddress $resource,
+        private readonly OrderAddressFactory $orderAddressFactory,
+        private readonly OrderAddressSearchResultsInterfaceFactory $searchResultFactory,
+        private readonly CollectionProcessorInterface $collectionProcessor,
+        private readonly CollectionFactory $collectionFactory
     ) {
-        $this->resource = $resource;
-        $this->orderAddressFactory = $orderAddressFactory;
-        $this->orderAddressCollectionFactory = $orderAddressCollectionFactory;
-        $this->searchResultsFactory = $searchResultsFactory;
-        $this->dataObjectHelper = $dataObjectHelper;
-        $this->dataOrderAddressFactory = $dataOrderAddressFactory;
-        $this->dataObjectProcessor = $dataObjectProcessor;
-        $this->storeManager = $storeManager;
     }
 
     /**
-     * {@inheritdoc}
+     * @throws CouldNotSaveException
      */
     public function save(
-        \Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface $orderAddress
-    ) {
-        /* if (empty($orderAddress->getStoreId())) {
-            $storeId = $this->storeManager->getStore()->getId();
-            $orderAddress->setStoreId($storeId);
-        } */
+        OrderAddressInterface $orderAddress
+    ): OrderAddressInterface {
         try {
             $this->resource->save($orderAddress);
         } catch (\Exception $exception) {
@@ -135,9 +70,9 @@ class OrderAddressRepository implements OrderAddressRepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @throws NoSuchEntityException
      */
-    public function getById($orderAddressId)
+    public function getById(int $orderAddressId): OrderAddressInterface
     {
         $orderAddress = $this->orderAddressFactory->create();
         $orderAddress->load($orderAddressId);
@@ -148,91 +83,47 @@ class OrderAddressRepository implements OrderAddressRepositoryInterface
         return $orderAddress;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function saveByAddress(
-        \Magento\Sales\Api\Data\OrderAddressInterface $address
-    ) {
+        MagentoOrderAddressInterface $address
+    ): OrderAddressInterface {
         $orderAddress = $this->orderAddressFactory->create();
         $orderAddress->setName(
             implode(
                 " ",
                 array_filter(
                     [
-                    $address->getFirstname(),
-                    $address->getMiddlename(),
-                    $address->getLastname(),
+                        $address->getFirstname(),
+                        $address->getMiddlename(),
+                        $address->getLastname(),
                     ]
                 )
             )
         );
         $orderAddress->setCompany($address->getCompany());
-        // TODO: Make full address
+
         return $this->save($orderAddress);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getList(
-        \Magento\Framework\Api\SearchCriteriaInterface $criteria
-    ) {
-        $searchResults = $this->searchResultsFactory->create();
-        $searchResults->setSearchCriteria($criteria);
+        SearchCriteriaInterface $searchCriteria
+    ): OrderAddressSearchResultsInterface {
+        $collection = $this->collectionFactory->create();
+        $this->collectionProcessor->process($searchCriteria, $collection);
 
-        $collection = $this->orderAddressCollectionFactory->create();
-        foreach ($criteria->getFilterGroups() as $filterGroup) {
-            foreach ($filterGroup->getFilters() as $filter) {
-                if ($filter->getField() === 'store_id') {
-                    $collection->addStoreFilter($filter->getValue(), false);
-                    continue;
-                }
+        $searchResults = $this->searchResultFactory->create();
+        $searchResults->setSearchCriteria($searchCriteria);
+        $searchResults->setItems($collection->getItems());
 
-                $condition = $filter->getConditionType() ?: 'eq';
-                $collection->addFieldToFilter($filter->getField(), [$condition => $filter->getValue()]);
-            }
-        }
-
-        $searchResults->setTotalCount($collection->getSize());
-        $sortOrders = $criteria->getSortOrders();
-        if ($sortOrders) {
-            /** @var SortOrder $sortOrder */
-            foreach ($sortOrders as $sortOrder) {
-                $collection->addOrder(
-                    $sortOrder->getField(),
-                    ($sortOrder->getDirection() == SortOrder::SORT_ASC) ? 'ASC' : 'DESC'
-                );
-            }
-        }
-
-        $collection->setCurPage($criteria->getCurrentPage());
-        $collection->setPageSize($criteria->getPageSize());
-        $items = [];
-
-        foreach ($collection as $orderAddressModel) {
-            $orderAddressData = $this->dataOrderAddressFactory->create();
-            $this->dataObjectHelper->populateWithArray(
-                $orderAddressData,
-                $orderAddressModel->getData(),
-                'Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface'
-            );
-            $items[] = $this->dataObjectProcessor->buildOutputDataArray(
-                $orderAddressData,
-                'Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface'
-            );
-        }
-
-        $searchResults->setItems($items);
         return $searchResults;
+
     }
 
     /**
-     * {@inheritdoc}
+     * @throws CouldNotDeleteException
      */
     public function delete(
-        \Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface $orderAddress
-    ) {
+        OrderAddressInterface $orderAddress
+    ): bool {
         try {
             $this->resource->delete($orderAddress);
         } catch (\Exception $exception) {
@@ -247,10 +138,7 @@ class OrderAddressRepository implements OrderAddressRepositoryInterface
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function deleteById($orderAddressId)
+    public function deleteById(int $orderAddressId): bool
     {
         return $this->delete($this->getById($orderAddressId));
     }

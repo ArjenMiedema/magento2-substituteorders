@@ -24,11 +24,7 @@ interface OrderItemInterface
 
     public function getOrderitemId(): ?int;
 
-    public function setOrderitemId(int $orderitemId): self;
-
-    public function getOrder(): ?OrderInterface;
-
-    public function setOrder(OrderInterface $order): self;
+    public function setOrderitemId(int $orderItemId): self;
 
     public function getOrderId(): ?int;
 

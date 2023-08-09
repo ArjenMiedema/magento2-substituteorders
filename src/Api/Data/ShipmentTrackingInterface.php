@@ -12,13 +12,13 @@ interface ShipmentTrackingInterface
 
     public function getCarrierName(): ?string;
 
-    public function setCarrierName(string $carrierName): void;
+    public function setCarrierName(string $carrierName): self;
 
     public function getTrackingCode(): ?string;
 
-    public function setTrackingCode(string $trackingCode): void;
+    public function setTrackingCode(string $code): self;
 
     public function getTrackingUrl(): ?string;
 
-    public function setTrackingUrl(string $trackingUrl): void;
+    public function setTrackingUrl(string $url): self;
 }

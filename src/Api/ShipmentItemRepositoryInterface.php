@@ -12,7 +12,7 @@ interface ShipmentItemRepositoryInterface
 {
     public function save(ShipmentItemInterface $shipmentItem): ShipmentItemInterface;
 
-    public function getById(string $shipmentItemId): ShipmentItemInterface;
+    public function getById(int $shipmentItemId): ShipmentItemInterface;
 
     public function getList(SearchCriteriaInterface $searchCriteria): ShipmentItemSearchResultsInterface;
 

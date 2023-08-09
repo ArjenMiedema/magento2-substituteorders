@@ -22,79 +22,28 @@
 
 namespace Dealer4Dealer\SubstituteOrders\Model;
 
-use Dealer4Dealer\SubstituteOrders\Model\OrderAddressFactory;
-use Dealer4Dealer\SubstituteOrders\Model\OrderFactory;
-use Dealer4Dealer\SubstituteOrders\Model\OrderItemFactory;
-use Dealer4Dealer\SubstituteOrders\Model\AttachmentRepository;
-use Dealer4Dealer\SubstituteOrders\Model\Order;
-use Dealer4Dealer\SubstituteOrders\Model\OrderItemRepository;
-use Dealer4Dealer\SubstituteOrders\Model\OrderRepository;
+use Dealer4Dealer\SubstituteOrders\Api\Data\OrderInterface;
+use Dealer4Dealer\SubstituteOrders\Api\Data\OrderSearchResultsInterface;
+use Dealer4Dealer\SubstituteOrders\Api\OrderManagementInterface;
+use Magento\Framework\Api\SearchCriteriaInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 
 use function Dealer4Dealer\SubstituteOrders\Model\__;
 
-class OrderManagement implements \Dealer4Dealer\SubstituteOrders\Api\OrderManagementInterface
+class OrderManagement implements OrderManagementInterface
 {
-    /*
-     * @var \Dealer4Dealer\SubstituteOrders\Model\OrderFactory
-     */
-    protected $orderFactory;
-
-    /*
-     * @var \Dealer4Dealer\SubstituteOrders\Model\OrderAddressFactory
-     */
-    protected $addressFactory;
-
-    /*
-     * @var \Dealer4Dealer\SubstituteOrders\Model\OrderItemFactory
-     */
-    protected $orderItemFactory;
-
-    /*
-     * @var \Dealer4Dealer\SubstituteOrders\Model\AttachmentRepository
-     */
-    protected $attachmentRepository;
-
-    /*
-     * @var \Dealer4Dealer\SubstituteOrders\Model\OrderRepository
-     */
-    protected $orderRepository;
-
-    /*
-     * @var \Dealer4Dealer\SubstituteOrders\Model\OrderItemRepository
-     */
-    protected $orderItemRepository;
-
-    /**
-     * OrderManagement constructor.
-     * @param OrderFactory $orderFactory
-     * @param OrderAddressFactory $addressFactory
-     * @param OrderItemFactory $orderItemFactory
-     * @param AttachmentRepository $attachmentRepository
-     * @param OrderRepository $orderRepository
-     * @param OrderItemRepository $orderItemRepository
-     */
     public function __construct(
-        \Dealer4Dealer\SubstituteOrders\Model\OrderFactory $orderFactory,
-        \Dealer4Dealer\SubstituteOrders\Model\OrderAddressFactory $addressFactory,
-        \Dealer4Dealer\SubstituteOrders\Model\OrderItemFactory $orderItemFactory,
-        \Dealer4Dealer\SubstituteOrders\Model\AttachmentRepository $attachmentRepository,
-        \Dealer4Dealer\SubstituteOrders\Model\OrderRepository $orderRepository,
-        \Dealer4Dealer\SubstituteOrders\Model\OrderItemRepository $orderItemRepository
+        private readonly \Dealer4Dealer\SubstituteOrders\Model\OrderFactory $orderFactory,
+        private readonly AttachmentRepository $attachmentRepository,
+        private readonly OrderRepository $orderRepository,
+        private readonly OrderItemRepository $orderItemRepository
     ) {
-
-        $this->orderFactory = $orderFactory;
-        $this->addressFactory = $addressFactory;
-        $this->orderItemFactory = $orderItemFactory;
-        $this->attachmentRepository = $attachmentRepository;
-        $this->orderRepository = $orderRepository;
-        $this->orderItemRepository = $orderItemRepository;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function postOrder($order)
+    public function postOrder(OrderInterface $order): int
     {
         $order->setId(null);
         $order->save();
@@ -105,9 +54,9 @@ class OrderManagement implements \Dealer4Dealer\SubstituteOrders\Api\OrderManage
     }
 
     /**
-     * {@inheritdoc}
+     * @throws NoSuchEntityException
      */
-    public function getOrderById($id)
+    public function getOrderById(int $id): OrderInterface
     {
         $order = $this->orderFactory->create()->load($id);
 
@@ -119,9 +68,9 @@ class OrderManagement implements \Dealer4Dealer\SubstituteOrders\Api\OrderManage
     }
 
     /**
-     * {@inheritdoc}
+     * @throws NoSuchEntityException
      */
-    public function getOrderByMagento($id)
+    public function getOrderByMagento(int $id): OrderInterface
     {
         $order = $this->orderFactory->create()->load($id, "magento_order_id");
 
@@ -133,9 +82,9 @@ class OrderManagement implements \Dealer4Dealer\SubstituteOrders\Api\OrderManage
     }
 
     /**
-     * {@inheritdoc}
+     * @throws NoSuchEntityException
      */
-    public function getOrderByMagentoIncrementId($id)
+    public function getOrderByMagentoIncrementId(int $id): OrderInterface
     {
         $order = $this->orderFactory->create()->load($id, "magento_increment_id");
 
@@ -147,9 +96,9 @@ class OrderManagement implements \Dealer4Dealer\SubstituteOrders\Api\OrderManage
     }
 
     /**
-     * {@inheritdoc}
+     * @throws NoSuchEntityException
      */
-    public function getOrderByExt($id)
+    public function getOrderByExt(int $id): OrderInterface
     {
         $order = $this->orderFactory->create()->load($id, "ext_order_id");
 
@@ -160,10 +109,7 @@ class OrderManagement implements \Dealer4Dealer\SubstituteOrders\Api\OrderManage
         return $order;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function putOrder($order)
+    public function putOrder(OrderInterface $order): int
     {
         $oldOrder = $this->orderFactory->create()->load($order->getId());
 
@@ -196,9 +142,9 @@ class OrderManagement implements \Dealer4Dealer\SubstituteOrders\Api\OrderManage
     }
 
     /**
-     * {@inheritdoc}
+     * @throws NoSuchEntityException
      */
-    public function deleteOrderById($id)
+    public function deleteOrderById(int $id): bool
     {
         $order = $this->orderFactory->create()->load($id);
 
@@ -211,10 +157,7 @@ class OrderManagement implements \Dealer4Dealer\SubstituteOrders\Api\OrderManage
         return true;
     }
 
-    /**
-     * @param $order
-     */
-    public function saveAttachment($order)
+    public function saveAttachment(OrderInterface $order): void
     {
         if (!empty($order->getFileContent())) {
             $this->attachmentRepository->saveAttachmentByEntityType(
@@ -226,12 +169,9 @@ class OrderManagement implements \Dealer4Dealer\SubstituteOrders\Api\OrderManage
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getList(
-        \Magento\Framework\Api\SearchCriteriaInterface $searchCriteria
-    ) {
+        SearchCriteriaInterface $searchCriteria
+    ): OrderSearchResultsInterface {
         return $this->orderRepository->getList($searchCriteria);
     }
 }

@@ -29,9 +29,9 @@ interface AttachmentInterface
 
     public function setEntityType(string $entityType): self;
 
-    public function getEntityTypeIdentifier(): ?string;
+    public function getEntityTypeIdentifier(): ?int;
 
-    public function setEntityTypeIdentifier(string $identifier): self;
+    public function setEntityTypeIdentifier(int $identifier): self;
 
     public function getFileContent(): ?ContentInterface;
 

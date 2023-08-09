@@ -26,50 +26,33 @@ use Dealer4Dealer\SubstituteOrders\Api\Data\AdditionalDataInterface;
 
 class AdditionalData implements AdditionalDataInterface
 {
-    protected $key;
-    protected $value;
-
-    /**
-     * @param string $key
-     * @param string $value
-     */
-    public function __construct($key = '', $value = '')
-    {
-        $this->key = $key;
-        $this->value = $value;
+    public function __construct(
+        private string $key = '',
+        private string $value = ''
+    ) {
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getKey()
+    public function getKey(): string
     {
         return $this->key;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setKey($key)
+    public function setKey(string $key): self
     {
         $this->key = $key;
+
         return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getValue()
+    public function getValue(): string
     {
         return $this->value;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setValue($value)
+    public function setValue(string $value): self
     {
         $this->value = $value;
+
         return $value;
     }
 }

@@ -1,37 +1,33 @@
 <?php
 
-/**
- * A Magento 2 module named Dealer4Dealer\SubstituteOrders
- * Copyright (C) 2017 Maikel Martens
- *
- * This file is part of Dealer4Dealer\SubstituteOrders.
- *
- * Dealer4Dealer\SubstituteOrders is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
+declare(strict_types=1);
 
 namespace Dealer4Dealer\SubstituteOrders\Model;
 
+use Dealer4Dealer\SubstituteOrders\Api\AttachmentRepositoryInterface;
+use Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface;
 use Dealer4Dealer\SubstituteOrders\Api\Data\ShipmentInterface;
+use Dealer4Dealer\SubstituteOrders\Api\OrderAddressRepositoryInterface;
+use Dealer4Dealer\SubstituteOrders\Api\ShipmentItemRepositoryInterface;
 use Dealer4Dealer\SubstituteOrders\Model\AdditionalData;
+use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\Shipment as ResourceModel;
 use Dealer4Dealer\SubstituteOrders\Model\ShipmentTracking;
+use Exception;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Data\Collection\AbstractDb;
+use Magento\Framework\Model\AbstractModel;
+use Magento\Framework\Model\Context;
+use Magento\Framework\Model\ResourceModel\AbstractResource;
+use Magento\Framework\Registry;
+use Magento\Store\Model\ScopeInterface;
+use Magento\Store\Model\StoreManagerInterface;
 
-class Shipment extends \Magento\Framework\Model\AbstractModel implements ShipmentInterface
+class Shipment extends AbstractModel implements ShipmentInterface
 {
     /**
      * @var string
      */
-    const ENTITY = 'shipment';
+    public const ENTITY = 'shipment';
 
     /**
      * @var string
@@ -43,76 +39,39 @@ class Shipment extends \Magento\Framework\Model\AbstractModel implements Shipmen
      */
     protected $_eventObject = 'shipment';
 
-    /*
-     * @var \Magento\Store\Model\StoreManagerInterface
-     */
-    protected $storeManager;
-
-    /*
-     * @var \Magento\Framework\Registry
-     */
-    protected $registry;
-
-    /*
-     * @var \Magento\Framework\App\Config\ScopeConfigInterface
-     */
-    protected $scopeConfig;
-
-    /*
-     * @var \Dealer4Dealer\SubstituteOrders\Api\OrderAddressRepositoryInterface
-     */
-    protected $addressRepository;
-
-    /*
-     * @var \Dealer4Dealer\SubstituteOrders\Api\ShipmentItemRepositoryInterface
-     */
-    protected $itemRepository;
-
-    /*
-    * @var \Dealer4Dealer\SubstituteOrders\Api\AttachmentRepositoryInterface
-    */
-    protected $attachmentRepository;
-
     protected $_items = null;
+
     protected $_billingAddress = null;
+
     protected $_shippingAddress = null;
+
     protected $_tracking = null;
+
     protected $_additionalData = null;
+
     protected $_attachments = null;
 
     public function __construct(
-        \Magento\Framework\Model\Context $context,
-        \Magento\Framework\Registry $registry,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Dealer4Dealer\SubstituteOrders\Api\ShipmentItemRepositoryInterface $shipmentItems,
-        \Dealer4Dealer\SubstituteOrders\Api\OrderAddressRepositoryInterface $orderAddress,
-        \Dealer4Dealer\SubstituteOrders\Api\AttachmentRepositoryInterface $attachmentRepository,
-        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
-        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        Context $context,
+        Registry $registry,
+        private readonly ScopeConfigInterface $scopeConfig,
+        private readonly StoreManagerInterface $storeManager,
+        private readonly ShipmentItemRepositoryInterface $itemRepository,
+        private readonly  \Dealer4Dealer\SubstituteOrders\Api\OrderAddressRepositoryInterface $addressRepository,
+        private readonly AttachmentRepositoryInterface $attachmentRepository,
+        AbstractResource $resource = null,
+        AbstractDb $resourceCollection = null,
         array $data = []
     ) {
-        $this->storeManager = $storeManager;
-        $this->scopeConfig = $scopeConfig;
-        $this->itemRepository = $shipmentItems;
-        $this->addressRepository = $orderAddress;
-        $this->attachmentRepository = $attachmentRepository;
         parent::__construct($context, $registry, $resource, $resourceCollection, $data);
     }
 
-    /**
-     * @return void
-     */
-    protected function _construct()
+    protected function _construct(): void
     {
-        $this->_init('Dealer4Dealer\SubstituteOrders\Model\ResourceModel\Shipment');
+        $this->_init(ResourceModel::class);
     }
 
-    /**
-     * Saves Shipment object and related objects (address and items)
-     * @return $this
-     */
-    public function save()
+    public function save(): self
     {
         if ($this->_tracking) {
             $trackingData = [];
@@ -140,7 +99,7 @@ class Shipment extends \Magento\Framework\Model\AbstractModel implements Shipmen
                     $this->_shippingAddress->setData(
                         array_merge($oldAddress->getData(), $this->_shippingAddress->getData())
                     );
-                } catch (\Exception $e) { // @codingStandardsIgnoreLine
+                } catch (Exception $e) { // @codingStandardsIgnoreLine
 
                 }
 
@@ -158,7 +117,7 @@ class Shipment extends \Magento\Framework\Model\AbstractModel implements Shipmen
                     $this->_billingAddress->setData(
                         array_merge($oldAddress->getData(), $this->_billingAddress->getData())
                     );
-                } catch (\Exception $e) { // @codingStandardsIgnoreLine
+                } catch (Exception $e) { // @codingStandardsIgnoreLine
 
                 }
 
@@ -205,10 +164,7 @@ class Shipment extends \Magento\Framework\Model\AbstractModel implements Shipmen
         return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function delete()
+    public function delete(): self
     {
         if ($this->getShippingAddress()) {
             $this->getShippingAddress()->delete();
@@ -227,11 +183,11 @@ class Shipment extends \Magento\Framework\Model\AbstractModel implements Shipmen
         return parent::delete();
     }
 
-    public function getRealOrderId()
+    public function getRealOrderId(): string
     {
         $realOrderIdSetting = $this->scopeConfig->getValue(
             'substitute/general/real_order_id',
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            ScopeInterface::SCOPE_STORE,
             $this->storeManager->getStore()->getId()
         );
 
@@ -244,33 +200,12 @@ class Shipment extends \Magento\Framework\Model\AbstractModel implements Shipmen
         return $orderId ? $orderId : '-';
     }
 
-    public function canShowBothIds()
-    {
-        return $this->scopeConfig->getValue(
-            'substitute/general/show_both_ids',
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
-            $this->storeManager->getStore()->getId()
-        );
-    }
-
-    public function getAttachmentCollection()
-    {
-        return $this->attachmentRepository->getAttachmentsByEntityTypeIdentifier(
-            $this->getShipmentId(),
-            $this->getCustomerId(),
-            self::ENTITY
-        );
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getShippingAddress()
+    public function getShippingAddress(): OrderAddressInterface
     {
         if (!$this->_shippingAddress) {
             try {
                 $this->_shippingAddress = $this->addressRepository->getById($this->getData(self::SHIPPING_ADDRESS_ID));
-            } catch (\Exception $e) { // @codingStandardsIgnoreLine
+            } catch (Exception) {
 
             }
         }
@@ -278,24 +213,18 @@ class Shipment extends \Magento\Framework\Model\AbstractModel implements Shipmen
         return $this->_shippingAddress;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setShippingAddress(\Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface $shipping_address)
+    public function setShippingAddress(OrderAddressInterface $shippingAddress): self
     {
-        $this->_shippingAddress = $shipping_address;
+        $this->_shippingAddress = $shippingAddress;
         return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getBillingAddress()
+    public function getBillingAddress(): OrderAddressInterface
     {
         if (!$this->_billingAddress) {
             try {
                 $this->_billingAddress = $this->addressRepository->getById($this->getData(self::BILLING_ADDRESS_ID));
-            } catch (\Exception $e) { // @codingStandardsIgnoreLine
+            } catch (Exception $e) { // @codingStandardsIgnoreLine
 
             }
         }
@@ -303,27 +232,20 @@ class Shipment extends \Magento\Framework\Model\AbstractModel implements Shipmen
         return $this->_billingAddress;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setBillingAddress(\Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface $billing_address)
+    public function setBillingAddress(OrderAddressInterface $billingAddress): self
     {
-        $this->_billingAddress = $billing_address;
+        $this->_billingAddress = $billingAddress;
         return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setItems(array $items)
+    public function setItems(array $items): self
     {
         $this->_items = $items;
+        
+        return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getItems()
+    public function getItems(): array
     {
         if (!$this->_items) {
             $this->_items = $this->itemRepository->getShipmentItems($this->getId());
@@ -332,10 +254,7 @@ class Shipment extends \Magento\Framework\Model\AbstractModel implements Shipmen
         return $this->_items;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getTracking()
+    public function getTracking(): array
     {
         if ($this->_tracking == null) {
             $this->_tracking = [];
@@ -351,22 +270,18 @@ class Shipment extends \Magento\Framework\Model\AbstractModel implements Shipmen
         return $this->_tracking;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setTracking($tracking)
+    public function setTracking(string|array $tracking): self
     {
         if (is_string($tracking)) {
             $tracking = json_decode($tracking);
         }
 
-        return $this->_tracking = $tracking;
+        $this->_tracking = $tracking;
+
+        return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getAdditionalData()
+    public function getAdditionalData(): array
     {
         if ($this->_additionalData == null) {
             $this->_additionalData = [];
@@ -382,196 +297,127 @@ class Shipment extends \Magento\Framework\Model\AbstractModel implements Shipmen
         return $this->_additionalData;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setAdditionalData($additional_data)
+    public function setAdditionalData(array $additionalData): self
     {
-        $this->_additionalData = $additional_data;
+        $this->_additionalData = $additionalData;
+        
         return $this;
     }
 
-    /* Standard getters and setters */
-
-    /**
-     * @inheritDoc
-     */
-    public function getShipmentId()
+    public function getShipmentId(): int
     {
         return $this->getData(self::SHIPMENT_ID);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setShipmentId($shipmentId)
+    public function setShipmentId(int $shipmentId): self
     {
         return $this->setData(self::SHIPMENT_ID, $shipmentId);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getExtShipmentId()
+    public function getExtShipmentId(): string
     {
         return $this->getData(self::EXT_SHIPMENT_ID);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setExtShipmentId($shipmentId)
+    public function setExtShipmentId(string $extShipmentId): self
     {
-        return $this->setData(self::EXT_SHIPMENT_ID, $shipmentId);
+        return $this->setData(self::EXT_SHIPMENT_ID, $extShipmentId);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getCustomerId()
+    public function getCustomerId(): int
     {
         return $this->getData(self::CUSTOMER_ID);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setCustomerId($customer_id)
+    public function setCustomerId(int $customerId): self
     {
-        return $this->setData(self::CUSTOMER_ID, $customer_id);
+        return $this->setData(self::CUSTOMER_ID, $customerId);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getOrderId()
+    public function getOrderId(): int
     {
         return $this->getData(self::ORDER_ID);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setOrderId($order_id)
+    public function setOrderId(int $orderId): self
     {
-        return $this->setData(self::ORDER_ID, $order_id);
+        return $this->setData(self::ORDER_ID, $orderId);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getInvoiceId()
+    public function getInvoiceId(): int
     {
         return $this->getData(self::INVOICE_ID);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setInvoiceId($invoice_id)
+    public function setInvoiceId(int $invoiceId): self
     {
-        return $this->setData(self::INVOICE_ID, $invoice_id);
+        return $this->setData(self::INVOICE_ID, $invoiceId);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getShipmentStatus()
+    public function getShipmentStatus(): string
     {
         return $this->getData(self::SHIPMENT_STATUS);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setShipmentStatus($shipment_status)
+    public function setShipmentStatus(string $shipmentStatus): self
     {
-        return $this->setData(self::SHIPMENT_STATUS, $shipment_status);
+        return $this->setData(self::SHIPMENT_STATUS, $shipmentStatus);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getIncrementId()
+    public function getIncrementId(): int
     {
         return $this->getData(self::INCREMENT_ID);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setIncrementId($increment_id)
+    public function setIncrementId(int $incrementId): self
     {
-        return $this->setData(self::INCREMENT_ID, $increment_id);
+        return $this->setData(self::INCREMENT_ID, $incrementId);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getCreatedAt()
+    public function getCreatedAt(): string
     {
         return $this->getData(self::CREATED_AT);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setCreatedAt($created_at)
+    public function setCreatedAt(string $createdAt): self
     {
-        return $this->setData(self::CREATED_AT, $created_at);
+        return $this->setData(self::CREATED_AT, $createdAt);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getUpdatedAt()
+    public function getUpdatedAt(): string
     {
         return $this->getData(self::UPDATED_AT);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setUpdatedAt($updated_at)
+    public function setUpdatedAt(string $updatedAt): self
     {
-        return $this->setData(self::UPDATED_AT, $updated_at);
+        return $this->setData(self::UPDATED_AT, $updatedAt);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->getData(self::NAME);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setName($name)
+    public function setName(string $name): self
     {
         return $this->setData(self::NAME, $name);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setAttachments(array $fileContent)
+    public function setAttachments(array $attachments): self
     {
-        return $this->setData(self::FILE_CONTENT, $fileContent);
+        return $this->setData(self::FILE_CONTENT, $attachments);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getAttachments()
+    public function getAttachments(): array
     {
         if ($this->_attachments == null) {
-            $attachments = $this->attachmentRepository->getAttachmentsByEntityTypeIdentifier(
-                $this->getShipmentId(),
-                $this->getCustomerId(),
-                self::ENTITY
-            );
+            $attachments = $this->attachmentRepository
+                ->getAttachmentsByEntityTypeIdentifier(
+                    $this->getShipmentId(),
+                    $this->getCustomerId(),
+                    self::ENTITY
+                );
 
             $files = [];
 
@@ -588,19 +434,13 @@ class Shipment extends \Magento\Framework\Model\AbstractModel implements Shipmen
         return $this->_attachments;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getShippingMethod()
+    public function getShippingMethod(): string
     {
         return $this->getData(self::SHIPPING_METHOD);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setShippingMethod($shipping_method)
+    public function setShippingMethod(string $shippingMethod): self
     {
-        return $this->setData(self::SHIPPING_METHOD, $shipping_method);
+        return $this->setData(self::SHIPPING_METHOD, $shippingMethod);
     }
 }

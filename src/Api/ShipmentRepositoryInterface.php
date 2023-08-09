@@ -19,5 +19,5 @@ interface ShipmentRepositoryInterface
 
     public function deleteById(int $shipmentId): bool;
 
-    public function getShipmentsByOrder(OrderInterface $order): ShipmentSearchResultsInterface;
+    public function getShipmentsByOrder(OrderInterface $order): array;
 }

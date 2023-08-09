@@ -26,8 +26,9 @@ use Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface;
 use Dealer4Dealer\SubstituteOrders\Api\Data\OrderInterface;
 use Dealer4Dealer\SubstituteOrders\Api\ShipmentRepositoryInterface;
 use Dealer4Dealer\SubstituteOrders\Model\AdditionalData;
+use Magento\Framework\Model\AbstractModel;
 
-class Order extends \Magento\Framework\Model\AbstractModel implements OrderInterface
+class Order extends AbstractModel implements OrderInterface
 {
     /**
      * @var string

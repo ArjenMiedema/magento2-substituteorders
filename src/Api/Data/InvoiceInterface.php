@@ -93,7 +93,7 @@ interface InvoiceInterface
 
     public function getGrandtotal(): ?float;
 
-    public function setGrandtotal(float $grandtotal): self;
+    public function setGrandtotal(float $grandTotal): self;
 
     public function getInvoiceDate(): ?string;
 
@@ -105,11 +105,17 @@ interface InvoiceInterface
 
     public function getMagentoIncrementId(): ?string;
 
-    public function setMagentoIncrementId(string $magentoIncrementId): self;
+    public function setMagentoIncrementId(string $magentoMagentoIncrementId): self;
 
-    public function getAdditionalData(): AdditionalDataInterface;
+    /**
+     * @return AdditionalDataInterface[]
+     */
+    public function getAdditionalData(): array;
 
-    public function setAdditionalData(AdditionalDataInterface $additionalData): self;
+    /**
+     * @param AdditionalDataInterface[] $additionalData
+     */
+    public function setAdditionalData(array $additionalData): self;
 
     /**
      * @param InvoiceItemInterface[] $items

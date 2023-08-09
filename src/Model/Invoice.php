@@ -22,16 +22,30 @@
 
 namespace Dealer4Dealer\SubstituteOrders\Model;
 
-use Dealer4Dealer\SubstituteOrders\Model\ResourceModel;
+use Dealer4Dealer\SubstituteOrders\Api\AttachmentRepositoryInterface;
+use Dealer4Dealer\SubstituteOrders\Api\Data\AdditionalDataInterface;
+use Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface;
+use Dealer4Dealer\SubstituteOrders\Api\InvoiceItemRepositoryInterface;
+use Dealer4Dealer\SubstituteOrders\Api\OrderAddressRepositoryInterface;
 use Dealer4Dealer\SubstituteOrders\Api\Data\InvoiceInterface;
-use Dealer4Dealer\SubstituteOrders\Model\AdditionalData;
+use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\Invoice as ResourceModel;
+use Dealer4Dealer\SubstituteOrders\Model\ResourceModel\Order\CollectionFactory;
+use Exception;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Data\Collection\AbstractDb;
+use Magento\Framework\Model\AbstractModel;
+use Magento\Framework\Model\Context;
+use Magento\Framework\Model\ResourceModel\AbstractResource;
+use Magento\Framework\Registry;
+use Magento\Store\Model\ScopeInterface;
+use Magento\Store\Model\StoreManagerInterface;
 
-class Invoice extends \Magento\Framework\Model\AbstractModel implements InvoiceInterface
+class Invoice extends AbstractModel implements InvoiceInterface
 {
     /**
      * @var string
      */
-    const ENTITY = 'invoice';
+    public const ENTITY = 'invoice';
 
     /**
      * @var string
@@ -43,89 +57,47 @@ class Invoice extends \Magento\Framework\Model\AbstractModel implements InvoiceI
      */
     protected $_eventObject = 'invoice';
 
-    /*
-     * @var \Magento\Store\Model\StoreManagerInterface
-     */
-    protected $storeManager;
+    protected array $items;
+    protected ?OrderAddressInterface $billingAddress;
+    protected ?OrderAddressInterface $shippingAddress;
+    protected $additionalData;
 
-    /*
-     * @var \Magento\Framework\Registry
-     */
-    protected $registry;
-
-    /*
-     * @var \Magento\Framework\App\Config\ScopeConfigInterface
-     */
-    protected $scopeConfig;
-
-    /**
-     * @var ResourceModel\Order\CollectionFactory
-     */
-    protected $orderCollectionFactory;
-
-    /**
-     * @var \Dealer4Dealer\SubstituteOrders\Model\OrderInvoiceRelationFactory
-     */
-    protected $orderInvoiceRelationFactory;
-
-    /**
-     * @var \Dealer4Dealer\SubstituteOrders\Api\OrderAddressRepositoryInterface
-     */
-    protected $addressRepository;
-
-    /**
-     * @var \Dealer4Dealer\SubstituteOrders\Api\AttachmentRepositoryInterface
-     */
-    protected $attachmentRepository;
-
-    /**
-     * @var \Dealer4Dealer\SubstituteOrders\Api\InvoiceItemRepositoryInterface
-     */
-    protected $itemRepository;
-
-    protected $_items = null;
-    protected $_billingAddress = null;
-    protected $_shippingAddress = null;
-    protected $_additionalData = null;
-    protected $_attachments = null;
+    protected array $attachments;
 
     public function __construct(
-        \Magento\Framework\Model\Context $context,
-        \Magento\Framework\Registry $registry,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Dealer4Dealer\SubstituteOrders\Model\ResourceModel\Order\CollectionFactory $orderCollectionFactory,
-        \Dealer4Dealer\SubstituteOrders\Model\OrderInvoiceRelationFactory $orderInvoiceRelationFactory,
-        \Dealer4Dealer\SubstituteOrders\Api\InvoiceItemRepositoryInterface $orderItems,
-        \Dealer4Dealer\SubstituteOrders\Api\OrderAddressRepositoryInterface $orderAddress,
-        \Dealer4Dealer\SubstituteOrders\Api\AttachmentRepositoryInterface $attachmentRepository,
-        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
-        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        Context $context,
+        Registry $registry,
+        private readonly ScopeConfigInterface $scopeConfig,
+        private readonly StoreManagerInterface $storeManager,
+        private readonly CollectionFactory $orderCollectionFactory,
+        private readonly \Dealer4Dealer\SubstituteOrders\Model\OrderInvoiceRelationFactory $orderInvoiceRelationFactory,
+        private readonly InvoiceItemRepositoryInterface $itemRepository,
+        private readonly OrderAddressRepositoryInterface $addressRepository,
+        private readonly AttachmentRepositoryInterface $attachmentRepository,
+        AbstractResource $resource = null,
+        AbstractDb $resourceCollection = null,
         array $data = []
     ) {
-        $this->storeManager = $storeManager;
-        $this->scopeConfig = $scopeConfig;
-        $this->orderCollectionFactory = $orderCollectionFactory;
-        $this->orderInvoiceRelationFactory = $orderInvoiceRelationFactory;
-        $this->itemRepository = $orderItems;
-        $this->addressRepository = $orderAddress;
-        $this->attachmentRepository = $attachmentRepository;
-        parent::__construct($context, $registry, $resource, $resourceCollection, $data);
+        parent::__construct(
+            $context,
+            $registry,
+            $resource,
+            $resourceCollection,
+            $data
+        );
+
     }
 
-    /**
-     * @return void
-     */
-    protected function _construct()
+    protected function _construct(): void
     {
-        $this->_init('Dealer4Dealer\SubstituteOrders\Model\ResourceModel\Invoice');
+        $this->_init(ResourceModel::class);
     }
 
-    public function save()
+    public function save(): self
     {
-        if ($this->_additionalData) {
+        if ($this->additionalData) {
             $data = [];
-            foreach ($this->_additionalData as $value) {
+            foreach ($this->additionalData as $value) {
                 $data[$value->getKey()] = $value->getValue();
             }
 
@@ -133,40 +105,40 @@ class Invoice extends \Magento\Framework\Model\AbstractModel implements InvoiceI
         }
 
 
-        if ($this->_shippingAddress) {
-            if (!$this->getData(self::SHIPPING_ADDRESS_ID) && $this->_shippingAddress->getId() != $this->getData(self::SHIPPING_ADDRESS_ID)) {
+        if ($this->shippingAddress) {
+            if (!$this->getData(self::SHIPPING_ADDRESS_ID) && $this->shippingAddress->getId() != $this->getData(self::SHIPPING_ADDRESS_ID)) {
                 try {
                     $oldAddress = $this->addressRepository->getById($this->getData(self::SHIPPING_ADDRESS_ID));
-                    $this->_shippingAddress->setData(
-                        array_merge($oldAddress->getData(), $this->_shippingAddress->getData())
+                    $this->shippingAddress->setData(
+                        array_merge($oldAddress->getData(), $this->shippingAddress->getData())
                     );
-                } catch (\Exception $e) { // @codingStandardsIgnoreLine
+                } catch (Exception $e) { // @codingStandardsIgnoreLine
 
                 }
 
-                $this->_shippingAddress->setId($this->getData(self::SHIPPING_ADDRESS_ID));
+                $this->shippingAddress->setId($this->getData(self::SHIPPING_ADDRESS_ID));
             }
 
-            $this->_shippingAddress->save();
-            $this->setData(self::SHIPPING_ADDRESS_ID, $this->_shippingAddress->getId());
+            $this->shippingAddress->save();
+            $this->setData(self::SHIPPING_ADDRESS_ID, $this->shippingAddress->getId());
         }
 
-        if ($this->_billingAddress) {
-            if (!$this->getData(self::BILLING_ADDRESS_ID) && $this->_billingAddress->getId() != $this->getData(self::BILLING_ADDRESS_ID)) {
+        if ($this->billingAddress) {
+            if (!$this->getData(self::BILLING_ADDRESS_ID) && $this->billingAddress->getId() != $this->getData(self::BILLING_ADDRESS_ID)) {
                 try {
                     $oldAddress = $this->addressRepository->getById($this->getData(self::BILLING_ADDRESS_ID));
-                    $this->_billingAddress->setData(
-                        array_merge($oldAddress->getData(), $this->_billingAddress->getData())
+                    $this->billingAddress->setData(
+                        array_merge($oldAddress->getData(), $this->billingAddress->getData())
                     );
-                } catch (\Exception $e) { // @codingStandardsIgnoreLine
+                } catch (Exception $e) { // @codingStandardsIgnoreLine
 
                 }
 
-                $this->_billingAddress->setId($this->getData(self::BILLING_ADDRESS_ID));
+                $this->billingAddress->setId($this->getData(self::BILLING_ADDRESS_ID));
             }
 
-            $this->_billingAddress->save();
-            $this->setData(self::BILLING_ADDRESS_ID, $this->_billingAddress->getId());
+            $this->billingAddress->save();
+            $this->setData(self::BILLING_ADDRESS_ID, $this->billingAddress->getId());
         }
 
         parent::save();
@@ -198,7 +170,7 @@ class Invoice extends \Magento\Framework\Model\AbstractModel implements InvoiceI
             }
         }
 
-        if ($this->_items) {
+        if ($this->items) {
             $oldItems = $this->itemRepository->getInvoiceItems($this->getId());
             $oldSkus = [];
             $newSkus = [];
@@ -206,7 +178,7 @@ class Invoice extends \Magento\Framework\Model\AbstractModel implements InvoiceI
                 $oldSkus[$item->getSku()] = $item;
             }
 
-            foreach ($this->_items as $item) {
+            foreach ($this->items as $item) {
                 $oldItem = isset($oldSkus[$item->getSku()]) ? $oldSkus[$item->getSku()] : null;
 
                 if ($oldItem && $oldItem->getInvoiceId() == $this->getId()) {
@@ -232,7 +204,7 @@ class Invoice extends \Magento\Framework\Model\AbstractModel implements InvoiceI
         return $this;
     }
 
-    public function delete()
+    public function delete(): self
     {
         if ($this->getShippingAddress()) {
             $this->getShippingAddress()->delete();
@@ -251,128 +223,69 @@ class Invoice extends \Magento\Framework\Model\AbstractModel implements InvoiceI
         return parent::delete();
     }
 
-    public function getRealOrderId()
+    public function getRealOrderId(): int
     {
         $realOrderIdSetting = $this->scopeConfig->getValue(
             'substitute/general/real_order_id',
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            ScopeInterface::SCOPE_STORE,
             $this->storeManager->getStore()->getId()
         );
 
-        if ($realOrderIdSetting == 'external') {
-            $orderId = $this->getData('ext_invoice_id');
-        } else {
-            $orderId = $this->getData('magento_increment_id');
-        }
-
-        return $orderId ? $orderId : '-';
+        return (
+            $realOrderIdSetting === 'external'
+                ? $this->getData('ext_invoice_id')
+                : $this->getData('magento_increment_id')
+        ) ?: '-';
     }
 
-    public function canShowBothIds()
+    public function getShippingAddress(): ?OrderAddressInterface
     {
-        return $this->scopeConfig->getValue(
-            'substitute/general/show_both_ids',
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
-            $this->storeManager->getStore()->getId()
-        );
+        return $this->shippingAddress ??= $this->addressRepository->getById($this->getData(self::SHIPPING_ADDRESS_ID));
     }
 
-    public function getAttachmentCollection()
+    public function setShippingAddress(OrderAddressInterface $shippingAddress): self
     {
-        return $this->attachmentRepository->getAttachmentsByEntityTypeIdentifier(
-            $this->getInvoiceId(),
-            $this->getMagentoCustomerId(),
-            self::ENTITY
-        );
-    }
+        $this->shippingAddress = $shippingAddress;
 
-    /**
-     * @inheritDoc
-     */
-    public function getShippingAddress()
-    {
-        if (!$this->_shippingAddress) {
-            try {
-                $this->_shippingAddress = $this->addressRepository->getById($this->getData(self::SHIPPING_ADDRESS_ID));
-            } catch (\Exception $e) { // @codingStandardsIgnoreLine
-
-            }
-        }
-
-        return $this->_shippingAddress;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setShippingAddress(\Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface $shipping_address)
-    {
-        $this->_shippingAddress = $shipping_address;
         return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getBillingAddress()
+    public function getBillingAddress(): OrderAddressInterface
     {
-        if (!$this->_billingAddress) {
-            try {
-                $this->_billingAddress = $this->addressRepository->getById($this->getData(self::BILLING_ADDRESS_ID));
-            } catch (\Exception $e) { // @codingStandardsIgnoreLine
-
-            }
-        }
-
-        return $this->_billingAddress;
+        return $this->billingAddress ??= $this->addressRepository->getById($this->getData(self::BILLING_ADDRESS_ID));
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setBillingAddress(\Dealer4Dealer\SubstituteOrders\Api\Data\OrderAddressInterface $billing_address)
+    public function setBillingAddress(OrderAddressInterface $billingAddress): self
     {
-        $this->_billingAddress = $billing_address;
+        $this->billingAddress = $billingAddress;
+
         return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setItems(array $items)
+    public function setItems(array $items): self
     {
-        $this->_items = $items;
+        $this->items = $items;
+
+        return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getItems()
+    public function getItems(): array
     {
-        if (!$this->_items) {
-            $this->_items = $this->itemRepository->getInvoiceItems($this->getId());
-        }
-
-        return $this->_items;
+        return $this->items ??= $this->itemRepository->getInvoiceItems($this->getId());
     }
 
     /**
      * @return array
      */
-    public function getAllItems()
+    public function getAllItems(): array
     {
-        $items = [];
-        foreach ($this->getItemsCollection() as $item) {
-            if (!$item->isDeleted()) {
-                $items[] = $item;
-            }
-        }
-
-        return $items;
+        return array_filter(
+            $this->getItemsCollection(),
+            static fn ($item) => !$item->isDeleted()
+        );
     }
 
-    // TODO make same ad original Magento Sales\Order\ model
-    public function getItemsCollection()
+    public function getItemsCollection(): array
     {
         return $this->getItems();
     }
@@ -380,7 +293,7 @@ class Invoice extends \Magento\Framework\Model\AbstractModel implements InvoiceI
     /**
      * Get all orders for invoice
      */
-    public function getOrders()
+    public function getOrders(): array
     {
         if (!$this->getId()) {
             return [];
@@ -389,379 +302,274 @@ class Invoice extends \Magento\Framework\Model\AbstractModel implements InvoiceI
         return $this->orderCollectionFactory->create()->filterByInvoice($this);
     }
 
-    /* Standard getters and setters */
-
-    /**
-     * @inheritDoc
-     */
-    public function getInvoiceId()
+    public function getInvoiceId(): int
     {
-        return $this->getData(self::INVOICE_ID);
+        return (int) $this->getData(self::INVOICE_ID);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setInvoiceId($invoiceId)
+
+    public function setInvoiceId(int $invoiceId): self
     {
         return $this->setData(self::INVOICE_ID, $invoiceId);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getOrderIds()
+    public function getOrderIds(): array
     {
-        if ($this->getData(self::ORDER_IDS)) {
-            return $this->getData(self::ORDER_IDS);
-        }
-
-        $ids = [];
-        foreach ($this->getOrders() as $order) {
-            $ids[] = $order->getId();
-        }
-
-        return $ids;
+        return $this->getData(self::ORDER_IDS) ?: array_map(
+            static fn ($order) => $order->getId(),
+            $this->getOrders()
+        );
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setOrderIds($orderIds)
+    public function setOrderIds(array $orderIds): self
     {
         return $this->setData(self::ORDER_IDS, array_unique($orderIds));
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getMagentoInvoiceId()
+    public function getMagentoInvoiceId(): int
     {
         return $this->getData(self::MAGENTO_INVOICE_ID);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setMagentoInvoiceId($magento_invoice_id)
+    public function setMagentoInvoiceId(int $magentoInvoiceId): self
     {
-        return $this->setData(self::MAGENTO_INVOICE_ID, $magento_invoice_id);
+        return $this->setData(self::MAGENTO_INVOICE_ID, $magentoInvoiceId);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getExtInvoiceId()
+    public function getExtInvoiceId(): string
     {
         return $this->getData(self::EXT_INVOICE_ID);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setExtInvoiceId($ext_invoice_id)
+    public function setExtInvoiceId(string $extInvoiceId): self
     {
-        return $this->setData(self::EXT_INVOICE_ID, $ext_invoice_id);
+        return $this->setData(self::EXT_INVOICE_ID, $extInvoiceId);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getPoNumber()
+    public function getPoNumber(): string
     {
         return $this->getData(self::PO_NUMBER);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setPoNumber($po_number)
+    public function setPoNumber(string $poNumber): self
     {
-        return $this->setData(self::PO_NUMBER, $po_number);
+        return $this->setData(self::PO_NUMBER, $poNumber);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getMagentoCustomerId()
+    public function getMagentoCustomerId(): int
     {
         return $this->getData(self::MAGENTO_CUSTOMER_ID);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setMagentoCustomerId($magento_customer_id)
+
+    public function setMagentoCustomerId(int $magentoCustomerId): self
     {
-        return $this->setData(self::MAGENTO_CUSTOMER_ID, $magento_customer_id);
+        return $this->setData(self::MAGENTO_CUSTOMER_ID, $magentoCustomerId);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getBaseTaxAmount()
+
+    public function getBaseTaxAmount(): float
     {
         return $this->getData(self::BASE_TAX_AMOUNT);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setBaseTaxAmount($base_tax_amount)
+
+    public function setBaseTaxAmount(float $baseTaxAmount): self
     {
-        return $this->setData(self::BASE_TAX_AMOUNT, $base_tax_amount);
+        return $this->setData(self::BASE_TAX_AMOUNT, $baseTaxAmount);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getBaseDiscountAmount()
+
+    public function getBaseDiscountAmount(): float
     {
         return $this->getData(self::BASE_DISCOUNT_AMOUNT);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setBaseDiscountAmount($base_discount_amount)
+
+    public function setBaseDiscountAmount(float $baseDiscountAmount): self
     {
-        return $this->setData(self::BASE_DISCOUNT_AMOUNT, $base_discount_amount);
+        return $this->setData(self::BASE_DISCOUNT_AMOUNT, $baseDiscountAmount);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getBaseShippingAmount()
+
+    public function getBaseShippingAmount(): float
     {
         return $this->getData(self::BASE_SHIPPING_AMOUNT);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setBaseShippingAmount($base_shipping_amount)
+
+    public function setBaseShippingAmount(float $baseShippingAmount): self
     {
-        return $this->setData(self::BASE_SHIPPING_AMOUNT, $base_shipping_amount);
+        return $this->setData(self::BASE_SHIPPING_AMOUNT, $baseShippingAmount);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getBaseSubtotal()
+
+    public function getBaseSubtotal(): float
     {
         return $this->getData(self::BASE_SUBTOTAL);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setBaseSubtotal($base_subtotal)
+
+    public function setBaseSubtotal(float $baseSubtotal): self
     {
-        return $this->setData(self::BASE_SUBTOTAL, $base_subtotal);
+        return $this->setData(self::BASE_SUBTOTAL, $baseSubtotal);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getBaseGrandTotal()
+
+    public function getBaseGrandTotal(): float
     {
         return $this->getData(self::BASE_GRANDTOTAL);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setBaseGrandTotal($base_grandTotal)
+
+    public function setBaseGrandTotal(float $baseGrandTotal): self
     {
-        return $this->setData(self::BASE_GRANDTOTAL, $base_grandTotal);
+        return $this->setData(self::BASE_GRANDTOTAL, $baseGrandTotal);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getTaxAmount()
+
+    public function getTaxAmount(): float
     {
         return $this->getData(self::TAX_AMOUNT);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setTaxAmount($tax_amount)
+
+    public function setTaxAmount(float $taxAmount): self
     {
-        return $this->setData(self::TAX_AMOUNT, $tax_amount);
+        return $this->setData(self::TAX_AMOUNT, $taxAmount);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getDiscountAmount()
+
+    public function getDiscountAmount(): float
     {
         return $this->getData(self::DISCOUNT_AMOUNT);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setDiscountAmount($discount_amount)
+
+    public function setDiscountAmount(float $discountAmount): self
     {
-        return $this->setData(self::DISCOUNT_AMOUNT, $discount_amount);
+        return $this->setData(self::DISCOUNT_AMOUNT, $discountAmount);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getShippingAmount()
+
+    public function getShippingAmount(): float
     {
         return $this->getData(self::SHIPPING_AMOUNT);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setShippingAmount($shipping_amount)
+
+    public function setShippingAmount(float $shippingAmount): self
     {
-        return $this->setData(self::SHIPPING_AMOUNT, $shipping_amount);
+        return $this->setData(self::SHIPPING_AMOUNT, $shippingAmount);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getSubtotal()
+
+    public function getSubtotal(): float
     {
         return $this->getData(self::SUBTOTAL);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setSubtotal($subtotal)
+
+    public function setSubtotal(float $subtotal): self
     {
         return $this->setData(self::SUBTOTAL, $subtotal);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getGrandtotal()
+
+    public function getGrandtotal(): float
     {
         return $this->getData(self::GRANDTOTAL);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setGrandtotal($grandtotal)
+
+    public function setGrandtotal(float $grandTotal): self
     {
-        return $this->setData(self::GRANDTOTAL, $grandtotal);
+        return $this->setData(self::GRANDTOTAL, $grandTotal);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getInvoiceDate()
+
+    public function getInvoiceDate(): string
     {
         return $this->getData(self::INVOICE_DATE);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setInvoiceDate($invoice_date)
+
+    public function setInvoiceDate(string $invoiceDate): self
     {
-        return $this->setData(self::INVOICE_DATE, $invoice_date);
+        return $this->setData(self::INVOICE_DATE, $invoiceDate);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getState()
+
+    public function getState(): string
     {
         return $this->getData(self::STATE);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setState($state)
+
+    public function setState(string $state): self
     {
         return $this->setData(self::STATE, $state);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getMagentoIncrementId()
+
+    public function getMagentoIncrementId(): string
     {
         return $this->getData(self::MAGENTO_INCREMENT_ID);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setMagentoIncrementId($incrementId)
+
+    public function setMagentoIncrementId(string $magentoIncrementId): self
     {
-        return $this->setData(self::MAGENTO_INCREMENT_ID, $incrementId);
+        return $this->setData(self::MAGENTO_INCREMENT_ID, $magentoIncrementId);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getUpdatedAt()
+
+    public function getUpdatedAt(): string
     {
         return $this->getData(self::UPDATED_AT);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setUpdatedAt($updated)
+
+    public function setUpdatedAt(string $updated): self
     {
         return $this->setData(self::UPDATED_AT, $updated);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getAdditionalData()
+    public function getAdditionalData(): array
     {
-        if ($this->_additionalData == null) {
-            $this->_additionalData = [];
+        if ($this->additionalData === null) {
+            $this->additionalData = [];
 
             if ($this->getData(self::ADDITIONAL_DATA)) {
                 $data = json_decode($this->getData(self::ADDITIONAL_DATA), true);
+
                 foreach ($data as $key => $value) {
-                    $this->_additionalData[] = new AdditionalData($key, $value);
+                    $this->additionalData[] = new AdditionalData($key, $value);
                 }
             }
         }
 
-        return $this->_additionalData;
+        return $this->additionalData;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setAdditionalData($additional_data)
+
+    public function setAdditionalData(array $additionalData): self
     {
-        $this->_additionalData = $additional_data;
+        $this->additionalData = $additionalData;
+
         return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setAttachments(array $attachments)
+
+    public function setAttachments(array $attachments): self
     {
         return $this->setData(self::FILE_CONTENT, $attachments);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getAttachments()
+
+    public function getAttachments(): array
     {
-        if ($this->_attachments == null) {
+        if ($this->attachments === null) {
             $attachments = $this->attachmentRepository->getAttachmentsByEntityTypeIdentifier(
                 $this->getInvoiceId(),
                 $this->getMagentoCustomerId(),
@@ -777,9 +585,9 @@ class Invoice extends \Magento\Framework\Model\AbstractModel implements InvoiceI
                 ];
             }
 
-            $this->_attachments = $files;
+            $this->attachments = $files;
         }
 
-        return $this->_attachments;
+        return $this->attachments;
     }
 }

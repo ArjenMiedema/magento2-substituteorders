@@ -22,49 +22,26 @@
 
 namespace Dealer4Dealer\SubstituteOrders\Model;
 
-use Dealer4Dealer\SubstituteOrders\Model\Shipment;
+use Dealer4Dealer\SubstituteOrders\Api\Data\ShipmentInterface;
+use Dealer4Dealer\SubstituteOrders\Api\Data\ShipmentSearchResultsInterface;
+use Dealer4Dealer\SubstituteOrders\Api\ShipmentManagementInterface;
+use Magento\Framework\Api\SearchCriteriaInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 
-use function Dealer4Dealer\SubstituteOrders\Model\__;
-
-class ShipmentManagement implements \Dealer4Dealer\SubstituteOrders\Api\ShipmentManagementInterface
+class ShipmentManagement implements ShipmentManagementInterface
 {
-    /*
-     * @var \Dealer4Dealer\SubstituteOrders\Model\ShipmentFactory
-     */
-    protected $shipmentFactory;
-
-    /*
-     * @var \Dealer4Dealer\SubstituteOrders\Model\OrderAddressFactory
-     */
-    protected $addressFactory;
-
-    /*
-    * @var \Dealer4Dealer\SubstituteOrders\Model\AttachmentRepository
-    */
-    protected $attachmentRepository;
-
-    /*
-    * @var \Dealer4Dealer\SubstituteOrders\Model\ShipmentRepository
-    */
-    protected $shipmentRepository;
-
     public function __construct(
-        \Dealer4Dealer\SubstituteOrders\Model\ShipmentFactory $shipmentFactory,
-        \Dealer4Dealer\SubstituteOrders\Model\OrderAddressFactory $addressFactory,
-        \Dealer4Dealer\SubstituteOrders\Model\AttachmentRepository $attachmentRepository,
-        \Dealer4Dealer\SubstituteOrders\Model\ShipmentRepository $shipmentRepository
+        private readonly ShipmentFactory $shipmentFactory,
+        private readonly OrderAddressFactory $addressFactory,
+        private readonly AttachmentRepository $attachmentRepository,
+        private readonly ShipmentRepository $shipmentRepository
     ) {
-        $this->shipmentFactory = $shipmentFactory;
-        $this->addressFactory = $addressFactory;
-        $this->attachmentRepository = $attachmentRepository;
-        $this->shipmentRepository = $shipmentRepository;
     }
 
     /**
-     * {@inheritdoc}
+     * @throws NoSuchEntityException
      */
-    public function getShipmentById($id)
+    public function getShipmentById(int $id): ShipmentInterface
     {
         $shipment = $this->shipmentFactory->create()->load($id);
 
@@ -76,9 +53,9 @@ class ShipmentManagement implements \Dealer4Dealer\SubstituteOrders\Api\Shipment
     }
 
     /**
-     * {@inheritdoc}
+     * @throws NoSuchEntityException
      */
-    public function getShipmentByExt($id)
+    public function getShipmentByExt(int $id): ShipmentInterface
     {
         $shipment = $this->shipmentFactory->create()->load($id, "ext_shipment_id");
 
@@ -90,9 +67,9 @@ class ShipmentManagement implements \Dealer4Dealer\SubstituteOrders\Api\Shipment
     }
 
     /**
-     * {@inheritdoc}
+     * @throws NoSuchEntityException
      */
-    public function getShipmentByMagentoIncrement($id)
+    public function getShipmentByMagentoIncrement(int $id): ShipmentInterface
     {
         $shipment = $this->shipmentFactory->create()->load($id, "increment_id");
 
@@ -103,27 +80,19 @@ class ShipmentManagement implements \Dealer4Dealer\SubstituteOrders\Api\Shipment
         return $shipment;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function postShipment($shipment)
+    public function postShipment(ShipmentInterface $shipment): int
     {
         $shipment->setId(null);
         $shipment->save();
 
         $this->saveAttachment($shipment);
 
-        return $shipment->getId();
+        return (int) $shipment->getId();
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @param \Dealer4Dealer\SubstituteOrders\Api\Data\ShipmentInterface $shipment
-     */
-    public function putShipment($shipment)
+    public function putShipment(ShipmentInterface $shipment): ?int
     {
-        /** @var $oldShipment \Dealer4Dealer\SubstituteOrders\Api\Data\ShipmentInterface */
+        /** @var $oldShipment ShipmentInterface */
 
         if ($shipment->getId()) {
             $oldShipment = $this->shipmentFactory->create()->load($shipment->getId());
@@ -132,7 +101,7 @@ class ShipmentManagement implements \Dealer4Dealer\SubstituteOrders\Api\Shipment
         }
 
         if (!$oldShipment->getId()) {
-            return false;
+            return null;
         }
 
         $oldShipment->setData(array_merge($oldShipment->getData(), $shipment->getData()));
@@ -152,13 +121,13 @@ class ShipmentManagement implements \Dealer4Dealer\SubstituteOrders\Api\Shipment
 
         $this->saveAttachment($oldShipment);
 
-        return $oldShipment->getId();
+        return (int) $oldShipment->getId();
     }
 
     /**
-     * {@inheritdoc}
+     * @throws NoSuchEntityException
      */
-    public function deleteShipmentById($id)
+    public function deleteShipmentById(int $id): bool
     {
         $shipment = $this->shipmentFactory->create()->load($id);
 
@@ -171,10 +140,7 @@ class ShipmentManagement implements \Dealer4Dealer\SubstituteOrders\Api\Shipment
         return true;
     }
 
-    /**
-     * @param \Dealer4Dealer\SubstituteOrders\Api\Data\ShipmentInterface $shipment
-     */
-    public function saveAttachment($shipment)
+    public function saveAttachment(ShipmentInterface $shipment): void
     {
         if (!empty($shipment->getFileContent())) {
             $this->attachmentRepository->saveAttachmentByEntityType(
@@ -190,8 +156,8 @@ class ShipmentManagement implements \Dealer4Dealer\SubstituteOrders\Api\Shipment
      * {@inheritdoc}
      */
     public function getList(
-        \Magento\Framework\Api\SearchCriteriaInterface $searchCriteria
-    ) {
+        SearchCriteriaInterface $searchCriteria
+    ): ShipmentSearchResultsInterface {
         return $this->shipmentRepository->getList($searchCriteria);
     }
 }

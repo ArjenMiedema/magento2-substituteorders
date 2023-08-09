@@ -22,68 +22,39 @@
 
 namespace Dealer4Dealer\SubstituteOrders\Observer\Sales;
 
+use Dealer4Dealer\SubstituteOrders\Api\OrderRepositoryInterface;
+use Dealer4Dealer\SubstituteOrders\Model\OrderAddressFactory;
+use Dealer4Dealer\SubstituteOrders\Model\OrderFactory;
+use Dealer4Dealer\SubstituteOrders\Model\OrderItemFactory;
+use Magento\Customer\Api\CustomerRepositoryInterface;
+use Magento\Framework\Api\AttributeInterface;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Event\Observer;
+use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Exception\LocalizedException;
-use Dealer4Dealer\SubstituteOrders\Model\OrderAddress;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Sales\Model\Order;
 
-class OrderSaveAfter implements \Magento\Framework\Event\ObserverInterface
+class OrderSaveAfter implements ObserverInterface
 {
-    /** @var \Dealer4Dealer\SubstituteOrders\Api\OrderRepositoryInterface */
-    protected $orderRepository;
-
-    /** @var \Dealer4Dealer\SubstituteOrders\Api\OrderItemRepositoryInterface */
-    protected $orderItemsRepository;
-
-    /** @var \Dealer4Dealer\SubstituteOrders\Api\OrderAddressRepositoryInterface */
-    protected $orderAddressesRepository;
-
-    /** @var \Dealer4Dealer\SubstituteOrders\Model\OrderFactory */
-    protected $orderFactory;
-
-    /** @var \Dealer4Dealer\SubstituteOrders\Model\OrderAddressFactory */
-    protected $addressFactory;
-
-    /** @var \Dealer4Dealer\SubstituteOrders\Model\OrderItemFactory */
-    protected $orderItemFactory;
-
-    /**@var \Magento\Framework\App\Config\ScopeConfigInterface */
-    protected $scopeConfig;
-
-    /** @var \Magento\Customer\Api\CustomerRepositoryInterface  */
-    protected $customerRepository;
-
     public function __construct(
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \Dealer4Dealer\SubstituteOrders\Model\OrderFactory $orderFactory,
-        \Dealer4Dealer\SubstituteOrders\Model\OrderAddressFactory $addressFactory,
-        \Dealer4Dealer\SubstituteOrders\Model\OrderItemFactory $orderItemFactory,
-        \Dealer4Dealer\SubstituteOrders\Api\OrderRepositoryInterface $orders,
-        \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository
+        private readonly ScopeConfigInterface $scopeConfig,
+        private readonly OrderFactory $orderFactory,
+        private readonly OrderAddressFactory $addressFactory,
+        private readonly OrderItemFactory $orderItemFactory,
+        private readonly OrderRepositoryInterface $orderRepository,
+        private readonly CustomerRepositoryInterface $customerRepository
     ) {
-        $this->orderFactory = $orderFactory;
-        $this->addressFactory = $addressFactory;
-        $this->orderItemFactory = $orderItemFactory;
-
-        $this->orderRepository = $orders;
-        $this->scopeConfig = $scopeConfig;
-        $this->customerRepository = $customerRepository;
     }
 
-    /**
-     * Execute observer
-     *
-     * @param \Magento\Framework\Event\Observer $observer
-     * @return void
-     * @throws LocalizedException
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
-     */
     public function execute(
-        \Magento\Framework\Event\Observer $observer
-    ) {
-        /** @var \Magento\Sales\Model\Order $order */
-        $order = $observer->getOrder();
+        Observer $observer
+    ): void {
+        /** @var Order $order */
+        $order = $observer->getData('order');
         try {
             $substitute = $this->orderRepository->getByMagentoOrderId($order->getId());
-        } catch (LocalizedException $e) {
+        } catch (LocalizedException) {
             $substitute = $this->orderFactory->create();
             $substitute->setMagentoOrderId($order->getId());
         }
@@ -141,7 +112,7 @@ class OrderSaveAfter implements \Magento\Framework\Event\ObserverInterface
 
         if ($order->getCustomerId() !== 0 && $order->getCustomerId() !== null) {
             $customer = $this->customerRepository->getById($order->getCustomerId());
-            /** @var \Magento\Framework\Api\AttributeInterface */
+            /** @var AttributeInterface */
             $externalCustomerIdAttribute = $customer->getCustomAttribute("external_customer_id");
             if ($externalCustomerIdAttribute !== null && $externalCustomerIdAttribute->getValue() !== '') {
                 $substitute->setExternalCustomerId($externalCustomerIdAttribute->getValue());

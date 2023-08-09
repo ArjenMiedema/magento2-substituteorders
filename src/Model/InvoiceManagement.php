@@ -1,85 +1,31 @@
 <?php
 
-/**
- * A Magento 2 module named Dealer4Dealer\SubstituteOrders
- * Copyright (C) 2017 Maikel Martens
- *
- * This file is part of Dealer4Dealer\SubstituteOrders.
- *
- * Dealer4Dealer\SubstituteOrders is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
+declare(strict_types=1);
 
 namespace Dealer4Dealer\SubstituteOrders\Model;
 
-use Dealer4Dealer\SubstituteOrders\Model\InvoiceFactory;
-use Dealer4Dealer\SubstituteOrders\Model\InvoiceItemFactory;
-use Dealer4Dealer\SubstituteOrders\Model\OrderAddressFactory;
-use Dealer4Dealer\SubstituteOrders\Model\Invoice;
+use Dealer4Dealer\SubstituteOrders\Api\Data\InvoiceInterface;
+use Dealer4Dealer\SubstituteOrders\Api\Data\InvoiceSearchResultsInterface;
+use Dealer4Dealer\SubstituteOrders\Api\InvoiceManagementInterface;
+use Magento\Framework\Api\SearchCriteriaInterface;
+use Magento\Framework\Api\SearchResults;
+use Magento\Framework\Data\SearchResultInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 
-use function Dealer4Dealer\SubstituteOrders\Model\__;
-
-class InvoiceManagement implements \Dealer4Dealer\SubstituteOrders\Api\InvoiceManagementInterface
+class InvoiceManagement implements InvoiceManagementInterface
 {
-    /**
-     * @var InvoiceFactory
-     */
-    protected $invoiceFactory;
-
-    /**
-     * @var OrderAddressFactory
-     */
-    protected $addressFactory;
-
-    /**
-     * @var InvoiceItemFactory
-     */
-    protected $invoiceItemFactory;
-
-    /*
-    * @var \Dealer4Dealer\SubstituteOrders\Model\AttachmentRepository
-    */
-    protected $attachmentRepository;
-
-    /*
-    * @var \Dealer4Dealer\SubstituteOrders\Model\InvoiceRepository $invoiceRepository
-    */
-    protected $invoiceRepository;
-
-    /** @var  */
-    protected $orderFactory;
-
     public function __construct(
-        \Dealer4Dealer\SubstituteOrders\Model\InvoiceFactory $invoiceFactory,
-        \Dealer4Dealer\SubstituteOrders\Model\OrderAddressFactory $addressFactory,
-        \Dealer4Dealer\SubstituteOrders\Model\InvoiceItemFactory $invoiceItemFactory,
-        \Dealer4Dealer\SubstituteOrders\Model\OrderFactory $orderFactory,
-        \Dealer4Dealer\SubstituteOrders\Model\AttachmentRepository $attachmentRepository,
-        \Dealer4Dealer\SubstituteOrders\Model\InvoiceRepository $invoiceRepository
+        private readonly InvoiceFactory $invoiceFactory,
+        private readonly OrderFactory $orderFactory,
+        private readonly AttachmentRepository $attachmentRepository,
+        private readonly InvoiceRepository $invoiceRepository
     ) {
-        $this->invoiceFactory = $invoiceFactory;
-        $this->addressFactory = $addressFactory;
-        $this->invoiceItemFactory = $invoiceItemFactory;
-        $this->attachmentRepository = $attachmentRepository;
-        $this->invoiceRepository = $invoiceRepository;
-        $this->orderFactory = $orderFactory;
     }
 
     /**
-     * {@inheritdoc}
+     * @throws NoSuchEntityException
      */
-    public function getInvoice($id)
+    public function getInvoice(int $id): InvoiceInterface
     {
         $invoice = $this->invoiceFactory->create()->load($id);
 
@@ -91,9 +37,9 @@ class InvoiceManagement implements \Dealer4Dealer\SubstituteOrders\Api\InvoiceMa
     }
 
     /**
-     * {@inheritdoc}
+     * @throws NoSuchEntityException
      */
-    public function getInvoiceByExt($id)
+    public function getInvoiceByExt(int $id): InvoiceInterface
     {
         $invoice = $this->invoiceFactory->create()->load($id, "ext_invoice_id");
 
@@ -105,9 +51,9 @@ class InvoiceManagement implements \Dealer4Dealer\SubstituteOrders\Api\InvoiceMa
     }
 
     /**
-     * {@inheritdoc}
+     * @throws NoSuchEntityException
      */
-    public function getInvoiceByMagento($id)
+    public function getInvoiceByMagento(int $id): InvoiceInterface
     {
         $invoice = $this->invoiceFactory->create()->load($id, "magento_invoice_id");
 
@@ -119,9 +65,9 @@ class InvoiceManagement implements \Dealer4Dealer\SubstituteOrders\Api\InvoiceMa
     }
 
     /**
-     * {@inheritdoc}
+     * @throws NoSuchEntityException
      */
-    public function getInvoiceByMagentoIncrementId($id)
+    public function getInvoiceByMagentoIncrementId(int $id): InvoiceInterface
     {
         $invoice = $this->invoiceFactory->create()->load($id, "magento_increment_id");
 
@@ -132,28 +78,25 @@ class InvoiceManagement implements \Dealer4Dealer\SubstituteOrders\Api\InvoiceMa
         return $invoice;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function postInvoice($invoice)
+    public function postInvoice(InvoiceInterface $invoice): int
     {
         $invoice->setId(null);
         $invoice->save();
 
         $this->saveAttachment($invoice);
 
-        return $invoice->getId();
+        return (int) $invoice->getId();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function putInvoice($invoice)
+    public function putInvoice(InvoiceInterface $invoice): ?int
     {
         $oldInvoice = $this->invoiceFactory->create()->load($invoice->getId());
 
         if (!$oldInvoice->getId()) {
-            return false;
+            return null;
         }
 
         $oldInvoice->setData(array_merge($oldInvoice->getData(), $invoice->getData()));
@@ -166,13 +109,13 @@ class InvoiceManagement implements \Dealer4Dealer\SubstituteOrders\Api\InvoiceMa
 
         $this->saveAttachment($oldInvoice);
 
-        return $oldInvoice->getId();
+        return (int) $oldInvoice->getId();
     }
 
     /**
-     * {@inheritdoc}
+     * @throws NoSuchEntityException
      */
-    public function deleteInvoice($id)
+    public function deleteInvoice(int $id): bool
     {
         $invoice = $this->invoiceFactory->create()->load($id);
 
@@ -185,10 +128,7 @@ class InvoiceManagement implements \Dealer4Dealer\SubstituteOrders\Api\InvoiceMa
         return true;
     }
 
-    /**
-     * @param $invoice
-     */
-    public function saveAttachment($invoice)
+    public function saveAttachment(InvoiceInterface $invoice): void
     {
         if (!empty($invoice->getFileContent())) {
             $this->attachmentRepository->saveAttachmentByEntityType(
@@ -200,21 +140,16 @@ class InvoiceManagement implements \Dealer4Dealer\SubstituteOrders\Api\InvoiceMa
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getList(
-        \Magento\Framework\Api\SearchCriteriaInterface $searchCriteria
-    ) {
+        SearchCriteriaInterface $searchCriteria
+    ): InvoiceSearchResultsInterface {
         return $this->invoiceRepository->getList($searchCriteria);
     }
 
     /**
-     * Retrieve Shipments by the order increment id.
-     * @param $id = Magento Order Increment Id
-     * @return mixed
+     * @throws NoSuchEntityException
      */
-    public function getInvoicesByOrderIncrementId($id)
+    public function getInvoicesByOrderIncrementId(int $id): InvoiceSearchResultsInterface
     {
         // 1. get order by increment id.
         $order = $this->orderFactory->create();

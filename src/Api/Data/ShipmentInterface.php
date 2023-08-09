@@ -47,9 +47,9 @@ interface ShipmentInterface
 
     public function setShipmentStatus(string $shipmentStatus): self;
 
-    public function getIncrementId(): ?string;
+    public function getIncrementId(): ?int;
 
-    public function setIncrementId(string $incrementId): self;
+    public function setIncrementId(int $incrementId): self;
 
     public function getCreatedAt(): ?string;
 

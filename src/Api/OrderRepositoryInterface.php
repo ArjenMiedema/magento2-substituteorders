@@ -18,7 +18,7 @@ interface OrderRepositoryInterface
 
     public function getByExtOrderId(int $id): OrderInterface;
 
-    public function getList(SearchCriteriaInterface $searchCriteria): \Magento\Framework\Api\SearchResults;
+    public function getList(SearchCriteriaInterface $searchCriteria): OrderSearchResultsInterface;
 
     public function delete(OrderInterface $order): bool;
 
