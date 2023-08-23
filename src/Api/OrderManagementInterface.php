@@ -4,66 +4,51 @@ declare(strict_types=1);
 
 namespace Dealer4Dealer\SubstituteOrders\Api;
 
-use Dealer4Dealer\SubstituteOrders\Api\Data\OrderInterface;
-use Dealer4Dealer\SubstituteOrders\Api\Data\OrderSearchResultsInterface;
+use Dealer4Dealer\SubstituteOrders\Api\Data\ExternalOrderInterface;
 use Magento\Framework\Api\SearchCriteriaInterface;
-use Magento\Framework\Api\SearchResults;
+use Magento\Sales\Api\Data\OrderSearchResultInterface;
 
 interface OrderManagementInterface
 {
     /**
-     * @param OrderInterface $order
+     * @param ExternalOrderInterface $externalOrder
      *
      * @return int
      */
-    public function postOrder(OrderInterface $order): int;
+    public function update(ExternalOrderInterface $externalOrder): int;
+
+    /**
+     * @param string $id
+     *
+     * @return ExternalOrderInterface
+     */
+    public function get(string $id): ExternalOrderInterface;
 
     /**
      * @param int $id
      *
-     * @return OrderInterface
+     * @return ExternalOrderInterface
      */
-    public function getOrderById(int $id): OrderInterface;
+    public function getById(int $id): ExternalOrderInterface;
 
     /**
-     * @param int $id
-     *
-     * @return OrderInterface
-     */
-    public function getOrderByMagento(int $id): OrderInterface;
-
-    /**
-     * @param int $id
-     *
-     * @return OrderInterface
-     */
-    public function getOrderByExt(int $id): OrderInterface;
-
-    /**
-     * @param int $id
-     *
-     * @return OrderInterface
-     */
-    public function getOrderByMagentoIncrementId(int $id): OrderInterface;
-
-    /**
-     * @param OrderInterface $order
+     * @param ExternalOrderInterface $externalOrder
      *
      * @return int
      */
-    public function putOrder(OrderInterface $order): int;
+    public function create(ExternalOrderInterface $externalOrder): int;
 
     /**
      * @param int $id
      *
-     * @return bool
+     * @return void
      */
-    public function deleteOrderById(int $id): bool;
+    public function deleteOrderById(int $id): void;
 
     /**
      * @param SearchCriteriaInterface $searchCriteria
      *
-     * @return SearchResults
+     * @return OrderSearchResultInterface
      */
-    public function getList(SearchCriteriaInterface $searchCriteria): SearchResults;
+    public function getList(SearchCriteriaInterface $searchCriteria): OrderSearchResultInterface;
 }

@@ -22,157 +22,72 @@
 
 namespace Dealer4Dealer\SubstituteOrders\Model;
 
-use Dealer4Dealer\SubstituteOrders\Api\Data\OrderInterface;
-use Dealer4Dealer\SubstituteOrders\Api\Data\OrderSearchResultsInterface;
+use Dealer4Dealer\SubstituteOrders\Api\Data\ExternalOrderInterface;
 use Dealer4Dealer\SubstituteOrders\Api\OrderManagementInterface;
 use Magento\Framework\Api\SearchCriteriaInterface;
-use Magento\Framework\Api\SearchResults;
+use Magento\Framework\Exception\AlreadyExistsException;
 use Magento\Framework\Exception\NoSuchEntityException;
-
-use function Dealer4Dealer\SubstituteOrders\Model\__;
+use Magento\Sales\Api\Data\OrderInterface;
+use Magento\Sales\Api\Data\OrderSearchResultInterface;
+use Magento\Sales\Api\OrderRepositoryInterface;
+use Magento\Sales\Model\OrderFactory;
 
 class OrderManagement implements OrderManagementInterface
 {
     public function __construct(
-        private readonly \Dealer4Dealer\SubstituteOrders\Model\OrderFactory $orderFactory,
-        private readonly AttachmentRepository $attachmentRepository,
-        private readonly OrderRepository $orderRepository,
-        private readonly OrderItemRepository $orderItemRepository
+        private readonly OrderRepositoryInterface $orderRepository,
+        private readonly OrderFactory $orderFactory
     ) {
     }
 
     /**
-     * {@inheritdoc}
+     * @throws AlreadyExistsException
      */
-    public function postOrder(OrderInterface $order): int
+    public function create(ExternalOrderInterface $externalOrder): int
     {
-        $order->setId(null);
-        $order->save();
+        if ($externalOrder->getId()) {
+            throw new AlreadyExistsException(
+                __(
+                    'An order with the given ID already exists. Please use PUT to update the order data.'
+                )
+            );
+        }
 
-        $this->saveAttachment($order);
+        $order = $this->transformExternalOrder($externalOrder);
+        $this->orderRepository->save($order);
 
         return $order->getId();
     }
 
-    /**
-     * @throws NoSuchEntityException
-     */
-    public function getOrderById(int $id): OrderInterface
+    public function get(string $id): ExternalOrderInterface
     {
-        $order = $this->orderFactory->create()->load($id);
-
-        if (!$order->getId()) {
-            throw new NoSuchEntityException(__('Order with id "%1" does not exist.', $id));
-        }
-
-        return $order;
+        var_dump($this->orderRepository->get($id));
     }
 
-    /**
-     * @throws NoSuchEntityException
-     */
-    public function getOrderByMagento(int $id): OrderInterface
+    private function transformExternalOrder(ExternalOrderInterface $externalOrder): OrderInterface
     {
-        $order = $this->orderFactory->create()->load($id, "magento_order_id");
+        $order = $this->orderFactory->create();
 
-        if (!$order->getId()) {
-            throw new NoSuchEntityException(__('Order with magento_order_id "%1" does not exist.', $id));
-        }
-
-        return $order;
     }
 
-    /**
-     * @throws NoSuchEntityException
-     */
-    public function getOrderByMagentoIncrementId(int $id): OrderInterface
+    public function update(ExternalOrderInterface $externalOrder): int
     {
-        $order = $this->orderFactory->create()->load($id, "magento_increment_id");
 
-        if (!$order->getId()) {
-            throw new NoSuchEntityException(__('Order with magento_increment_id "%1" does not exist.', $id));
-        }
-
-        return $order;
     }
 
-    /**
-     * @throws NoSuchEntityException
-     */
-    public function getOrderByExt(int $id): OrderInterface
+    public function getById(int $id): ExternalOrderInterface
     {
-        $order = $this->orderFactory->create()->load($id, "ext_order_id");
 
-        if (!$order->getId()) {
-            throw new NoSuchEntityException(__('Order with ext_order_id "%1" does not exist.', $id));
-        }
-
-        return $order;
     }
 
-    public function putOrder(OrderInterface $order): int
+    public function deleteOrderById(int $id): void
     {
-        $oldOrder = $this->orderFactory->create()->load($order->getId());
 
-        if (!$oldOrder->getId()) {
-            return false;
-        }
-
-        $oldOrder->setData(array_merge($oldOrder->getData(), $order->getData()));
-
-        if ($shippingAddress = $order->getShippingAddress()) {
-            $oldOrder->setShippingAddress($shippingAddress);
-        }
-
-        if ($billingAddress = $order->getBillingAddress()) {
-            $oldOrder->setBillingAddress($billingAddress);
-        }
-
-        foreach ($oldOrder->getItems() as $oldOrderItem) {
-            $this->orderItemRepository->delete($oldOrderItem);
-        }
-
-        $oldOrder->setItems($order->getItems());
-        $oldOrder->setAdditionalData($order->getAdditionalData());
-
-        $oldOrder->save();
-
-        $this->saveAttachment($oldOrder);
-
-        return $oldOrder->getId();
-    }
-
-    /**
-     * @throws NoSuchEntityException
-     */
-    public function deleteOrderById(int $id): bool
-    {
-        $order = $this->orderFactory->create()->load($id);
-
-        if (!$order->getId()) {
-            throw new NoSuchEntityException(__('Order with id "%1" does not exist.', $id));
-        }
-
-        $order->delete();
-
-        return true;
-    }
-
-    public function saveAttachment(OrderInterface $order): void
-    {
-        if (!empty($order->getFileContent())) {
-            $this->attachmentRepository->saveAttachmentByEntityType(
-                Order::ENTITY,
-                $order->getOrderId(),
-                $order->getMagentoCustomerId(),
-                $order->getFileContent()
-            );
-        }
     }
 
     public function getList(
         SearchCriteriaInterface $searchCriteria
-    ): SearchResults {
-        return $this->orderRepository->getList($searchCriteria);
+    ): OrderSearchResultInterface {
+
     }
 }

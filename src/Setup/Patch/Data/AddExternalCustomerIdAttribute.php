@@ -78,7 +78,7 @@ class AddExternalCustomerIdAttribute implements DataPatchInterface, PatchReverta
         return $this;
     }
 
-    public function revert()
+    public function revert(): void
     {
         /** @var EavSetup $eavSetup */
         $eavSetup = $this->eavSetupFactory->create();
